@@ -648,6 +648,73 @@
             margin-left: 0.5rem;
         }
 
+        /* Filter System */
+        .filter-container {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(41, 182, 246, 0.1);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .filter-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            min-width: 80px;
+        }
+
+        .filter-btn {
+            padding: 0.4rem 0.9rem;
+            border: 1px solid rgba(41, 182, 246, 0.3);
+            border-radius: 20px;
+            background: linear-gradient(180deg, #ffffff 0%, #f5f9fc 100%);
+            color: var(--text-dark);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: #29b6f6;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(180deg, #4fc3f7 0%, #29b6f6 100%);
+            color: white;
+            border-color: #29b6f6;
+            box-shadow: 0 2px 8px rgba(41, 182, 246, 0.3);
+        }
+
+        .material-item {
+            transition: all 0.3s ease;
+        }
+
+        .material-item.hidden {
+            display: none;
+        }
+
+        .category-header {
+            transition: all 0.3s ease;
+        }
+
+        .category-header.hidden {
+            display: none;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -1289,12 +1356,36 @@ For EVERY image, diagram, graph, or icon, insert [Visual Description]:
                 </button>
             </div>
 
-            <h2>ENGLISCH</h2>
+            <!-- Filter System -->
+            <div class="filter-container">
+                <div class="filter-row">
+                    <span class="filter-label">Kategorie:</span>
+                    <button class="filter-btn active" data-filter="category" data-value="all">Alle</button>
+                    <button class="filter-btn" data-filter="category" data-value="grammar">Grammar</button>
+                    <button class="filter-btn" data-filter="category" data-value="writing">Writing</button>
+                    <button class="filter-btn" data-filter="category" data-value="video">Video & Media</button>
+                    <button class="filter-btn" data-filter="category" data-value="speaking">Speaking</button>
+                    <button class="filter-btn" data-filter="category" data-value="test-prep">Test Prep</button>
+                    <button class="filter-btn" data-filter="category" data-value="vocab">Vocab & Culture</button>
+                    <button class="filter-btn" data-filter="category" data-value="pup">PuP</button>
+                </div>
+                <div class="filter-row">
+                    <span class="filter-label">Schulstufe:</span>
+                    <button class="filter-btn active" data-filter="grade" data-value="all">Alle</button>
+                    <button class="filter-btn" data-filter="grade" data-value="2">2. Klasse</button>
+                    <button class="filter-btn" data-filter="grade" data-value="3">3. Klasse</button>
+                    <button class="filter-btn" data-filter="grade" data-value="4">4. Klasse</button>
+                    <button class="filter-btn" data-filter="grade" data-value="5">5. Klasse</button>
+                    <button class="filter-btn" data-filter="grade" data-value="wpf">WPF (7./8.)</button>
+                </div>
+            </div>
+
+            <h2 class="category-header" data-subject="english">ENGLISCH</h2>
 
             <h3>2. Klasse (A1+/A2-Niveau)</h3>
 
             <!-- 3.1 School Exercise Handout -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="grammar" data-grade="2">
                 <div class="collapsible-header">
                     <h3>3.1 School Exercise als Handout: "Talking about Rules"</h3>
                     <span class="toggle-icon">▼</span>
@@ -1342,7 +1433,7 @@ Make it visually appealing with boxes so students can glue it into their exercis
             </div>
 
             <!-- 3.2 Christmas & New Year -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="vocab" data-grade="2">
     <div class="collapsible-header">
         <h3>3.2 Christmas & New Year Materials (Unit 7)</h3>
         <span class="toggle-icon">▼</span>
@@ -1583,7 +1674,7 @@ Create PowerPoint slides with clear instructions for each activity that I can pr
     </div>
 </div>
 
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="video" data-grade="2">
                 <div class="collapsible-header">
                     <h3>3.3 Voyager Golden Record Lesson (Unit 8: UFOs)</h3>
                     <span class="toggle-icon">▼</span>
@@ -1660,7 +1751,7 @@ Create PowerPoint slides with clear instructions for each activity that I can pr
             <h3>3. Klasse (A2-Niveau)</h3>
 
             <!-- 3.4 Year 2 Revision Quiz -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="test-prep" data-grade="3">
                 <div class="collapsible-header">
                     <h3>3.4 Year 2 Revision Quiz: "Can you remember...?"</h3>
                     <span class="toggle-icon">▼</span>
@@ -1751,7 +1842,7 @@ Format the output so I can easily turn it into presentation slides, with each qu
             </div>
 
             <!-- 3.5 My Year of Travelling Adventures -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="writing" data-grade="3">
                 <div class="collapsible-header">
                     <h3>3.5 "My Year of Travelling Adventures" – Diary Entry Writing Task</h3>
                     <span class="toggle-icon">▼</span>
@@ -1801,7 +1892,7 @@ So, I want them to write a diary entry from one day in this journey. Like, retel
             </div>
 
             <!-- 3.6 Pair Reading Activity -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="speaking" data-grade="3">
     <div class="collapsible-header">
         <h3>3.6 Pair Reading Activity mit Leitfragen (Unit 3)</h3>
         <span class="toggle-icon">▼</span>
@@ -1965,7 +2056,7 @@ Questions should cover:
     </div>
 </div>
 
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="grammar" data-grade="3">
     <div class="collapsible-header">
         <h3>3.7 "The World's Most Dangerous Animals" – Induktive Grammatikeinführung</h3>
         <span class="toggle-icon">▼</span>
@@ -2275,7 +2366,7 @@ Include:
     </div>
 </div>
 
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="grammar" data-grade="3">
                 <div class="collapsible-header">
                     <h3>3.8 "Express it Four Ways!" – First Conditional Übung</h3>
                     <span class="toggle-icon">▼</span>
@@ -2318,7 +2409,7 @@ Include:
             </div>
 
             <!-- 3.9 Setting Boundaries -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="speaking" data-grade="3">
     <div class="collapsible-header">
         <h3>3.9 Speaking Activities: Setting Boundaries (Friendship Unit)</h3>
         <span class="toggle-icon">▼</span>
@@ -2735,7 +2826,7 @@ Create a movement-based activity:
 
             <h3>4. Klasse (A2+-Niveau)</h3>
 
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="test-prep" data-grade="4">
                 <div class="collapsible-header">
                     <h3>4.1 Year 3 Revision: "Can you remember...?" Answer Keys</h3>
                     <span class="toggle-icon">▼</span>
@@ -2775,7 +2866,7 @@ in this format:
             </div>
 
             <!-- 4.2 NYC Video -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="video" data-grade="4">
     <div class="collapsible-header">
         <h3>4.2 NYC Video While-Watching Tasks (Unit 3)</h3>
         <span class="toggle-icon">▼</span>
@@ -3006,7 +3097,7 @@ Create tasks in this specific format:
     </div>
 </div>
 
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="vocab" data-grade="4">
                 <div class="collapsible-header">
                     <h3>4.3 Gen Alpha Slang – End-of-Year Reflection Worksheet</h3>
                     <span class="toggle-icon">▼</span>
@@ -3052,7 +3143,7 @@ The questions should cover:
             </div>
 
             <!-- 4.4 Test Common Mistakes -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="test-prep" data-grade="4">
                 <div class="collapsible-header">
                     <h3>4.4 Test Common Mistakes & Great Vocabulary Presentation</h3>
                     <span class="toggle-icon">▼</span>
@@ -3081,7 +3172,7 @@ The questions should cover:
             </div>
 
             <!-- 4.5 Model Texts Analysis -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="writing" data-grade="4">
                 <div class="collapsible-header">
                     <h3>4.5 Model Texts Analysis – How to Get Full Points</h3>
                     <span class="toggle-icon">▼</span>
@@ -3127,7 +3218,7 @@ So for the details in particular as well, right? And like the details in one col
             <h3>5. Klasse (B1-Niveau)</h3>
 
             <!-- 5.1 Food Vlog Project -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="video" data-grade="5">
     <div class="collapsible-header">
         <h3>5.1 Food Vlog Project (Unit 4)</h3>
         <span class="toggle-icon">▼</span>
@@ -3356,7 +3447,7 @@ Create a multi-week project where students make a 30-60 second food vlog (Instag
     </div>
 </div>
 
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="writing" data-grade="5">
     <div class="collapsible-header">
         <h3>5.2 Blog Post Writing Task – Trends (Unit 6)</h3>
         <span class="toggle-icon">▼</span>
@@ -3566,7 +3657,7 @@ Suggest how to phase this over 2-3 weeks:
     </div>
 </div>
 
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="video" data-grade="5">
     <div class="collapsible-header">
         <h3>5.3 Dead Poets Society – EFL Film Unit (3 Stunden)</h3>
         <span class="toggle-icon">▼</span>
@@ -3942,7 +4033,7 @@ Before finalizing, verify:
     </div>
 </div>
 
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="test-prep" data-grade="5">
                 <div class="collapsible-header">
                     <h3>5.4 Englisch Matura-Aufgaben-Generator (Claude Project)</h3>
                     <span class="toggle-icon">▼</span>
@@ -4031,7 +4122,7 @@ Before finalizing, verify:
             <h3>Entwicklungspsychologie</h3>
 
             <!-- PuP 1: Bindungstheorie -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="pup" data-grade="wpf">
                 <div class="collapsible-header">
                     <h3>PuP.1 Entwicklungspsychologie &amp; Bindungstheorie</h3>
                     <span class="toggle-icon">▼</span>
@@ -4214,7 +4305,7 @@ Methodischer Hinweis: Balance zwischen Theorie-Input und eigenständiger Erarbei
             <h3>Sozialpsychologie</h3>
 
             <!-- PuP 2: Werbepsychologie -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="pup" data-grade="wpf">
                 <div class="collapsible-header">
                     <h3>PuP.2 Werbepsychologie-Unterrichtseinheit</h3>
                     <span class="toggle-icon">▼</span>
@@ -4310,7 +4401,7 @@ Methodik: Entdeckendes Lernen, Gruppenarbeit, Plenumsdiskussion
             <h3>Persönlichkeitspsychologie</h3>
 
             <!-- PuP 3: Persönlichkeitsdiagnostik -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="pup" data-grade="wpf">
                 <div class="collapsible-header">
                     <h3>PuP.3 Persönlichkeitsdiagnostik &amp; Big Five</h3>
                     <span class="toggle-icon">▼</span>
@@ -4452,7 +4543,7 @@ Ton: leicht und spielerisch, da Themenabschluss
             <h3>Philosophische Anthropologie</h3>
 
             <!-- PuP 4: Transhumanismus -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="pup" data-grade="wpf">
                 <div class="collapsible-header">
                     <h3>PuP.4 Transhumanismus &amp; Anthropologie</h3>
                     <span class="toggle-icon">▼</span>
@@ -4587,7 +4678,7 @@ Zusätzlich:
             <h3>Normative Ethik</h3>
 
             <!-- PuP 5: Utilitarismus & Pflichtethik - NEU -->
-            <div class="collapsible">
+            <div class="collapsible material-item" data-category="pup" data-grade="wpf">
                 <div class="collapsible-header">
                     <h3>PuP.5 Utilitarismus &amp; Pflichtethik</h3>
                     <span class="toggle-icon">▼</span>
@@ -4881,6 +4972,81 @@ Methodischer Hinweis: SuS sollen beide Perspektiven anwenden können, ohne eine 
                 el.classList.remove('open');
                 const toggleText = el.querySelector('.toggle-template');
                 if (toggleText) toggleText.textContent = '▼ anzeigen';
+            });
+        }
+
+        // Filter functionality
+        let activeFilters = {
+            category: 'all',
+            grade: 'all'
+        };
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filterType = this.dataset.filter;
+                const filterValue = this.dataset.value;
+
+                // Update active button in this row
+                document.querySelectorAll(`.filter-btn[data-filter="${filterType}"]`).forEach(b => {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                // Update active filters
+                activeFilters[filterType] = filterValue;
+
+                // Apply filters
+                applyFilters();
+            });
+        });
+
+        function applyFilters() {
+            const items = document.querySelectorAll('.material-item');
+            const headers = document.querySelectorAll('h2.category-header, h3');
+
+            items.forEach(item => {
+                const category = item.dataset.category;
+                const grade = item.dataset.grade;
+
+                const categoryMatch = activeFilters.category === 'all' || category === activeFilters.category;
+                const gradeMatch = activeFilters.grade === 'all' || grade === activeFilters.grade;
+
+                if (categoryMatch && gradeMatch) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            // Hide empty section headers (h2 and h3 that have no visible items after them)
+            updateSectionHeadersVisibility();
+        }
+
+        function updateSectionHeadersVisibility() {
+            // Get all h2 and h3 elements in materialien section
+            const materialienSection = document.getElementById('materialien');
+            if (!materialienSection) return;
+
+            const allHeaders = materialienSection.querySelectorAll('h2, h3');
+
+            allHeaders.forEach(header => {
+                // Find next sibling elements until next header
+                let hasVisibleItems = false;
+                let sibling = header.nextElementSibling;
+
+                while (sibling && !sibling.matches('h2, h3')) {
+                    if (sibling.classList.contains('material-item') && !sibling.classList.contains('hidden')) {
+                        hasVisibleItems = true;
+                        break;
+                    }
+                    sibling = sibling.nextElementSibling;
+                }
+
+                if (hasVisibleItems || activeFilters.category === 'all' && activeFilters.grade === 'all') {
+                    header.classList.remove('hidden');
+                } else {
+                    header.classList.add('hidden');
+                }
             });
         }
     </script>
