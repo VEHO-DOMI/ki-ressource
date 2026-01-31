@@ -1546,6 +1546,7 @@ For EVERY image, diagram, graph, or icon, insert [Visual Description]:
                     <button class="filter-btn" data-filter="grade" data-value="3">3. Klasse</button>
                     <button class="filter-btn" data-filter="grade" data-value="4">4. Klasse</button>
                     <button class="filter-btn" data-filter="grade" data-value="5">5. Klasse</button>
+                    <button class="filter-btn" data-filter="grade" data-value="8">8. Klasse</button>
                     <button class="filter-btn" data-filter="grade" data-value="wpf">WPF (7./8.)</button>
                 </div>
             </div>
@@ -5005,213 +5006,66 @@ Create a SINGLE SLIDE with instructions for students. The slide should:
 
             <h3>Test Prep</h3>
 
-<div class="collapsible material-item" data-category="test-prep" data-grade="3">
-                <div class="collapsible-header">
-                    <h3>3.4 Year 2 Revision Quiz: "Can you remember...?"</h3>
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <div class="collapsible-inner">
-                        <span class="category-badge english">Englisch</span>
-                        <span class="grade-level">3. Klasse • A2</span>
+            <p style="color: #888; font-style: italic; margin: 1rem 0 2rem 0;">Folgt in Kürze...</p>
 
-                        <p><strong>Kontext:</strong> Wiederholung des gesamten Vorjahresstoffs zu Schuljahresbeginn. Drei Kategorien: Inhalte der Units, Grammatik ("What do you say if...?"), Vokabeln ("5 words for...").</p>
-                        
-                        <p><strong>Arbeitsablauf:</strong> Gesamtes transkribiertes Schulbuch (MORE! 2) hochgeladen → KI erstellt umfassendes Quiz in drei Teilen.</p>
+            <h3>8. Klasse / Matura</h3>
 
-                        <div class="prompt-box">
-                            <div class="prompt-header" onclick="togglePrompt(this)">
-                                <span>📋 Prompt</span>
-                                <span class="toggle-prompt">▼ anzeigen</span>
-                            </div>
-                            <div class="prompt-content">
-                                <div class="prompt-inner">
-                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                    <pre>I'm attaching the entire MORE! 2 Student's Book (all units). I need you to create a comprehensive year-end review quiz that my students can use to revise everything they learned. The quiz should be structured in three parts and cover content, grammar, and vocabulary from all units.
+<div class="collapsible material-item" data-category="test-prep" data-grade="8">
+    <div class="collapsible-header">
+        <h3>8.1 Englisch Matura-Aufgaben-Generator (Claude Project)</h3>
+        <span class="toggle-icon">▼</span>
+    </div>
+    <div class="collapsible-content">
+        <div class="collapsible-inner">
+            <span class="category-badge english">Englisch</span>
+            <span class="grade-level">8. Klasse • Matura • B2+</span>
 
-Part 1: "Can you remember...?" (Content Questions)
-Create approximately 10 content questions that test students' memory of key facts, stories, characters, and interesting details from the main reading texts across all units.
-* Questions should start with "Can you remember...?"
-* Focus on memorable moments, character names, plot points, and interesting facts
-* Include a mix of questions from different units throughout the book
-* Provide the answers for each question
+            <p><strong>Kontext:</strong> Umfassendes Claude-Projekt zur Generierung von mündlichen Matura-Aufgaben (Standardisierte Reifeprüfung) für Englisch auf B2+-Niveau. Iterativ über längere Zeit entwickelt und verfeinert.</p>
 
-Examples of the style I want:
-* "Can you remember...? What is special about the pyramid at Chichen Itza?"
-* "Can you remember...? What were the two embarrassing stories about Alan and Sophia?"
-* "Can you remember...? What was this girl's name and why did Lara and Ron find her mysterious?"
+            <p><strong>Arbeitsablauf:</strong> Claude Project mit System-Prompt, Qualitätsleitfaden und Task Libraries eingerichtet. Bei Eingabe eines Themenblocks generiert die KI sieben vollständige Aufgabensets (3× Bilder, 2× Zitate, 2× Alternative Prompts).</p>
 
-Part 2: "What do you say if...?" (Grammar Questions)
-Create situational prompts where the answer requires using the grammar structures learned throughout the year. Students must answer in full sentences.
+            <h4>Kern-Features des Projects</h4>
+            <ul>
+                <li><strong>18 genehmigte Themenblöcke</strong> (Family & Gender, School & Education, etc.)</li>
+                <li><strong>Automatische Variabilitätsprüfung</strong> (keine Überlappungen zwischen Aufgaben)</li>
+                <li><strong>Verifizierungspflicht</strong> für Zitate (Web-Suche) und Statistiken (Quelle, Jahr, URL)</li>
+                <li><strong>Zwei Ausgabedateien:</strong> Student Tasks + Teacher Resource (mit Erwartungshorizont)</li>
+                <li><strong>Bildgenerierungs-Prompts</strong> für KI-Bildgeneratoren</li>
+            </ul>
 
-Cover all the main grammar points from More 2:
-* Past Simple (asking about holidays)
-* Present Simple (daily routines)
-* Modal verbs for rules (must/mustn't, have to/don't have to)
-* Comparatives and superlatives (comparing things)
-* Asking for and giving directions
-* Going to (definite future plans)
-* Might (uncertain future plans)
-* There is/are with some/any
-* Like + gerund (free time activities)
-* Present Perfect with ever
-* Whose (possession questions)
-* Will/going to for predictions (weather)
+            <h4>Aufgabenstruktur pro Set</h4>
+            <ul>
+                <li><strong>Part 1:</strong> Individual Long Turn (Prompt + 3 Bullet Points für 5 Min. Monolog)</li>
+                <li><strong>Part 2:</strong> Paired Activity (Szenario + 5 Optionen für 10 Min. Dialog)</li>
+                <li><strong>Erwartungshorizont:</strong> Lösungen für beide Teile</li>
+            </ul>
 
-Format each as: "What do you say if... [situation]?"
+            <h4>Kategorie A – Kontrastierende Bilder</h4>
+            <table>
+                <tr><th>Kontrastkategorie</th><th>Bild 1</th><th>Bild 2</th></tr>
+                <tr><td>Temporal</td><td>Historisch/Vergangenheit</td><td>Modern/Gegenwart</td></tr>
+                <tr><td>Scale</td><td>Individuum</td><td>Gruppe/Masse</td></tr>
+                <tr><td>Approach</td><td>Aktiv</td><td>Passiv</td></tr>
+                <tr><td>Setting</td><td>Urban</td><td>Rural</td></tr>
+                <tr><td>Mood</td><td>Positiv</td><td>Negativ</td></tr>
+                <tr><td>Impact</td><td>Problem</td><td>Lösung</td></tr>
+            </table>
 
-Part 3: "5 words for..." (Vocabulary Questions)
-Create vocabulary challenges where students need to come up with 5 words related to key topics from the units. This should be done as a pair activity.
+            <h4>Qualitätssicherung</h4>
+            <ul>
+                <li>Alle 7 Aufgaben adressieren UNTERSCHIEDLICHE Aspekte des Themas</li>
+                <li>A1/A2/A3 verwenden UNTERSCHIEDLICHE Kontrastkategorien</li>
+                <li>B1/B2 verwenden UNTERSCHIEDLICHE Autoren UND thematische Winkel</li>
+                <li>Plagiatsprüfung gegen bestehende Task Libraries</li>
+            </ul>
 
-Include categories like:
-* school subjects
-* buildings in a town
-* Halloween/spooky vocabulary
-* weather descriptions
-* health (aches and pains)
-* describing rooms/furniture
-
-Part 4 (Optional): "Say 5 sentences about..."
-Add a few open speaking prompts where students practice free production:
-* talk about your (ideal) pet
-* describe your room
-* describe your family
-* talk about your favourite sports
-
-Format the output so I can easily turn it into presentation slides, with each question on its own slide.</pre>
-                                </div>
-                            </div>
-                        </div>
-
-                                                <div class="materials-box">
-                            <h4>📂 Erstellte Materialien</h4>
-                            <ul>
-                                <li><span class="file-icon">📄</span> <a href="https://github.com/Kokisamkuci/ki-ressource/blob/main/materials/3A/ANSWER%20KEY%20-%20Practice%20Pack%20for%20First%20Test.docx?raw=true" download>Answer Key - Practice Pack for First Test</a></li>
-                            </ul>
-                        </div></div>
-                        </div>
-
-                    </div>
-
-<div class="collapsible material-item" data-category="test-prep" data-grade="4">
-                <div class="collapsible-header">
-                    <h3>4.1 Year 3 Revision: "Can you remember...?" Answer Keys</h3>
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <div class="collapsible-inner">
-                        <span class="category-badge english">Englisch</span>
-                        <span class="grade-level">4. Klasse • A2+</span>
-
-                        <p><strong>Kontext:</strong> Wiederholungsquiz für Schuljahresbeginn, basierend auf MORE! 3. Erstellung von Antwortschlüsseln zu Content- und Grammar-Fragen.</p>
-
-                        <div class="prompt-box">
-                            <div class="prompt-header" onclick="togglePrompt(this)">
-                                <span>📋 Prompt – Format spezifizieren</span>
-                                <span class="toggle-prompt">▼ anzeigen</span>
-                            </div>
-                            <div class="prompt-content">
-                                <div class="prompt-inner">
-                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                    <pre>the answer should be meant as an answer key to a student quiz:
-in this format:
-* The Titanic Story: In 1898, a novel called Futility described a ship named the Titan sinking after hitting an iceberg. Fourteen years later, the real Titanic sank in a very similar way. Even stranger, in 1935, a ship called the Titanian almost hit an iceberg in the same area. (Unit 2, p. 17)</pre>
-                                </div>
-                            </div>
-                        </div>
-
-                                                <div class="materials-box">
-                            <h4>📂 Erstellte Materialien</h4>
-                            <ul>
-                                <li><span class="file-icon">📕</span> <a href="https://github.com/Kokisamkuci/ki-ressource/blob/main/materials/3A/More%203%20WB%20Answer%20KEY.pdf?raw=true" download>MORE 3 Workbook Answer Key</a></li>
-                            </ul>
-                        </div></div>
-                        </div>
-
-                    </div>
-
-<div class="collapsible material-item" data-category="test-prep" data-grade="4">
-                <div class="collapsible-header">
-                    <h3>4.4 Test Common Mistakes & Great Vocabulary Presentation</h3>
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <div class="collapsible-inner">
-                        <span class="category-badge english">Englisch</span>
-                        <span class="grade-level">4. Klasse • A2+</span>
-
-                        <p><strong>Kontext:</strong> Nach der Korrektur von Übungstexten: Häufige Fehler und besonders gelungene Ausdrücke auf Folien zusammenstellen zur Besprechung vor dem Test.</p>
-                        
-                        <p><strong>Arbeitsablauf:</strong> Fehler und gute Ausdrücke per Voice Input diktiert → KI kategorisiert und erstellt Folien im gewohnten visuellen Stil.</p>
-
-                        <p><strong>Besonderheit:</strong> Claude referenzierte vergangene Konversationen, um den etablierten visuellen Stil beizubehalten (pink/magenta Primärfarbe, Teal-Akzente, dekorative Elemente).</p>
-
-                                                <div class="materials-box">
-                            <h4>📂 Erstellte Materialien</h4>
-                            <ul>
-                                <li><span class="file-icon">📊</span> <a href="https://github.com/Kokisamkuci/ki-ressource/blob/main/materials/5B/5B%20Common%20Writing%20Mistakes%20%28January%202026%29.pptx?raw=true" download>5B Common Writing Mistakes (PowerPoint)</a></li>
-                            </ul>
-                        </div></div>
-                        </div>
-
-                    </div>
-
-<div class="collapsible material-item" data-category="test-prep" data-grade="5">
-                <div class="collapsible-header">
-                    <h3>5.4 Englisch Matura-Aufgaben-Generator (Claude Project)</h3>
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <div class="collapsible-inner">
-                        <span class="category-badge english">Englisch</span>
-                        <span class="grade-level">Matura • B2+</span>
-
-                        <p><strong>Kontext:</strong> Umfassendes Claude-Projekt zur Generierung von mündlichen Matura-Aufgaben (Standardisierte Reifeprüfung) für Englisch auf B2+-Niveau. Iterativ über längere Zeit entwickelt und verfeinert.</p>
-
-                        <p><strong>Arbeitsablauf:</strong> Claude Project mit System-Prompt, Qualitätsleitfaden und Task Libraries eingerichtet. Bei Eingabe eines Themenblocks generiert die KI sieben vollständige Aufgabensets (3× Bilder, 2× Zitate, 2× Alternative Prompts).</p>
-
-                        <h4>Kern-Features des Projects</h4>
-                        <ul>
-                            <li><strong>18 genehmigte Themenblöcke</strong> (Family & Gender, School & Education, etc.)</li>
-                            <li><strong>Automatische Variabilitätsprüfung</strong> (keine Überlappungen zwischen Aufgaben)</li>
-                            <li><strong>Verifizierungspflicht</strong> für Zitate (Web-Suche) und Statistiken (Quelle, Jahr, URL)</li>
-                            <li><strong>Zwei Ausgabedateien:</strong> Student Tasks + Teacher Resource (mit Erwartungshorizont)</li>
-                            <li><strong>Bildgenerierungs-Prompts</strong> für KI-Bildgeneratoren</li>
-                        </ul>
-
-                        <h4>Aufgabenstruktur pro Set</h4>
-                        <ul>
-                            <li><strong>Part 1:</strong> Individual Long Turn (Prompt + 3 Bullet Points für 5 Min. Monolog)</li>
-                            <li><strong>Part 2:</strong> Paired Activity (Szenario + 5 Optionen für 10 Min. Dialog)</li>
-                            <li><strong>Erwartungshorizont:</strong> Lösungen für beide Teile</li>
-                        </ul>
-
-                        <h4>Kategorie A – Kontrastierende Bilder</h4>
-                        <table>
-                            <tr><th>Kontrastkategorie</th><th>Bild 1</th><th>Bild 2</th></tr>
-                            <tr><td>Temporal</td><td>Historisch/Vergangenheit</td><td>Modern/Gegenwart</td></tr>
-                            <tr><td>Scale</td><td>Individuum</td><td>Gruppe/Masse</td></tr>
-                            <tr><td>Approach</td><td>Aktiv</td><td>Passiv</td></tr>
-                            <tr><td>Setting</td><td>Urban</td><td>Rural</td></tr>
-                            <tr><td>Mood</td><td>Positiv</td><td>Negativ</td></tr>
-                            <tr><td>Impact</td><td>Problem</td><td>Lösung</td></tr>
-                        </table>
-
-                        <h4>Qualitätssicherung</h4>
-                        <ul>
-                            <li>Alle 7 Aufgaben adressieren UNTERSCHIEDLICHE Aspekte des Themas</li>
-                            <li>A1/A2/A3 verwenden UNTERSCHIEDLICHE Kontrastkategorien</li>
-                            <li>B1/B2 verwenden UNTERSCHIEDLICHE Autoren UND thematische Winkel</li>
-                            <li>Plagiatsprüfung gegen bestehende Task Libraries</li>
-                        </ul>
-
-                                                <div class="materials-box">
-                            <h4>📂 Erstellte Materialien</h4>
-                            <p style="color: #666; font-size: 0.9em; margin: 0;">Materialien werden noch hinzugefügt...</p>
-                        </div></div>
-                        </div>
-
-                    </div>
+            <div class="materials-box">
+                <h4>📂 Erstellte Materialien</h4>
+                <p style="color: #666; font-size: 0.9em; margin: 0;">Materialien werden noch hinzugefügt...</p>
+            </div>
+        </div>
+    </div>
+</div>
 
             <h3>Vocab & Culture</h3>
 
