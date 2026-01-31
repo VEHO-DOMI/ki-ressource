@@ -2875,45 +2875,211 @@ Create a CONCISE writing task (NOT explanations of format - just the task itself
                         <span class="category-badge english">Englisch</span>
                         <span class="grade-level">2. Klasse • A1+/A2</span>
 
-                        <p><strong>Kontext:</strong> Unit über UFOs und Aliens. Zwei Videos gezeigt: eines über die Voyager-1-Mission (1977) mit der goldenen Schallplatte. Kreativprojekt: Schüler:innen erstellen ihre eigene "Class 2A Golden Record" mit Song, Foto, Objekt und Nachricht.</p>
-                        
-                        <p><strong>Arbeitsablauf:</strong> Video-Transkript + Unit-PDF hochgeladen → KI erstellt Vokabel-Einführung, Verständnisfragen und Projektanleitung als PowerPoint im visuellen Stil des Buches.</p>
+                        <p><strong>Kontext:</strong> Unit über UFOs und Aliens. Zwei Videos verwendet: "What is a UFO?" (Colossal Questions) und "Do Aliens Exist?" mit der Voyager-1-Mission (1977) und der goldenen Schallplatte. Kreativprojekt: Schüler:innen erstellen ihre eigene "Class 2A Golden Record" mit Song, Foto, Objekt und Nachricht.</p>
 
+                        <p><strong>Arbeitsablauf:</strong> Zuerst wurden die Video-Transkripte von der KI analysiert, um passende Verständnisfragen und Diskussionsfragen für A2-Niveau zu erstellen. Dann wurde eine Unterrichtsstruktur geplant und schrittweise eine PowerPoint mit Vokabeln, MCQs, und Projektanleitung erstellt – mit mehreren Iterationen zur Optimierung von Inhalt, Schriftgröße und Detailgrad.</p>
+
+                        <!-- FULL CONVERSATION SECTION -->
                         <div class="sub-collapsible">
                             <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
-                                <span>📋 Prompt 1 – Initiale Anfrage</span>
+                                <span>💬 Vollständiger Chat-Verlauf (9 Prompts)</span>
                                 <span class="toggle-icon">▼</span>
                             </div>
                             <div class="sub-collapsible-content">
                                 <div class="sub-collapsible-inner">
-                                    <div class="prompt-box open">
-                                        <div class="prompt-content" style="max-height:none">
+                                    <p><strong>Thema:</strong> Video-Transkript-Analyse → Unterrichtsplanung → PowerPoint-Erstellung</p>
+
+                                    <!-- PROMPT 1 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 1 – Video-Transkript Analyse (Video "Do Aliens Exist")</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
                                             <div class="prompt-inner">
                                                 <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                                <pre>Create PowerPoint slides for Unit 8 UFO lesson (Class 2A, A2 level) matching the textbook's visual style from uploaded PDF pages. Lesson structure: Video 1 (What is a UFO?) → Textbook reading (Trent photo) → Listening (Paul/George interview) → Video 2 (Do Aliens Exist?/Golden Record) → Creative project (Class 2A Golden Record).
+                                                <pre>I wanna watch this video in the context of my EFL class in 2A (level A2) in the context of unit 8 which is about similar stuff (see below). formulate a couple of global understanding questions and some interesting discussion questions:
 
-[Uploaded: Unit 8 textbook PDF pages]</pre>
+[Video Transcript "Do Aliens Exist?" eingefügt – Inhalt über Aliens, Earth 2.0, Voyager Mission, Golden Record]
+
+[Unit 8 Buchseiten als Text eingefügt]</pre>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
+                                    <p><strong>🤖 Claude:</strong> Erstellte 5 Global Understanding Questions (z.B. "What is special about Kepler 452b?", "What is on the Golden Record?") und 4 Discussion Questions für A2-Niveau, plus Teacher Tips zu Vokabular und Untertiteln.</p>
 
-                        <div class="sub-collapsible">
-                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
-                                <span>📋 Prompt 2 – Reduktion + Formatierung</span>
-                                <span class="toggle-icon">▼</span>
-                            </div>
-                            <div class="sub-collapsible-content">
-                                <div class="sub-collapsible-inner">
-                                    <div class="prompt-box open">
-                                        <div class="prompt-content" style="max-height:none">
+                                    <!-- PROMPT 2 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 2 – Video-Transkript Analyse (Video "What is a UFO?")</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>do the same for this video:
+
+[Video Transcript "What is a UFO?" eingefügt – Inhalt über UFO-Geschichte, Kenneth Arnold, Roswell, Erklärungen für Sichtungen]</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Erstellte 5 Global Understanding Questions (z.B. "What do the letters UFO stand for?", "Was the Roswell crash an alien ship?") und 4 Discussion Questions, die an das Trent-Foto im Buch anknüpfen.</p>
+
+                                    <!-- PROMPT 3 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 3 – KI-Output Bewertung</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>bewerte den output dieser KI:
+
+[9-Folien-Entwurf einer anderen KI eingefügt mit Phase 1-4 Struktur]</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Detaillierte Bewertung mit Stärken (logischer Aufbau, Scaffolding, Vokabelarbeit) und Schwächen (fehlende Zeitangaben, zu wenige Comprehension Questions, keine Differenzierung). Fazit: "Guter erster Entwurf, der aber noch 15-20 Minuten Nacharbeit braucht."</p>
+
+                                    <!-- PROMPT 4 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 4 – Folienerstellung</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>schreib die folien die jeden punkt instruieren und die links zu den video haben (platzhalter, ich füge sie selbst ein). mach es im visual style der unit (siehe PDF)
+
+[Uploaded: Unit 8 PDF]</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Erstellte 9-Folien-Präsentation im Unit-8-Stil (Orange-Töne), aber zu komplex für den Unterricht.</p>
+
+                                    <!-- PROMPT 5 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 5 – Reduktion + Formatierung</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
                                             <div class="prompt-inner">
                                                 <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
                                                 <pre>this is too much input. I only want the link to the videos and the global questions found by the first AI and for the second the task with the golden record stuff. you gotta make the fonts way bigger, it needs to fill the full slide and not just be tiny in the middle and the rest is blank</pre>
                                             </div>
                                         </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Reduzierte auf 2 Folien mit großen Schriften – aber zu stark vereinfacht.</p>
+
+                                    <!-- PROMPT 6 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 6 – Fehlende Comprehension Questions</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>yeah, but why leave out the others I talked about. read my message again</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Verstand: Video 1 + MCQ Comprehension Questions + Video 2 Golden Record Task gewünscht. Erweiterte auf 3 Folien.</p>
+
+                                    <!-- PROMPT 7 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 7 – Golden Record Projektaufgabe</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>nein ich möchte dass die student task instructions zu ihrem 2A golden record auch drauf ist</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Fügte Folie 4 mit Creative Project Aufgabe hinzu (Class 2A Golden Record: Song, Photo, Object, Message).</p>
+
+                                    <!-- PROMPT 8 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 8 – Detail-Level erhöhen</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>make it as detailed as before mate!
+
+[Uploaded: Unit8_UFO_Lesson_2A.pptx als Referenz]</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Finale Version mit 4 detaillierten Folien: Vokabelboxen, vollständige MCQs mit Antworten, Voyager-Kontext mit Golden Record Grafik, und Projektaufgabe mit Beispielen und Timer.</p>
+
+                                    <!-- PROMPT 9 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 9 – Zusatzfrage zum Video</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>Was sind die Sachen in Video 1 die für Ufos gehalten wurden?</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Auflistung aus dem Transkript: Aircraft, Weather balloons, Kites, Oddly-shaped clouds, Meteors, Electromagnetic activity, Pranks – plus Roswell war ein geheimer Militär-Ballon.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ONE-SHOT PROMPT -->
+                        <div class="template-box">
+                            <h4>🎯 One-Shot Prompt</h4>
+                            <p>Diesen Prompt kannst du verwenden, um ein ähnliches Ergebnis in einer einzigen Anfrage zu erhalten:</p>
+                            <div class="prompt-box open">
+                                <div class="prompt-content" style="max-height:none">
+                                    <div class="prompt-inner">
+                                        <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                        <pre>Erstelle eine PowerPoint-Präsentation für eine Englisch-Stunde (2. Klasse, A2-Niveau) zum Thema UFOs mit zwei YouTube-Videos.
+
+**Struktur (4 Folien):**
+
+1. **Video 1: "What is a UFO?"**
+   - Vokabelbox: Sighting, Saucer, Hoax (mit einfachen Definitionen)
+   - Task: "Watch the video. What are most UFOs really?"
+   - Video-Link Platzhalter
+
+2. **Video 1 Comprehension Questions**
+   - 4 Multiple-Choice Fragen mit a/b Optionen:
+     * When did people start seeing many UFOs? (1840s / 1940s)
+     * What did Kenneth Arnold see? (9 flying saucers / A weather balloon)
+     * What crashed in Roswell? (An alien ship / A military balloon)
+     * Are all UFO photos real? (Yes / No, many are fakes)
+   - Antworten markiert
+
+3. **Video 2: "The Golden Record" (ab 2:25)**
+   - Kurzer Kontext: Voyager 1 Mission 1977, Golden Record für Aliens
+   - Task: "What is on the Golden Record? List 3 things."
+   - Video-Link Platzhalter
+
+4. **Creative Project: "Class 2A Golden Record"**
+   - Gruppenarbeit (15 Min): Wählt 4 Items für eure eigene Golden Record:
+     * A Song (welcher Song repräsentiert uns?)
+     * A Photo (Schule? Stadt? Pizza?)
+     * An Object (typisch für Teenager 2024)
+     * A Message (ein Satz auf Englisch)
+   - Beispiel-Box mit Ideen
+
+**Design:** Große, gut lesbare Schriften. Jede Folie soll voll ausgefüllt sein, nicht nur kleine Textblöcke in der Mitte. Visueller Stil passend zu einem Englisch-Schulbuch (freundlich, orange Töne).
+
+[Uploaded: Unit 8 Buchseiten als Referenz für Stil]</pre>
                                     </div>
                                 </div>
                             </div>
@@ -2921,21 +3087,21 @@ Create a CONCISE writing task (NOT explanations of format - just the task itself
 
                         <p><strong>Finale Folienstruktur:</strong></p>
                         <ol>
-                            <li>Slide 1: Video 1 "What is a UFO?" mit Vokabeln, Aufgabe, Video-Link</li>
+                            <li>Slide 1: Video 1 "What is a UFO?" mit Vokabeln (Sighting, Saucer, Hoax), Aufgabe, Video-Link</li>
                             <li>Slide 2: 4 MCQs mit a/b-Optionen und markierten Antworten</li>
                             <li>Slide 3: Video 2 "The Golden Record" mit Voyager-Kontext und Aufgabe</li>
-                            <li>Slide 4: Creative Project "Class 2A Golden Record" – 4 Items (Song, Photo, Object, Message)</li>
+                            <li>Slide 4: Creative Project "Class 2A Golden Record" – 4 Items (Song, Photo, Object, Message) mit Beispielen und Timer</li>
                         </ol>
 
-                                                <div class="materials-box">
+                        <div class="materials-box">
                             <h4>📂 Erstellte Materialien</h4>
                             <ul>
-                                <li><span class="file-icon">📄</span> <a href="https://github.com/Kokisamkuci/ki-ressource/blob/main/materials/2A/Writing%20task%20Unit%208.docx?raw=true" download>Writing Task Unit 8</a></li>
+                                <li><span class="file-icon">📄</span> <a href="https://github.com/Kokisamkuci/ki-ressource/blob/main/materials/2A/Unit8%20UFO%20Videos%20Tasks.pptx?raw=true" download>Unit 8 UFO Videos Tasks</a></li>
                             </ul>
-                        </div></div>
                         </div>
-
                     </div>
+                </div>
+            </div>
 
 <div class="collapsible material-item" data-category="video" data-grade="4">
     <div class="collapsible-header">
