@@ -1779,85 +1779,100 @@ and then the noticing questions I will do orally where they mark the nouns follo
                 </div>
             </div>
 
-            <!-- ONE-SHOT PROMPT SECTION -->
-            <div class="template-box">
-                <div class="template-header" onclick="toggleTemplate(this)">
-                    <span>🎯 One-Shot Prompt (für gleiches Ergebnis)</span>
-                    <span class="toggle-template">▼ anzeigen</span>
+            <!-- GENERALIZED PROMPT TEMPLATE -->
+            <div class="sub-collapsible">
+                <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                    <span>📋 Generalisierte Prompt-Vorlage: Induktive Grammatikeinführung</span>
+                    <span class="toggle-icon">▼</span>
                 </div>
-                <div class="template-content">
-                    <div class="template-inner">
-                        <div class="template-description">
-                            Dieser Prompt kombiniert alle Anforderungen für eine induktive Grammatik-Lesson.
-                            <br><strong>Anhänge benötigt:</strong> Kollegin's Worksheet (falls vorhanden), Vokabelliste mit Übersetzungen
-                        </div>
-                        <pre>
-# Inductive Grammar Lesson: Countable/Uncountable Quantifiers
+                <div class="sub-collapsible-content">
+                    <div class="sub-collapsible-inner">
+                        <p><em>Diese Vorlage enthält alle Prinzipien für induktive Grammatik-Lessons. Platzhalter in [GROSSBUCHSTABEN] an eigenen Kontext anpassen.</em></p>
 
-## Context
-I'm teaching a unit on comparisons (comparatives, superlatives) to my 3rd grade EFL class (A2/A2+ level). My colleague has a worksheet on fewer/less, but I want to introduce the concept INDUCTIVELY first – through a reading text where students notice the patterns themselves before we explain the rules.
+                        <h4>🔄 Empfohlener Workflow (2 Schritte)</h4>
+                        <p>Für induktive Grammatik ist ein <strong>zweistufiger Ansatz</strong> oft besser als ein One-Shot:</p>
+                        <ol>
+                            <li><strong>Schritt 1:</strong> Konzept erklären lassen + Feedback zum Text-Entwurf</li>
+                            <li><strong>Schritt 2:</strong> Finalisierung mit allen Materialien</li>
+                        </ol>
 
-## Target Grammar
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>👤 Schritt 1 – Konzept & erster Text-Entwurf</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Ich unterrichte [KLASSENSTUFE] (Niveau [CEFR-NIVEAU], z.B. A2/B1). Wir arbeiten gerade an [GRAMMATIK-THEMA].
+
+Ich möchte die Grammatik INDUKTIV einführen – durch einen Lesetext, bei dem die Schüler:innen die Muster selbst entdecken, BEVOR wir die Regeln explizit erklären.
+
+**Zielgrammatik:**
+[LISTE DER GRAMMATIK-FORMEN, z.B.:]
 - many vs. much
-- few vs. little
-- a few vs. a little
 - fewer vs. less
-- Countable vs. uncountable noun distinction
+- [weitere Formen...]
 
-## What I Need
+**Meine Idee:**
+Ein Text über [THEMA] (ca. [WORTANZAHL] Wörter), der diese Grammatikformen natürlich einbettet.
 
-### 1. Reading Text: "The World's Most Dangerous Animals"
-Create an engaging text (A2/A2+ level) that:
-- Compares different dangerous animals (sharks, mosquitoes, snakes, wolves, hippos, scorpions)
-- Naturally embeds the target grammar forms throughout
-- Has 6+ uses of fewer/less specifically
-- Is NOT overloaded – grammar should feel natural, not forced
-- Is shorter and snappy (about 250-300 words)
+Bitte:
+1. Erkläre mir kurz das Konzept der Zielgrammatik (als Teacher Reference)
+2. Erstelle einen ersten Entwurf des Lesetexts
+3. Markiere, wo welche Grammatikform vorkommt
 
-**Integrate this vocabulary** (with German translations at the top):
-- predator (Raubtier)
-- fangs (Giftzähne)
-- toxin (Gift)
-- prey (Beute)
-- desert (Wüste)
-- scarce (knapp)
-- strength (Stärke)
-- in a pack (im Rudel)
-- habitat (Lebensraum)
+Wichtig: Die Grammatik soll NATÜRLICH im Text vorkommen – nicht erzwungen!</pre>
+                                </div>
+                            </div>
+                        </div>
 
-### 2. Student Handout
-**Part A: Vocabulary Exercise**
-Format: "Find the word in the text that means..."
-- A2-level definitions for each vocabulary word
-- Students match definition to word in text
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>👤 Schritt 2 – Komplettes Materialpaket</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Der Text ist gut! Erstelle jetzt das komplette Materialpaket:
 
-**Part B: The Reading Text**
-- Target grammar forms in bold for noticing
+**1. Student Handout:**
+- Vocabulary Box mit [ANZAHL] Wörtern (Englisch + [MUTTERSPRACHE]-Übersetzung)
+- Vocabulary Exercise: "Find the word in the text that means..."
+- Der Lesetext mit Zielgrammatik in **fett** markiert
 
-### 3. Teacher's Resource (Extensive)
-Include:
-- **Lesson Overview:** Level, timing (40-50 min), objectives
-- **Lesson Flow:** 5 stages (warm-up, vocabulary, reading, noticing activity, transition to worksheet)
-- **Answer Key:** For vocabulary exercise
-- **Color-Marking Activity:** Table showing which quantifiers go with which nouns
-  - Students mark nouns after quantifiers in different colors
-  - Complete list of all quantifiers + nouns from text
-- **Oral Noticing Questions:** 4-step discussion guide
-- **Teaching Tips:** Before and during lesson
-- **Common Student Errors:** What to watch for
-- **Differentiation:** For stronger and weaker students
-- **Extension Activities:** If time permits
-- **Anticipated Student Questions:** With suggested answers
+**2. Teacher's Resource:**
+- Lesson Overview: Niveau, Timing ([MINUTEN] min), Lernziele
+- Lesson Flow: [ANZAHL] Phasen (z.B. Warm-up → Vocabulary → Reading → Noticing → Anwendung)
+- Answer Key für alle Übungen
+- **Noticing Activity:** Anleitung für Klassendiskussion
+  - Welche Fragen stelle ich, damit SuS die Regeln selbst entdecken?
+  - Tabelle: Welche Wörter gehen mit welchen Nomen?
+- Common Errors: Typische Fehler bei dieser Grammatik
+- Differentiation: Für stärkere/schwächere SuS
+- Extension: Falls Zeit übrig ist
 
-### Key Design Principles
-- INDUCTIVE approach: Students notice patterns BEFORE explicit explanation
-- NOT forced: If a grammar form doesn't fit naturally, don't include it
-- A2/A2+ language: Simple vocabulary, short sentences
-- Engaging topic: Dangerous animals captures interest
-- Practical: Flows into colleague's existing worksheet
+[Optional: Anhang – Kolleg:in hat bereits Worksheet zu [THEMA], der Text soll dazu hinführen]</pre>
+                                </div>
+                            </div>
+                        </div>
 
-[Attach: Colleague's fewer/less worksheet if available, vocabulary list with translations]
-                        </pre>
+                        <h4>💡 Didaktische Prinzipien</h4>
+                        <ul>
+                            <li><strong>Induktiv vor Deduktiv:</strong> SuS entdecken Regeln durch Beispiele, bevor sie erklärt werden</li>
+                            <li><strong>Noticing-Aktivität:</strong> Gezielte Fragen lenken Aufmerksamkeit auf Muster</li>
+                            <li><strong>Natürliche Kontexte:</strong> Grammatik nie erzwingen – lieber weniger Beispiele als unnatürliche</li>
+                            <li><strong>Engaging Topics:</strong> Thema sollte zum Alter/Interesse passen (hier: Tiere)</li>
+                            <li><strong>Scaffolding:</strong> Von gesteuertem Entdecken zu freier Anwendung</li>
+                        </ul>
+
+                        <h4>📎 Anhänge die helfen</h4>
+                        <ul>
+                            <li>Unit-Transkript oder Schulbuch-Seiten (für Vokabular-Alignment)</li>
+                            <li>Bestehendes Worksheet von Kolleg:innen (falls vorhanden)</li>
+                            <li>Vokabelliste mit Übersetzungen</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -1977,62 +1992,83 @@ Include:
 
                         <p><strong>Ergebnis:</strong> 10-Folien-Präsentation mit 4 Aufgaben, rotierende Reihenzuweisungen, sodass jede Reihe jeden Satztyp genau einmal schreibt.</p>
 
-                        <!-- ONE-SHOT PROMPT SECTION -->
-                        <div class="template-box">
-                            <div class="template-header" onclick="toggleTemplate(this)">
-                                <span>🎯 One-Shot Prompt (für gleiches Ergebnis)</span>
-                                <span class="toggle-template">▼ anzeigen</span>
+                        <!-- GENERALIZED PROMPT TEMPLATE -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <span>📋 Generalisierte Prompt-Vorlage: Interaktive Grammatik-Klassenaktivität</span>
+                                <span class="toggle-icon">▼</span>
                             </div>
-                            <div class="template-content">
-                                <div class="template-inner">
-                                    <div class="template-description">
-                                        Dieser Prompt kombiniert alle Anforderungen für die First Conditional Klassenaktivität.
-                                        <br><strong>Anhänge optional:</strong> Screenshot einer ähnlichen Übung als Inspiration
+                            <div class="sub-collapsible-content">
+                                <div class="sub-collapsible-inner">
+                                    <p><em>Diese Vorlage eignet sich für Aktivitäten, bei denen SuS dieselbe Struktur auf mehrere Arten üben. Platzhalter in [GROSSBUCHSTABEN] anpassen.</em></p>
+
+                                    <h4>🔄 Empfohlener Workflow (1-2 Schritte)</h4>
+                                    <p>Bei klaren Anforderungen oft <strong>One-Shot möglich</strong>. Bei komplexen Rotationssystemen ggf. zweiter Schritt zur Korrektur.</p>
+
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt – Interaktive Grammatik-Aktivität mit Gruppenrotation</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>Ich unterrichte [GRAMMATIK-THEMA] in meiner [KLASSENSTUFE] ([CEFR-NIVEAU]).
+
+**Übungskonzept:**
+Schüler:innen üben, dieselbe Idee auf [ANZAHL] verschiedene Arten auszudrücken:
+[LISTE DER VARIANTEN, z.B.:]
+1. [STRUKTUR 1] – z.B. "if am Satzanfang"
+2. [STRUKTUR 2] – z.B. "if in der Satzmitte"
+3. [STRUKTUR 3] – z.B. "unless am Satzanfang"
+4. [STRUKTUR 4] – z.B. "unless in der Satzmitte"
+
+**Klassenorganisation:**
+- Die Klasse ist in [ANZAHL] Gruppen/Reihen aufgeteilt
+- Pro Aufgabe schreibt jede Gruppe nur EINEN Satz
+- Dann lesen alle ihre Version vor → schneller Vergleich
+- Bei der nächsten Aufgabe ROTIEREN die Zuweisungen
+
+**Bitte erstelle eine PowerPoint mit:**
+1. Titelfolie mit kurzer Anleitung
+2. Beispielfolie mit vollständig ausgefülltem Beispiel + Tipp-Box (z.B. "unless = if...not")
+3. [ANZAHL] Aufgaben-Sets, jeweils:
+   - Aufgabenfolie: Situation + leere Tabelle mit Gruppenzuweisungen
+   - Lösungsfolie: Dieselbe Tabelle mit allen Antworten
+
+**Situationen:**
+[LISTE VON SITUATIONEN, z.B.:]
+- Kein Frühstück → später hungrig sein
+- Jetzt losgehen → den Bus erwischen
+- [weitere...]
+
+**WICHTIG – Rotationssystem:**
+Jede Gruppe muss jeden Satztyp genau EINMAL über alle Aufgaben hinweg schreiben.
+[Optional: Tabelle vorgeben wie die Rotation aussehen soll]
+
+**Design:**
+- Farbcodierung für verschiedene Strukturen (z.B. Blau für "if", Orange für "unless")
+- Klare Tabellenstruktur
+- Visuell übersichtlich</pre>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <pre>
-# First Conditional "Express it Four Ways" - Classroom Activity
 
-## Context
-I'm teaching First Conditional with if/unless to my 3rd grade EFL class (A2 level). I want students to practice expressing the same idea in four different ways:
-1. if + beginning of sentence
-2. if + middle of sentence
-3. unless + beginning of sentence
-4. unless + middle of sentence
+                                    <h4>💡 Didaktische Prinzipien</h4>
+                                    <ul>
+                                        <li><strong>Multiple Expressions:</strong> Dieselbe Idee auf verschiedene Arten → Flexibilität im Sprachgebrauch</li>
+                                        <li><strong>Reduced Writing Load:</strong> Jede:r schreibt nur einen Satz → mehr Zeit für Vergleich und Diskussion</li>
+                                        <li><strong>Peer Learning:</strong> Vorlesen und Vergleichen macht Varianten sichtbar</li>
+                                        <li><strong>Fair Rotation:</strong> Alle üben alle Strukturen gleich oft</li>
+                                        <li><strong>Visual Scaffolding:</strong> Farbcodierung hilft bei der Unterscheidung</li>
+                                    </ul>
 
-## What I Need
-Create a PowerPoint presentation for a classroom activity with 4 rows of students.
-
-### Slide Structure (10 slides total):
-1. **Title slide** - "Express it Four Ways!" with brief instructions: "Each row writes one sentence. Then share your version!"
-2. **Example slide** - Full worked example with a situation (e.g., "No umbrella → get wet") showing all 4 variations filled in. Include tip: "unless = if...not"
-3-10. **4 Task Sets** - Each set has:
-   - Task slide: Situation + empty table with row assignments (Row 1, Row 2, Row 3, Row 4)
-   - Solution slide: Same table with all 4 answers revealed
-
-### Situations to use:
-- Task 1: No breakfast → be hungry later
-- Task 2: Leave now → catch the bus
-- Task 3: No practice → not improve at guitar
-- Task 4: No coat → get cold
-
-### Critical: Rotating Row Assignments
-Each row must do each sentence type exactly ONCE across all 4 tasks:
-
-| | Task 1 | Task 2 | Task 3 | Task 4 |
-|---|---|---|---|---|
-| Row 1 | if + beginning | unless + middle | unless + beginning | if + middle |
-| Row 2 | if + middle | if + beginning | unless + middle | unless + beginning |
-| Row 3 | unless + beginning | if + middle | if + beginning | unless + middle |
-| Row 4 | unless + middle | unless + beginning | if + middle | if + beginning |
-
-### Design Requirements:
-- Color coding: Blue for "if" sentences, orange for "unless" sentences
-- Clear table format with Beginning/Middle columns
-- Task 2 note: Point out that positive conditions require negative results with "unless"
-- Keep it simple and visually clean
-
-[Optional: Attach screenshot of similar grammar exercise for reference]
-                                    </pre>
+                                    <h4>🔧 Anpassungsmöglichkeiten</h4>
+                                    <ul>
+                                        <li><strong>Andere Grammatik:</strong> Reported Speech (4 Reporting Verbs), Passive (verschiedene Zeitformen), etc.</li>
+                                        <li><strong>Gruppengrößen:</strong> 3, 4, 5 oder 6 Gruppen – Rotation entsprechend anpassen</li>
+                                        <li><strong>Schwierigkeit:</strong> Mehr/weniger Varianten, komplexere Situationen</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -2225,68 +2261,104 @@ Tell us:
 
                         <p><strong>Ergebnis:</strong> Ein-Seiten-Handout mit Scenario, Optionen-Checkliste, Schreibaufgabe und 7 Leitfragen für den Tagebucheintrag (mindestens 120 Wörter).</p>
 
-                        <!-- ONE-SHOT PROMPT SECTION -->
-                        <div class="template-box">
-                            <div class="template-header" onclick="toggleTemplate(this)">
-                                <span>🎯 One-Shot Prompt (für gleiches Ergebnis)</span>
-                                <span class="toggle-template">▼ anzeigen</span>
+                        <!-- GENERALIZED PROMPT TEMPLATE -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <span>📋 Generalisierte Prompt-Vorlage: Kreative Schreibaufgabe mit Szenario</span>
+                                <span class="toggle-icon">▼</span>
                             </div>
-                            <div class="template-content">
-                                <div class="template-inner">
-                                    <div class="template-description">
-                                        Dieser Prompt erstellt ein Diary Entry Writing Task Handout basierend auf einer Unit mit Reisetexten.
-                                        <br><strong>Anhänge optional:</strong> Unit-Transkript mit Traveller-Texten
+                            <div class="sub-collapsible-content">
+                                <div class="sub-collapsible-inner">
+                                    <p><em>Diese Vorlage eignet sich für Schreibaufgaben, die Unit-Inhalte in ein kreatives Szenario verwandeln. Platzhalter in [GROSSBUCHSTABEN] anpassen.</em></p>
+
+                                    <h4>🔄 Empfohlener Workflow (2-3 Schritte)</h4>
+                                    <p>Kreative Schreibaufgaben profitieren von <strong>Iteration</strong>:</p>
+                                    <ol>
+                                        <li><strong>Schritt 1:</strong> Unit analysieren lassen + erste Szenario-Ideen</li>
+                                        <li><strong>Schritt 2:</strong> Handout-Entwurf mit Scaffolding</li>
+                                        <li><strong>Schritt 3:</strong> Feinschliff basierend auf Feedback</li>
+                                    </ol>
+
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Schritt 1 – Unit analysieren & Szenario entwickeln</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>Hier ist [UNIT-NAME] aus meinem Schulbuch [KLASSENSTUFE, NIVEAU].
+
+[Unit-Transkript anhängen oder Inhalte beschreiben]
+
+Die Unit enthält verschiedene [TEXTSORTE, z.B. Reisetexte / Geschichten / Biografien]:
+[LISTE DER TEXTE/PERSONEN IN DER UNIT]
+
+Ich möchte eine kreative Schreibaufgabe entwickeln, die all diese Inputs zusammenbringt.
+
+Bitte:
+1. Analysiere die gemeinsamen Themen in diesen Texten
+2. Schlage 2-3 mögliche Szenarios vor, in die sich SuS hineinversetzen könnten
+3. Welches Schreibformat würde passen? (Diary Entry, Blog Post, Letter, Story, etc.)</pre>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <pre>
-# Diary Entry Writing Task: "My Year of Travelling Adventures"
 
-## Context
-I'm teaching Unit 3 to my 3rd grade EFL class (A2 level, 13-year-olds). The unit contains multiple travel texts:
-- James Holman (blind traveler)
-- Mary Kingsley (Victorian lady in Africa)
-- Celia (cycling across America)
-- Will (cycling through Argentina after university)
-- Sightseeing in Barcelona
-- Holiday at a lake
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Schritt 2 – Handout erstellen</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>Ich entscheide mich für [GEWÄHLTES SZENARIO].
 
-## What I Need
-Create a ONE-PAGE writing task handout that:
+Erstelle ein [ANZAHL]-seitiges Handout mit:
 
-### 1. Sets the Scenario
-Students imagine they just finished 8th grade and have ONE FULL YEAR to travel anywhere in the world before university/work/etc.
+**1. Das Szenario**
+[BESCHREIBUNG, z.B. "SuS stellen sich vor, sie haben ein Jahr Zeit, die Welt zu bereisen"]
+- Verbindung zu den Unit-Texten herstellen (Namen der Personen/Orte erwähnen)
 
-### 2. Lists Travel Options (checkbox style)
-Include options like:
-- cycle across a continent (like Celia)
-- explore remote places (like Holman/Kingsley)
-- go sightseeing in amazing cities
-- hike through mountains
-- relax on beaches
-- sail around islands
-- volunteer in different countries
-- learn to surf, ski, or dive
-- travel by train, boat, bike, or on foot
-- mix everything together
+**2. Optionen (Checkbox-Format)**
+[ANZAHL] Optionen, aus denen SuS wählen können, z.B.:
+- Option inspiriert von [PERSON 1 AUS UNIT]
+- Option inspiriert von [PERSON 2 AUS UNIT]
+- [weitere Optionen...]
+- "Mix everything together"
 
-### 3. The Task
-Write a DIARY ENTRY (at least 120 words) from ONE DAY during the adventure.
+**3. Die Schreibaufgabe**
+- Textsorte: [DIARY ENTRY / BLOG POST / LETTER / etc.]
+- Mindestlänge: [WORTANZAHL] Wörter
+- Klare Instruktion, WAS geschrieben werden soll
 
-### 4. Guiding Questions
-What to write about:
-- Where are you right now?
-- How did you get there? (What happened today?)
-- Who are you travelling with (or are you alone)?
-- What did you do today?
-- What challenges did you face?
-- How are you feeling?
-- What are you looking forward to tomorrow/next?
+**4. Scaffolding: Leitfragen**
+[ANZAHL] Fragen, die beim Schreiben helfen:
+- Wer? Was? Wo? Wann? Wie? Warum?
+- Gefühle? Herausforderungen? Pläne?
 
-### Design Requirements
-- Keep it on ONE PAGE (handout format)
-- A2 level language
-- Visually appealing with checkboxes and clear sections
-- Connect to the travellers from the unit (mention Celia, Holman, Kingsley by name)
-                                    </pre>
+**5. Optional: Sentence Starters / Useful Phrases**
+
+**Design:** [NIVEAU]-Sprache, visuell ansprechend, übersichtlich</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4>💡 Didaktische Prinzipien</h4>
+                                    <ul>
+                                        <li><strong>Unit-Integration:</strong> Texte aus der Unit als Inspiration nutzen (nicht isolierte Aufgabe)</li>
+                                        <li><strong>Wahlmöglichkeiten:</strong> Verschiedene Optionen für unterschiedliche Interessen</li>
+                                        <li><strong>Immersive Scenario:</strong> SuS versetzen sich in Rolle → höhere Motivation</li>
+                                        <li><strong>Scaffolding:</strong> Leitfragen geben Struktur, ohne einzuschränken</li>
+                                        <li><strong>Realistic Output:</strong> Textsorte, die SuS auch außerhalb der Schule schreiben würden</li>
+                                    </ul>
+
+                                    <h4>🔧 Anpassungsmöglichkeiten</h4>
+                                    <ul>
+                                        <li><strong>Andere Szenarien:</strong> "Du bist Journalist:in und interviewst...", "Schreibe einen Brief an...", "Erstelle einen Social Media Post über..."</li>
+                                        <li><strong>Differenzierung:</strong> Kürzere/längere Texte, mehr/weniger Scaffolding</li>
+                                        <li><strong>Follow-up:</strong> Peer Feedback, Präsentation, Klassenbuch erstellen</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -2453,90 +2525,125 @@ Make it copy-paste ready for a teacher resource document.</pre>
                 </div>
             </div>
 
-            <!-- ONE-SHOT PROMPT SECTION -->
-            <div class="template-box">
-                <div class="template-header" onclick="toggleTemplate(this)">
-                    <span>🎯 One-Shot Prompt (für gleiches Ergebnis)</span>
-                    <span class="toggle-template">▼ anzeigen</span>
+            <!-- GENERALIZED PROMPT TEMPLATE -->
+            <div class="sub-collapsible">
+                <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                    <span>📋 Generalisierte Prompt-Vorlage: Blog Post mit PEEL & Peer Feedback</span>
+                    <span class="toggle-icon">▼</span>
                 </div>
-                <div class="template-content">
-                    <div class="template-inner">
-                        <div class="template-description">
-                            Dieser Prompt kombiniert alle Anforderungen für eine Blog Post Schreibaufgabe mit mehreren Optionen, PEEL-Struktur und Peer Feedback.
-                            <br><strong>Anhänge benötigt:</strong> Unit-Transkript oder Schulbuchseiten
+                <div class="sub-collapsible-content">
+                    <div class="sub-collapsible-inner">
+                        <p><em>Diese Vorlage eignet sich für argumentative Blog Posts mit Strukturhilfe (PEEL) und Peer Feedback. Platzhalter in [GROSSBUCHSTABEN] anpassen.</em></p>
+
+                        <h4>🔄 Empfohlener Workflow (3-4 Schritte)</h4>
+                        <p>Blog Posts mit PEEL + Peer Feedback haben <strong>mehrere Komponenten</strong> – besser aufteilen:</p>
+                        <ol>
+                            <li><strong>Schritt 1:</strong> Aufgabenstellung + PEEL-Erklärung</li>
+                            <li><strong>Schritt 2:</strong> Model Texts anfordern</li>
+                            <li><strong>Schritt 3:</strong> Peer Feedback Task erstellen</li>
+                            <li><strong>Schritt 4:</strong> (Optional) Implementierungsplan</li>
+                        </ol>
+
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>👤 Schritt 1 – Aufgabenstellung mit Optionen</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Ich unterrichte [UNIT-NAME] über [THEMA] in [KLASSENSTUFE] ([CEFR-NIVEAU]).
+
+Ich möchte eine Blog Post Schreibaufgabe erstellen, bei der SuS aus [ANZAHL] Optionen wählen:
+
+**Option 1: [TITEL]**
+[BESCHREIBUNG, z.B. "Beschreibe etwas, das früher trendy war und zurückkommen sollte"]
+- Guiding questions: [...]
+
+**Option 2: [TITEL]**
+[BESCHREIBUNG, z.B. "Kritisiere einen aktuellen Trend, der verschwinden sollte"]
+- Guiding questions: [...]
+
+**Option 3: [TITEL]**
+[BESCHREIBUNG, z.B. "Erfinde einen neuen Trend, den es geben sollte"]
+- Guiding questions: [...]
+
+**Für jede Option soll enthalten sein:**
+- Klare Bullet Points mit Leitfragen
+- Vokabular-Support aus der Unit
+- Wortanzahl: [WORTANZAHL] Wörter
+
+**PEEL-Paragraph-Pflicht:**
+Der Blog Post MUSS einen PEEL-Paragraph enthalten. Bitte erkläre PEEL klar mit Beispielen:
+- **P**oint: Hauptidee/Meinung in einem Satz
+- **E**xample/Evidence: Konkretes Beispiel, Geschichte, Statistik
+- **E**xplanation: Warum das Beispiel den Punkt unterstützt
+- **L**ink: Verbindung zurück zum Hauptargument
+
+[Unit-Transkript anhängen]</pre>
+                                </div>
+                            </div>
                         </div>
-                        <pre>
-# Blog Post Writing Task with PEEL Paragraphs and Peer Feedback
 
-## Context
-I'm teaching Unit 6 "All the Rage" about fashion trends, body image, and what's trendy/not trendy. I want to create a blog post writing assignment that runs throughout the unit with a peer feedback component.
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>👤 Schritt 2 – Model Texts</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Schreibe jetzt Model Texts für alle [ANZAHL] Optionen:
 
-## What I Need
+- [WORTANZAHL] Wörter pro Text
+- PEEL-Paragraph klar markiert/unterstrichen
+- Konversationeller Blog-Ton
+- Relatable Topics für [ALTERSGRUPPE]
+- Unit-Vokabular natürlich einbauen
+- Verschiedene "Stimmen" – nostalgisch, kritisch, innovativ</pre>
+                                </div>
+                            </div>
+                        </div>
 
-### 1. Main Writing Task (3 Options)
-Create a blog post assignment where students choose ONE of three options:
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>👤 Schritt 3 – Peer Feedback Task</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Erstelle eine separate Peer Feedback Commenting Task:
 
-**Option 1: Bring Back an Old Trend**
-- Describe a trend that was once popular but went out of fashion
-- Explain why it was "all the rage" and why it faded
-- Argue why it should make a comeback
+Nach dem Schreiben werden die Posts auf [PLATTFORM, z.B. Teams/Padlet] hochgeladen.
+Jede:r SuS kommentiert EINEN anderen Post.
 
-**Option 2: A Stupid Trend That Should Disappear**
-- Describe a current trend that's popular but shouldn't be
-- Explain why it's popular and what's bad about it
-- Argue why it should NOT be a trend
+**Das Handout soll enthalten:**
+- Struktur für sinnvolle Kommentare (nicht nur "great post!")
+- Beispiele für gute vs. schlechte Kommentare
+- Useful Phrases für Zustimmen/höflich Widersprechen
+- Bewertungskriterien für Kommentare ([WORTANZAHL] Wörter)
+- Optional: Sentence Starters</pre>
+                                </div>
+                            </div>
+                        </div>
 
-**Option 3: Invent a New Trend**
-- Describe a trend that doesn't exist yet but should
-- Explain who it's for and why it would be good
-- "Sell" the idea to make it sound realistic and appealing
+                        <h4>💡 Didaktische Prinzipien</h4>
+                        <ul>
+                            <li><strong>Choice = Engagement:</strong> Mehrere Optionen → SuS wählen nach Interesse</li>
+                            <li><strong>PEEL als Scaffolding:</strong> Strukturhilfe für argumentatives Schreiben</li>
+                            <li><strong>Authentic Audience:</strong> Peer Feedback macht Schreiben "real"</li>
+                            <li><strong>Model Texts:</strong> Zeigen, wie das Ergebnis aussehen soll</li>
+                            <li><strong>Process Writing:</strong> Planen → Schreiben → Feedback → Überarbeiten</li>
+                        </ul>
 
-**For each option, include:**
-- Clear bullet points with guiding questions
-- Vocabulary support from the unit
-- Word count: 180-220 words
-
-### 2. PEEL Paragraph Requirement
-The blog post MUST include one PEEL paragraph. Explain PEEL clearly:
-- **P**oint: Main idea/opinion in one sentence
-- **E**xample/Evidence: Concrete example, story, statistic, or quote
-- **E**xplanation: Why the example supports the point
-- **L**ink: Connect back to the main argument or transition
-
-Include clear examples of each component.
-
-### 3. Peer Feedback Commenting Task (Separate Document)
-After writing, posts go on Teams and each student comments on ONE other post.
-
-**Include:**
-- Structure for meaningful comments (not just "great post!")
-- Examples of good vs. bad comments
-- Useful phrases for agreeing/disagreeing respectfully
-- Assessment criteria for comments (150-200 words)
-
-### 4. Model Texts
-Write THREE complete model blog posts (one for each option):
-- 180-220 words each
-- Clear PEEL paragraph marked/highlighted
-- Conversational blog tone
-- Relatable topics for teenagers
-- Use unit vocabulary naturally
-
-### 5. Implementation Plan
-Suggest how to phase this over 2-3 weeks:
-- When to introduce PEEL
-- When students write
-- When/how to do the commenting phase
-- Optional extension activities
-
-## Technical Requirements
-- B1 appropriate language
-- Works for EFL learners
-- Assessment rubrics for both writing and commenting
-- Ready-to-use worksheets
-
-[Attach: Unit textbook pages or transcript]
-                        </pre>
+                        <h4>🔧 Anpassungsmöglichkeiten</h4>
+                        <ul>
+                            <li><strong>Andere Themen:</strong> Technologie, Umwelt, Schule, Hobbys – Optionen entsprechend anpassen</li>
+                            <li><strong>Andere Strukturen:</strong> TEEL, PECE, oder freiere Formate</li>
+                            <li><strong>Andere Plattformen:</strong> Padlet, Wakelet, physisches "Blog Book"</li>
+                            <li><strong>Assessment:</strong> Self-Assessment, Peer Assessment, Teacher Assessment kombinieren</li>
+                        </ul>
                     </div>
                 </div>
             </div>
