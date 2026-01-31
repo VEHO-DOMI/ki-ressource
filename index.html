@@ -2058,17 +2058,101 @@ Each row must do each sentence type exactly ONCE across all 4 tasks:
                         <span class="category-badge english">Englisch</span>
                         <span class="grade-level">3. Klasse • A2</span>
 
-                        <p><strong>Kontext:</strong> Unit mit vielen Reisetexten (Victorian Lady in Africa, Record Traveler, Celia cycling across America, etc.). Statt der eher oberflächlichen Buchaufgabe wollte ich eine substanziellere Schreibaufgabe entwickeln.</p>
+                        <p><strong>Kontext:</strong> Unit 3 enthält viele Reisetexte (Victorian Lady in Africa, Record Traveler, Celia cycling across America, Will's Argentinian adventure, etc.). Die Buchaufgaben waren eher oberflächlich – ich wollte eine substanziellere Schreibaufgabe entwickeln, die all diese Inputs zusammenbringt.</p>
 
+                        <p><strong>Die Aufgabe:</strong> Schüler:innen stellen sich vor, sie haben die 8. Klasse abgeschlossen und bekommen ein Jahr Zeit, um die Welt zu bereisen. Sie schreiben einen Tagebucheintrag von EINEM Tag während dieser Reise – wo sie sind, was passiert ist, wie sie sich fühlen.</p>
+
+                        <p><strong>Erstellung:</strong> Iterativer Prozess über 7 Prompts – von der ursprünglichen Idee (Task 8 verbessern) über verschiedene Ansätze bis zum finalen Handout mit Scaffolding.</p>
+
+                        <!-- FULL CONVERSATION SECTION -->
                         <div class="sub-collapsible">
                             <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
-                                <span>📋 Hauptvision für Schreibaufgabe (Voice Input)</span>
+                                <span>💬 Vollständiger Chat-Verlauf (7 Prompts)</span>
                                 <span class="toggle-icon">▼</span>
                             </div>
                             <div class="sub-collapsible-content">
                                 <div class="sub-collapsible-inner">
-                                    <div class="prompt-box open">
-                                        <div class="prompt-content" style="max-height:none">
+                                    <p><strong>Thema:</strong> Diary Entry Writing Task basierend auf Unit 3 Traveller-Texten</p>
+
+                                    <!-- PROMPT 1 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 1 – Problem identifizieren</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>look at task 8. it's a bit lackluster; any recommendations how we can give it a bit more substance and/or scaffold
+
+[Uploaded: More_3_SB_Unit_3.docx]</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Schlug verschiedene Optionen vor für Task 8 (Seiten 24-27) – Scaffolding, kritisches Denken, Diskussionselemente.</p>
+
+                                    <!-- PROMPT 2 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 2 – Richtige Aufgabe spezifizieren</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>nope i meant this:
+🎧 READING & LISTENING Understanding an interview 6 Read and listen to the podcast interview...
+[Celia interview about cycling across America]
+...
+8 In pairs, talk about Celia. Use the phrases from 7.</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Schlug 4 Optionen vor: Guided Retelling, Structured Discussion, Compare & Contrast, Interview Role Play.</p>
+
+                                    <!-- PROMPT 3 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 3 – Ansatz einschränken</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>nothing to do with summarizing or comparing to the other travellers.</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Neue Optionen: Question Prompts, Agree/Disagree Discussion, Personal Response.</p>
+
+                                    <!-- PROMPT 4 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 4 – Option wählen und ausbauen</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>this and flesh it out a bit:
+Option 3: Personal Response (probably best)
+8 In pairs, talk about Celia. Use the phrases from 7.
+Answer these questions about yourself:
+- Would you prefer to rent a car or cycle across America?
+- Could you sleep in a tent for weeks?
+...</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Erweiterte Personal Response mit 3 Steps: Fragen beantworten, gemeinsam diskutieren, der Klasse berichten.</p>
+
+                                    <!-- PROMPT 5 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 5 – Hauptvision für Schreibaufgabe (Voice Input)</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
                                             <div class="prompt-inner">
                                                 <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
                                                 <pre>Here's what I want to do. Basically, I just wanted to get them to... So, I'm reading all these texts, right? I'm reading... We read the two... Victorian Lady in Africa. We read this text. We read the text about the Record Traveler. We read this interview about the Celia cycling across America. We're going to eventually read about sightseeing in Barcelona and a holiday at the lake. And we're going to read another story for Argentina, an Argentinian adventure where it's also cyclists. And we're going to listen to another story about a holiday. So, a lot of inputs.
@@ -2083,17 +2167,139 @@ So, I want them to write a diary entry from one day in this journey. Like, retel
                                             </div>
                                         </div>
                                     </div>
+                                    <p><strong>🤖 Claude:</strong> Erstellte kompletten Writing Task Prompt mit Scenario, Optionen (cycle, explore, hike, etc.), Task-Beschreibung, "Before You Write" Planung, und Sentence Starters.</p>
+
+                                    <!-- PROMPT 6 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 6 – Workbook-Referenz hinzufügen</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>here is the other reference from the WB:
+
+[Uploaded: More 3 Workbook Unit 3 pages with Will's story about cycling through Argentina]</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Integrierte Will's Story als Kontext, fügte detailliertes Scaffolding hinzu: Step 1 (Plan), Step 2 (Choose your day), Step 3 (Write), Step 4 (Space for writing).</p>
+
+                                    <!-- PROMPT 7 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 7 – Finale Version mit Referenz</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>no, keep it like this just add this as a reference:
+
+WRITING TASK: My Year of travelling adventures
+THE SCENARIO Imagine this: You have just finished your 8th year at this school and graduated! Before you start university, begin working, or do anything else, you have been given one full year to go on a journey and travel anywhere in the world!
+
+You could:
+* cycle across a continent like Celia
+* explore remote places like James Holman or Mary Kingsley
+* go sightseeing in amazing cities like Barcelona
+...
+
+THE TASK
+Write a diary entry from one day during your year of adventure.
+
+Tell us:
+* Where are you right now?
+* How did you get there? (What happened today?)
+...</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Finale Version mit dem bereitgestellten Scenario-Text als Basis, plus Scaffolding (Step 1-4), Sentence Starters, und Sprachhinweise.</p>
+
                                 </div>
                             </div>
                         </div>
 
-                                                <div class="materials-box">
+                        <p><strong>Ergebnis:</strong> Ein-Seiten-Handout mit Scenario, Optionen-Checkliste, Schreibaufgabe und 7 Leitfragen für den Tagebucheintrag (mindestens 120 Wörter).</p>
+
+                        <!-- ONE-SHOT PROMPT SECTION -->
+                        <div class="template-box">
+                            <div class="template-header" onclick="toggleTemplate(this)">
+                                <span>🎯 One-Shot Prompt (für gleiches Ergebnis)</span>
+                                <span class="toggle-template">▼ anzeigen</span>
+                            </div>
+                            <div class="template-content">
+                                <div class="template-inner">
+                                    <div class="template-description">
+                                        Dieser Prompt erstellt ein Diary Entry Writing Task Handout basierend auf einer Unit mit Reisetexten.
+                                        <br><strong>Anhänge optional:</strong> Unit-Transkript mit Traveller-Texten
+                                    </div>
+                                    <pre>
+# Diary Entry Writing Task: "My Year of Travelling Adventures"
+
+## Context
+I'm teaching Unit 3 to my 3rd grade EFL class (A2 level, 13-year-olds). The unit contains multiple travel texts:
+- James Holman (blind traveler)
+- Mary Kingsley (Victorian lady in Africa)
+- Celia (cycling across America)
+- Will (cycling through Argentina after university)
+- Sightseeing in Barcelona
+- Holiday at a lake
+
+## What I Need
+Create a ONE-PAGE writing task handout that:
+
+### 1. Sets the Scenario
+Students imagine they just finished 8th grade and have ONE FULL YEAR to travel anywhere in the world before university/work/etc.
+
+### 2. Lists Travel Options (checkbox style)
+Include options like:
+- cycle across a continent (like Celia)
+- explore remote places (like Holman/Kingsley)
+- go sightseeing in amazing cities
+- hike through mountains
+- relax on beaches
+- sail around islands
+- volunteer in different countries
+- learn to surf, ski, or dive
+- travel by train, boat, bike, or on foot
+- mix everything together
+
+### 3. The Task
+Write a DIARY ENTRY (at least 120 words) from ONE DAY during the adventure.
+
+### 4. Guiding Questions
+What to write about:
+- Where are you right now?
+- How did you get there? (What happened today?)
+- Who are you travelling with (or are you alone)?
+- What did you do today?
+- What challenges did you face?
+- How are you feeling?
+- What are you looking forward to tomorrow/next?
+
+### Design Requirements
+- Keep it on ONE PAGE (handout format)
+- A2 level language
+- Visually appealing with checkboxes and clear sections
+- Connect to the travellers from the unit (mention Celia, Holman, Kingsley by name)
+                                    </pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="materials-box">
                             <h4>📂 Erstellte Materialien</h4>
-                            <p style="color: #666; font-size: 0.9em; margin: 0;">Materialien werden noch hinzugefügt...</p>
-                        </div></div>
+                            <ul>
+                                <li><span class="file-icon">📄</span> <a href="https://github.com/Kokisamkuci/ki-ressource/blob/main/materials/3A/WRITING%20TASK_%20My%20year%20of%20travelling%20adventures.pdf?raw=true" download>Writing Task: My Year of Travelling Adventures (Handout)</a></li>
+                            </ul>
                         </div>
 
                     </div>
+                </div>
+            </div>
 
 <div class="collapsible material-item" data-category="writing" data-grade="4">
                 <div class="collapsible-header">
