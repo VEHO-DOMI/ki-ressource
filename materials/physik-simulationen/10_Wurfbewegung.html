@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wurfbewegung - Schräger Wurf</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(180deg, #1a237e 0%, #4a148c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #ffab40; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-wrapper { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+        .canvas-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        canvas { display: block; border-radius: 10px; }
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .panel h3 { font-size: 1em; color: #ffab40; margin-bottom: 12px; }
+        .control-group { margin-bottom: 15px; }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #b0bec5;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #ffab40;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .value-display { color: #ffab40; font-weight: bold; }
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .preset-btn {
+            padding: 8px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover { background: rgba(255,255,255,0.2); }
+        .preset-btn.active { border-color: #ffab40; }
+        .physics-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85em;
+        }
+        .physics-row:last-child { border-bottom: none; }
+        .physics-row .label { color: #90a4ae; }
+        .physics-row .value { color: #fff; font-family: monospace; }
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: #ffab40; color: #1a237e; font-weight: bold; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn:hover { opacity: 0.9; }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .checkbox-group input { width: 16px; height: 16px; accent-color: #ffab40; }
+        .checkbox-group label { font-size: 0.85em; color: #b0bec5; }
+        .formula-box {
+            background: rgba(255, 171, 64, 0.1);
+            border: 1px solid rgba(255, 171, 64, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.85em;
+        }
+        .formula {
+            font-family: 'Times New Roman', serif;
+            color: #ffab40;
+            margin-bottom: 5px;
+        }
+        .info-box {
+            background: rgba(255, 171, 64, 0.1);
+            border-left: 4px solid #ffab40;
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #b0bec5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Wurfbewegung</h1>
+        <p class="subtitle">5. Klasse Physik – Schräger Wurf und Überlagerung von Bewegungen</p>
+
+        <div class="simulation-wrapper">
+            <div class="canvas-container">
+                <canvas id="projectileCanvas" width="650" height="450"></canvas>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>🎮 Voreinstellungen</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-v="20" data-angle="45">Optimal (45°)</button>
+                        <button class="preset-btn" data-v="25" data-angle="30">Flach (30°)</button>
+                        <button class="preset-btn" data-v="15" data-angle="60">Steil (60°)</button>
+                        <button class="preset-btn" data-v="30" data-angle="45">Stark (45°)</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>⚙️ Parameter</h3>
+                    <div class="control-group">
+                        <label>Anfangsgeschwindigkeit v₀ <span class="value-display" id="v0Val">20 m/s</span></label>
+                        <input type="range" id="velocity" min="5" max="40" value="20">
+                    </div>
+                    <div class="control-group">
+                        <label>Abwurfwinkel α <span class="value-display" id="angleVal">45°</span></label>
+                        <input type="range" id="angle" min="5" max="85" value="45">
+                    </div>
+                    <div class="control-group">
+                        <label>Abwurfhöhe h₀ <span class="value-display" id="heightVal">0 m</span></label>
+                        <input type="range" id="startHeight" min="0" max="20" value="0">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="launch()">🚀 Werfen!</button>
+                        <button class="btn btn-secondary" onclick="reset()">↺ Reset</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>🎨 Anzeige</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showTrajectory" checked>
+                        <label for="showTrajectory">Bahnkurve</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showVectors" checked>
+                        <label for="showVectors">Geschwindigkeitsvektoren</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showComponents">
+                        <label for="showComponents">v_x und v_y Komponenten</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showGrid">
+                        <label for="showGrid">Koordinatengitter</label>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>📊 Messwerte</h3>
+                    <div class="physics-row">
+                        <span class="label">Zeit t:</span>
+                        <span class="value" id="timeVal">0.00 s</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Position x:</span>
+                        <span class="value" id="xVal">0.0 m</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Höhe y:</span>
+                        <span class="value" id="yVal">0.0 m</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Geschwindigkeit |v|:</span>
+                        <span class="value" id="vVal">0.0 m/s</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Max. Höhe:</span>
+                        <span class="value" id="maxHeightVal">- m</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Wurfweite:</span>
+                        <span class="value" id="rangeVal">- m</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Flugzeit:</span>
+                        <span class="value" id="flightTimeVal">- s</span>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <div class="formula">x(t) = v₀ · cos(α) · t</div>
+                    <div class="formula">y(t) = h₀ + v₀ · sin(α) · t - ½gt²</div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Überlagerung:</strong> Der schräge Wurf ist die Überlagerung einer gleichförmigen Bewegung (horizontal) mit dem freien Fall (vertikal). Beide Bewegungen sind unabhängig voneinander!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('projectileCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const g = 9.81;
+        const scale = 8; // pixels per meter
+        const originX = 50;
+        const groundY = canvas.height - 50;
+
+        let v0 = 20;
+        let angle = 45;
+        let startHeight = 0;
+
+        let isFlying = false;
+        let time = 0;
+        let trajectory = [];
+        let maxHeight = 0;
+        let landed = false;
+
+        let showTrajectory = true;
+        let showVectors = true;
+        let showComponents = false;
+        let showGrid = false;
+
+        function getVx() { return v0 * Math.cos(angle * Math.PI / 180); }
+        function getVy0() { return v0 * Math.sin(angle * Math.PI / 180); }
+
+        function getX(t) { return getVx() * t; }
+        function getY(t) { return startHeight + getVy0() * t - 0.5 * g * t * t; }
+        function getVy(t) { return getVy0() - g * t; }
+        function getV(t) { return Math.sqrt(getVx() ** 2 + getVy(t) ** 2); }
+
+        function getMaxHeight() {
+            const tMax = getVy0() / g;
+            return startHeight + getVy0() * tMax - 0.5 * g * tMax * tMax;
+        }
+
+        function getFlightTime() {
+            // y = h0 + vy0*t - 0.5*g*t^2 = 0
+            const a = -0.5 * g;
+            const b = getVy0();
+            const c = startHeight;
+            return (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+        }
+
+        function getRange() {
+            return getVx() * getFlightTime();
+        }
+
+        function toScreenX(x) { return originX + x * scale; }
+        function toScreenY(y) { return groundY - y * scale; }
+
+        function drawBackground() {
+            // Sky gradient
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
+            skyGrad.addColorStop(0, '#0d47a1');
+            skyGrad.addColorStop(1, '#42a5f5');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, canvas.width, groundY);
+
+            // Ground
+            ctx.fillStyle = '#2e7d32';
+            ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+
+            // Grass texture
+            ctx.strokeStyle = '#1b5e20';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 10) {
+                ctx.beginPath();
+                ctx.moveTo(x, groundY);
+                ctx.lineTo(x + 3, groundY - 5);
+                ctx.stroke();
+            }
+        }
+
+        function drawGrid() {
+            if (!showGrid) return;
+
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+
+            // Vertical lines (every 10m)
+            for (let x = 0; x <= 100; x += 10) {
+                const screenX = toScreenX(x);
+                if (screenX < canvas.width) {
+                    ctx.beginPath();
+                    ctx.moveTo(screenX, 0);
+                    ctx.lineTo(screenX, groundY);
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.font = '10px Segoe UI';
+                    ctx.fillText(x + 'm', screenX - 10, groundY + 15);
+                }
+            }
+
+            // Horizontal lines (every 10m)
+            for (let y = 10; y <= 50; y += 10) {
+                const screenY = toScreenY(y);
+                if (screenY > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(originX, screenY);
+                    ctx.lineTo(canvas.width, screenY);
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.fillText(y + 'm', 5, screenY + 4);
+                }
+            }
+        }
+
+        function drawCannon() {
+            const cannonX = originX;
+            const cannonY = toScreenY(startHeight);
+            const cannonLength = 40;
+
+            // Cannon base
+            ctx.fillStyle = '#5d4037';
+            ctx.beginPath();
+            ctx.arc(cannonX, cannonY, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cannon barrel
+            ctx.save();
+            ctx.translate(cannonX, cannonY);
+            ctx.rotate(-angle * Math.PI / 180);
+
+            ctx.fillStyle = '#37474f';
+            ctx.fillRect(0, -8, cannonLength, 16);
+
+            // Barrel opening
+            ctx.fillStyle = '#263238';
+            ctx.beginPath();
+            ctx.arc(cannonLength, 0, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // Angle indicator
+            ctx.strokeStyle = 'rgba(255, 171, 64, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(cannonX, cannonY, 50, 0, -angle * Math.PI / 180, true);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffab40';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText(angle + '°', cannonX + 55, cannonY - 10);
+        }
+
+        function drawTrajectory() {
+            if (!showTrajectory || trajectory.length < 2) return;
+
+            ctx.beginPath();
+            ctx.moveTo(trajectory[0].screenX, trajectory[0].screenY);
+            for (let i = 1; i < trajectory.length; i++) {
+                ctx.lineTo(trajectory[i].screenX, trajectory[i].screenY);
+            }
+            ctx.strokeStyle = 'rgba(255, 171, 64, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawProjectile() {
+            if (!isFlying && trajectory.length === 0) return;
+
+            const x = getX(time);
+            const y = getY(time);
+            const screenX = toScreenX(x);
+            const screenY = toScreenY(y);
+
+            // Shadow
+            ctx.beginPath();
+            ctx.ellipse(screenX, groundY, 8, 3, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fill();
+
+            // Projectile
+            ctx.beginPath();
+            ctx.arc(screenX, screenY, 10, 0, Math.PI * 2);
+            const gradient = ctx.createRadialGradient(screenX - 3, screenY - 3, 0, screenX, screenY, 10);
+            gradient.addColorStop(0, '#ffcc80');
+            gradient.addColorStop(1, '#ff8f00');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Velocity vectors
+            if (showVectors && isFlying) {
+                const vx = getVx();
+                const vy = getVy(time);
+                const vScale = 3;
+
+                // Total velocity vector
+                ctx.beginPath();
+                ctx.moveTo(screenX, screenY);
+                ctx.lineTo(screenX + vx * vScale, screenY - vy * vScale);
+                ctx.strokeStyle = '#ffab40';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Arrow head
+                const vAngle = Math.atan2(-vy, vx);
+                ctx.beginPath();
+                ctx.moveTo(screenX + vx * vScale, screenY - vy * vScale);
+                ctx.lineTo(screenX + vx * vScale - 10 * Math.cos(vAngle - 0.4),
+                          screenY - vy * vScale + 10 * Math.sin(vAngle - 0.4));
+                ctx.moveTo(screenX + vx * vScale, screenY - vy * vScale);
+                ctx.lineTo(screenX + vx * vScale - 10 * Math.cos(vAngle + 0.4),
+                          screenY - vy * vScale + 10 * Math.sin(vAngle + 0.4));
+                ctx.stroke();
+
+                // Components
+                if (showComponents) {
+                    // vx component
+                    ctx.beginPath();
+                    ctx.moveTo(screenX, screenY);
+                    ctx.lineTo(screenX + vx * vScale, screenY);
+                    ctx.strokeStyle = '#4caf50';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.fillStyle = '#4caf50';
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('vx', screenX + vx * vScale / 2, screenY + 15);
+
+                    // vy component
+                    ctx.beginPath();
+                    ctx.moveTo(screenX + vx * vScale, screenY);
+                    ctx.lineTo(screenX + vx * vScale, screenY - vy * vScale);
+                    ctx.strokeStyle = '#f44336';
+                    ctx.stroke();
+                    ctx.fillStyle = '#f44336';
+                    ctx.fillText('vy', screenX + vx * vScale + 5, screenY - vy * vScale / 2);
+                }
+            }
+
+            // Record trajectory
+            if (isFlying) {
+                trajectory.push({ screenX, screenY, t: time });
+            }
+        }
+
+        function updateStats() {
+            const x = getX(time);
+            const y = Math.max(0, getY(time));
+            const v = getV(time);
+
+            document.getElementById('timeVal').textContent = time.toFixed(2) + ' s';
+            document.getElementById('xVal').textContent = x.toFixed(1) + ' m';
+            document.getElementById('yVal').textContent = y.toFixed(1) + ' m';
+            document.getElementById('vVal').textContent = v.toFixed(1) + ' m/s';
+
+            if (landed || trajectory.length > 0) {
+                document.getElementById('maxHeightVal').textContent = getMaxHeight().toFixed(1) + ' m';
+                document.getElementById('rangeVal').textContent = getRange().toFixed(1) + ' m';
+                document.getElementById('flightTimeVal').textContent = getFlightTime().toFixed(2) + ' s';
+            }
+        }
+
+        function draw() {
+            drawBackground();
+            drawGrid();
+            drawTrajectory();
+            drawCannon();
+            drawProjectile();
+            updateStats();
+        }
+
+        function animate() {
+            if (!isFlying) {
+                draw();
+                return;
+            }
+
+            time += 0.02;
+            const y = getY(time);
+
+            if (y <= 0) {
+                isFlying = false;
+                landed = true;
+                time = getFlightTime();
+            }
+
+            draw();
+
+            if (isFlying) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        function launch() {
+            if (isFlying) return;
+            trajectory = [];
+            time = 0;
+            isFlying = true;
+            landed = false;
+            animate();
+        }
+
+        function reset() {
+            isFlying = false;
+            landed = false;
+            time = 0;
+            trajectory = [];
+            document.getElementById('maxHeightVal').textContent = '- m';
+            document.getElementById('rangeVal').textContent = '- m';
+            document.getElementById('flightTimeVal').textContent = '- s';
+            draw();
+        }
+
+        // Event listeners
+        document.getElementById('velocity').addEventListener('input', (e) => {
+            v0 = parseInt(e.target.value);
+            document.getElementById('v0Val').textContent = v0 + ' m/s';
+            reset();
+        });
+
+        document.getElementById('angle').addEventListener('input', (e) => {
+            angle = parseInt(e.target.value);
+            document.getElementById('angleVal').textContent = angle + '°';
+            reset();
+        });
+
+        document.getElementById('startHeight').addEventListener('input', (e) => {
+            startHeight = parseInt(e.target.value);
+            document.getElementById('heightVal').textContent = startHeight + ' m';
+            reset();
+        });
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                v0 = parseInt(btn.dataset.v);
+                angle = parseInt(btn.dataset.angle);
+                document.getElementById('velocity').value = v0;
+                document.getElementById('angle').value = angle;
+                document.getElementById('v0Val').textContent = v0 + ' m/s';
+                document.getElementById('angleVal').textContent = angle + '°';
+                reset();
+            });
+        });
+
+        document.getElementById('showTrajectory').addEventListener('change', (e) => {
+            showTrajectory = e.target.checked;
+            draw();
+        });
+
+        document.getElementById('showVectors').addEventListener('change', (e) => {
+            showVectors = e.target.checked;
+            draw();
+        });
+
+        document.getElementById('showComponents').addEventListener('change', (e) => {
+            showComponents = e.target.checked;
+            draw();
+        });
+
+        document.getElementById('showGrid').addEventListener('change', (e) => {
+            showGrid = e.target.checked;
+            draw();
+        });
+
+        draw();
+    </script>
+</body>
+</html>

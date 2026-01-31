@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonische Schwingung - Federpendel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1b1b2f 0%, #162447 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #e43f5a; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .main-content { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .panel h3 { font-size: 1em; color: #e43f5a; margin-bottom: 12px; }
+        .control-group { margin-bottom: 15px; }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #b0bec5;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #e43f5a;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .value-display { color: #e43f5a; font-weight: bold; }
+        .canvas-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .simulation-canvas {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        canvas { display: block; border-radius: 10px; }
+        .graphs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        .graph-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .graph-container h4 {
+            font-size: 0.85em;
+            color: #90a4ae;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .physics-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85em;
+        }
+        .physics-row:last-child { border-bottom: none; }
+        .physics-row .label { color: #90a4ae; }
+        .physics-row .value { color: #fff; font-family: monospace; }
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: #e43f5a; color: #fff; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn:hover { opacity: 0.9; }
+        .formula-box {
+            background: rgba(228, 63, 90, 0.1);
+            border: 1px solid rgba(228, 63, 90, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .formula {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+            color: #e43f5a;
+        }
+        .info-box {
+            background: rgba(228, 63, 90, 0.1);
+            border-left: 4px solid #e43f5a;
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #b0bec5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Harmonische Schwingung</h1>
+        <p class="subtitle">6. Klasse Physik – Federpendel und Schwingungsdiagramme</p>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>⚙️ Parameter</h3>
+                    <div class="control-group">
+                        <label>Federkonstante D <span class="value-display" id="springVal">20 N/m</span></label>
+                        <input type="range" id="springConstant" min="5" max="50" value="20">
+                    </div>
+                    <div class="control-group">
+                        <label>Masse m <span class="value-display" id="massVal">0.5 kg</span></label>
+                        <input type="range" id="mass" min="0.1" max="2" step="0.1" value="0.5">
+                    </div>
+                    <div class="control-group">
+                        <label>Amplitude A <span class="value-display" id="ampVal">80 px</span></label>
+                        <input type="range" id="amplitude" min="20" max="120" value="80">
+                    </div>
+                    <div class="control-group">
+                        <label>Dämpfung <span class="value-display" id="dampVal">0%</span></label>
+                        <input type="range" id="damping" min="0" max="50" value="0">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="resetSimulation()">↺ Reset</button>
+                        <button class="btn btn-secondary" id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>📊 Messwerte</h3>
+                    <div class="physics-row">
+                        <span class="label">Auslenkung y</span>
+                        <span class="value" id="posValue">0.00 m</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Geschwindigkeit v</span>
+                        <span class="value" id="velValue">0.00 m/s</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Beschleunigung a</span>
+                        <span class="value" id="accValue">0.00 m/s²</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Periode T</span>
+                        <span class="value" id="periodValue">0.00 s</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Frequenz f</span>
+                        <span class="value" id="freqValue">0.00 Hz</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Kreisfrequenz ω</span>
+                        <span class="value" id="omegaValue">0.00 rad/s</span>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <div class="formula">y(t) = A · cos(ωt)</div>
+                    <div class="formula" style="margin-top: 8px; font-size: 0.9em;">ω = √(D/m)</div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Harmonische Schwingung:</strong> Die Rückstellkraft ist proportional zur Auslenkung: F = -D·y. Je größer die Federkonstante D, desto schneller die Schwingung.
+                </div>
+            </div>
+
+            <div class="canvas-area">
+                <div class="simulation-canvas">
+                    <canvas id="springCanvas" width="700" height="280"></canvas>
+                </div>
+
+                <div class="graphs">
+                    <div class="graph-container">
+                        <h4>Auslenkung y(t)</h4>
+                        <canvas id="posGraph" width="220" height="120"></canvas>
+                    </div>
+                    <div class="graph-container">
+                        <h4>Geschwindigkeit v(t)</h4>
+                        <canvas id="velGraph" width="220" height="120"></canvas>
+                    </div>
+                    <div class="graph-container">
+                        <h4>Beschleunigung a(t)</h4>
+                        <canvas id="accGraph" width="220" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const springCanvas = document.getElementById('springCanvas');
+        const springCtx = springCanvas.getContext('2d');
+        const posGraph = document.getElementById('posGraph');
+        const posCtx = posGraph.getContext('2d');
+        const velGraph = document.getElementById('velGraph');
+        const velCtx = velGraph.getContext('2d');
+        const accGraph = document.getElementById('accGraph');
+        const accCtx = accGraph.getContext('2d');
+
+        let springConstant = 20;
+        let mass = 0.5;
+        let amplitude = 80;
+        let damping = 0;
+
+        let time = 0;
+        let isPaused = false;
+
+        const posHistory = [];
+        const velHistory = [];
+        const accHistory = [];
+        const maxHistory = 200;
+
+        const anchorY = 40;
+        const equilibriumY = 150;
+        const scale = 100;
+
+        function getOmega() {
+            return Math.sqrt(springConstant / mass);
+        }
+
+        function getPeriod() {
+            return 2 * Math.PI / getOmega();
+        }
+
+        function getPosition() {
+            const omega = getOmega();
+            const dampFactor = Math.exp(-damping * 0.01 * time);
+            return amplitude * dampFactor * Math.cos(omega * time);
+        }
+
+        function getVelocity() {
+            const omega = getOmega();
+            const dampFactor = Math.exp(-damping * 0.01 * time);
+            return -amplitude * omega * dampFactor * Math.sin(omega * time);
+        }
+
+        function getAcceleration() {
+            const omega = getOmega();
+            const dampFactor = Math.exp(-damping * 0.01 * time);
+            return -amplitude * omega * omega * dampFactor * Math.cos(omega * time);
+        }
+
+        function drawSpring(ctx, x1, y1, x2, y2, coils = 15) {
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx);
+
+            ctx.save();
+            ctx.translate(x1, y1);
+            ctx.rotate(angle);
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+
+            const coilWidth = 15;
+            const segmentLength = length / coils;
+
+            for (let i = 0; i < coils; i++) {
+                const x = (i + 0.25) * segmentLength;
+                const y = (i % 2 === 0 ? coilWidth : -coilWidth);
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(length, 0);
+
+            ctx.strokeStyle = '#78909c';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function drawSimulation() {
+            springCtx.fillStyle = '#0a0a15';
+            springCtx.fillRect(0, 0, springCanvas.width, springCanvas.height);
+
+            const centerX = springCanvas.width / 2;
+            const pos = getPosition();
+            const massY = equilibriumY + pos;
+
+            // Ceiling
+            springCtx.fillStyle = '#333';
+            springCtx.fillRect(centerX - 60, 0, 120, 30);
+            springCtx.strokeStyle = '#555';
+            springCtx.lineWidth = 2;
+            for (let i = 0; i < 8; i++) {
+                springCtx.beginPath();
+                springCtx.moveTo(centerX - 55 + i * 15, 30);
+                springCtx.lineTo(centerX - 45 + i * 15, 0);
+                springCtx.stroke();
+            }
+
+            // Spring
+            drawSpring(springCtx, centerX, anchorY, centerX, massY - 30);
+
+            // Mass
+            const massSize = 30 + mass * 15;
+            springCtx.fillStyle = '#e43f5a';
+            springCtx.beginPath();
+            springCtx.roundRect(centerX - massSize/2, massY - massSize/2, massSize, massSize, 5);
+            springCtx.fill();
+
+            // Mass label
+            springCtx.fillStyle = '#fff';
+            springCtx.font = 'bold 14px Segoe UI';
+            springCtx.textAlign = 'center';
+            springCtx.fillText(mass.toFixed(1) + ' kg', centerX, massY + 5);
+
+            // Equilibrium line
+            springCtx.setLineDash([5, 5]);
+            springCtx.strokeStyle = 'rgba(255,255,255,0.3)';
+            springCtx.beginPath();
+            springCtx.moveTo(50, equilibriumY);
+            springCtx.lineTo(springCanvas.width - 50, equilibriumY);
+            springCtx.stroke();
+            springCtx.setLineDash([]);
+
+            springCtx.fillStyle = '#90a4ae';
+            springCtx.font = '12px Segoe UI';
+            springCtx.textAlign = 'left';
+            springCtx.fillText('Ruhelage', 60, equilibriumY - 5);
+
+            // Displacement arrow
+            if (Math.abs(pos) > 5) {
+                springCtx.strokeStyle = '#4fc3f7';
+                springCtx.lineWidth = 2;
+                springCtx.beginPath();
+                springCtx.moveTo(centerX + 50, equilibriumY);
+                springCtx.lineTo(centerX + 50, massY);
+                springCtx.stroke();
+
+                // Arrow head
+                const arrowDir = pos > 0 ? 1 : -1;
+                springCtx.beginPath();
+                springCtx.moveTo(centerX + 50, massY);
+                springCtx.lineTo(centerX + 45, massY - arrowDir * 8);
+                springCtx.moveTo(centerX + 50, massY);
+                springCtx.lineTo(centerX + 55, massY - arrowDir * 8);
+                springCtx.stroke();
+
+                springCtx.fillStyle = '#4fc3f7';
+                springCtx.fillText('y', centerX + 60, (equilibriumY + massY) / 2);
+            }
+
+            // Force arrow
+            const force = -springConstant * pos / scale;
+            if (Math.abs(force) > 0.5) {
+                const forceScale = 2;
+                springCtx.strokeStyle = '#ff9800';
+                springCtx.lineWidth = 3;
+                springCtx.beginPath();
+                springCtx.moveTo(centerX - 50, massY);
+                springCtx.lineTo(centerX - 50, massY - force * forceScale);
+                springCtx.stroke();
+
+                springCtx.fillStyle = '#ff9800';
+                springCtx.font = '12px Segoe UI';
+                springCtx.fillText('F', centerX - 65, massY - force * forceScale / 2);
+            }
+
+            // Velocity arrow
+            const vel = getVelocity() / scale;
+            if (Math.abs(vel) > 0.01) {
+                const velScale = 30;
+                springCtx.strokeStyle = '#4caf50';
+                springCtx.lineWidth = 3;
+                springCtx.beginPath();
+                springCtx.moveTo(centerX, massY + massSize/2 + 10);
+                springCtx.lineTo(centerX, massY + massSize/2 + 10 + vel * velScale);
+                springCtx.stroke();
+
+                springCtx.fillStyle = '#4caf50';
+                springCtx.fillText('v', centerX + 10, massY + massSize/2 + 20);
+            }
+        }
+
+        function drawGraph(ctx, history, color, maxVal) {
+            ctx.fillStyle = '#0a0a15';
+            ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+            const w = ctx.canvas.width;
+            const h = ctx.canvas.height;
+            const centerY = h / 2;
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(w, centerY);
+            ctx.stroke();
+
+            // Data
+            if (history.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(0, centerY - history[0] / maxVal * (h * 0.4));
+                for (let i = 1; i < history.length; i++) {
+                    const x = (i / maxHistory) * w;
+                    const y = centerY - history[i] / maxVal * (h * 0.4);
+                    ctx.lineTo(x, y);
+                }
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        function updateValues() {
+            const pos = getPosition() / scale;
+            const vel = getVelocity() / scale;
+            const acc = getAcceleration() / scale;
+            const omega = getOmega();
+            const period = getPeriod();
+
+            document.getElementById('posValue').textContent = pos.toFixed(3) + ' m';
+            document.getElementById('velValue').textContent = vel.toFixed(3) + ' m/s';
+            document.getElementById('accValue').textContent = acc.toFixed(2) + ' m/s²';
+            document.getElementById('periodValue').textContent = period.toFixed(3) + ' s';
+            document.getElementById('freqValue').textContent = (1/period).toFixed(2) + ' Hz';
+            document.getElementById('omegaValue').textContent = omega.toFixed(2) + ' rad/s';
+
+            // Update history
+            posHistory.push(pos * scale);
+            velHistory.push(vel * scale);
+            accHistory.push(acc * scale);
+            if (posHistory.length > maxHistory) {
+                posHistory.shift();
+                velHistory.shift();
+                accHistory.shift();
+            }
+        }
+
+        function animate() {
+            if (!isPaused) {
+                time += 0.016;
+            }
+
+            drawSimulation();
+            updateValues();
+
+            drawGraph(posCtx, posHistory, '#e43f5a', amplitude);
+            drawGraph(velCtx, velHistory, '#4caf50', amplitude * getOmega());
+            drawGraph(accCtx, accHistory, '#ff9800', amplitude * getOmega() * getOmega());
+
+            requestAnimationFrame(animate);
+        }
+
+        function resetSimulation() {
+            time = 0;
+            posHistory.length = 0;
+            velHistory.length = 0;
+            accHistory.length = 0;
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('pauseBtn').textContent = isPaused ? '▶ Start' : '⏸ Pause';
+        }
+
+        // Event listeners
+        document.getElementById('springConstant').addEventListener('input', (e) => {
+            springConstant = parseInt(e.target.value);
+            document.getElementById('springVal').textContent = springConstant + ' N/m';
+        });
+
+        document.getElementById('mass').addEventListener('input', (e) => {
+            mass = parseFloat(e.target.value);
+            document.getElementById('massVal').textContent = mass.toFixed(1) + ' kg';
+        });
+
+        document.getElementById('amplitude').addEventListener('input', (e) => {
+            amplitude = parseInt(e.target.value);
+            document.getElementById('ampVal').textContent = amplitude + ' px';
+            resetSimulation();
+        });
+
+        document.getElementById('damping').addEventListener('input', (e) => {
+            damping = parseInt(e.target.value);
+            document.getElementById('dampVal').textContent = damping + '%';
+        });
+
+        animate();
+    </script>
+</body>
+</html>

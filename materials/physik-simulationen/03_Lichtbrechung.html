@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lichtbrechung - Snellius'sches Brechungsgesetz</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a237e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #64b5f6; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-wrapper { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+        .canvas-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        canvas {
+            display: block;
+            border-radius: 10px;
+            cursor: crosshair;
+        }
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .panel h3 {
+            font-size: 1em;
+            color: #64b5f6;
+            margin-bottom: 12px;
+        }
+        .material-select {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .material-btn {
+            padding: 10px 8px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s;
+        }
+        .material-btn:hover { background: rgba(255,255,255,0.2); }
+        .material-btn.active {
+            border-color: #64b5f6;
+            background: rgba(100, 181, 246, 0.2);
+        }
+        .material-btn .n-value {
+            display: block;
+            font-size: 0.75em;
+            color: #90a4ae;
+            margin-top: 3px;
+        }
+        .control-group { margin-bottom: 15px; }
+        .control-group label {
+            display: block;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #b0bec5;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #64b5f6;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .value-display {
+            text-align: right;
+            font-size: 0.9em;
+            color: #64b5f6;
+            margin-top: 3px;
+        }
+        .physics-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9em;
+        }
+        .physics-row:last-child { border-bottom: none; }
+        .physics-row .label { color: #90a4ae; }
+        .physics-row .value { color: #fff; font-family: monospace; }
+        .formula-box {
+            background: rgba(100, 181, 246, 0.1);
+            border: 1px solid rgba(100, 181, 246, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .formula-box .formula {
+            font-size: 1.2em;
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: #64b5f6;
+        }
+        .info-box {
+            background: rgba(100, 181, 246, 0.1);
+            border-left: 4px solid #64b5f6;
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #b0bec5;
+        }
+        .total-reflection-warning {
+            background: rgba(255, 152, 0, 0.2);
+            border-left: 4px solid #ff9800;
+            padding: 10px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 10px;
+            font-size: 0.85em;
+            display: none;
+        }
+        .instruction {
+            text-align: center;
+            color: #90a4ae;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💡 Lichtbrechung</h1>
+        <p class="subtitle">4. Klasse Physik – Snellius'sches Brechungsgesetz interaktiv erleben</p>
+
+        <div class="simulation-wrapper">
+            <div class="canvas-container">
+                <canvas id="refractionCanvas" width="650" height="500"></canvas>
+                <p class="instruction">🖱️ Bewege die Maus, um den Einfallswinkel zu ändern</p>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>🔬 Medium 1 (oben)</h3>
+                    <div class="material-select" id="medium1Select">
+                        <button class="material-btn active" data-n="1.00" data-name="Luft">Luft<span class="n-value">n = 1.00</span></button>
+                        <button class="material-btn" data-n="1.33" data-name="Wasser">Wasser<span class="n-value">n = 1.33</span></button>
+                        <button class="material-btn" data-n="1.52" data-name="Glas">Glas<span class="n-value">n = 1.52</span></button>
+                        <button class="material-btn" data-n="2.42" data-name="Diamant">Diamant<span class="n-value">n = 2.42</span></button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>🔬 Medium 2 (unten)</h3>
+                    <div class="material-select" id="medium2Select">
+                        <button class="material-btn" data-n="1.00" data-name="Luft">Luft<span class="n-value">n = 1.00</span></button>
+                        <button class="material-btn active" data-n="1.33" data-name="Wasser">Wasser<span class="n-value">n = 1.33</span></button>
+                        <button class="material-btn" data-n="1.52" data-name="Glas">Glas<span class="n-value">n = 1.52</span></button>
+                        <button class="material-btn" data-n="2.42" data-name="Diamant">Diamant<span class="n-value">n = 2.42</span></button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>📊 Messwerte</h3>
+                    <div class="physics-row">
+                        <span class="label">Einfallswinkel α</span>
+                        <span class="value" id="angle1Value">45.0°</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Brechungswinkel β</span>
+                        <span class="value" id="angle2Value">32.1°</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">n₁</span>
+                        <span class="value" id="n1Value">1.00</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">n₂</span>
+                        <span class="value" id="n2Value">1.33</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Grenzwinkel</span>
+                        <span class="value" id="criticalAngle">-</span>
+                    </div>
+
+                    <div class="formula-box">
+                        <div class="formula">n₁ · sin(α) = n₂ · sin(β)</div>
+                    </div>
+
+                    <div class="total-reflection-warning" id="totalReflection">
+                        ⚠️ <strong>Totalreflexion!</strong><br>
+                        Der Einfallswinkel ist größer als der Grenzwinkel – das Licht wird vollständig reflektiert.
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Brechungsindex n:</strong> Gibt an, wie stark Licht in einem Medium langsamer wird. Je größer n, desto stärker die Brechung zum Lot hin.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('refractionCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        let n1 = 1.00;
+        let n2 = 1.33;
+        let medium1Name = 'Luft';
+        let medium2Name = 'Wasser';
+        let incidentAngle = Math.PI / 4;
+
+        const medium1Colors = {
+            'Luft': { top: 'rgba(135, 206, 250, 0.3)', bottom: 'rgba(100, 149, 237, 0.4)' },
+            'Wasser': { top: 'rgba(0, 119, 190, 0.4)', bottom: 'rgba(0, 80, 130, 0.5)' },
+            'Glas': { top: 'rgba(200, 220, 240, 0.5)', bottom: 'rgba(150, 180, 210, 0.6)' },
+            'Diamant': { top: 'rgba(180, 220, 255, 0.6)', bottom: 'rgba(140, 180, 220, 0.7)' }
+        };
+
+        const medium2Colors = {
+            'Luft': { top: 'rgba(135, 206, 250, 0.3)', bottom: 'rgba(100, 149, 237, 0.4)' },
+            'Wasser': { top: 'rgba(0, 119, 190, 0.4)', bottom: 'rgba(0, 80, 130, 0.5)' },
+            'Glas': { top: 'rgba(200, 220, 240, 0.5)', bottom: 'rgba(150, 180, 210, 0.6)' },
+            'Diamant': { top: 'rgba(180, 220, 255, 0.6)', bottom: 'rgba(140, 180, 220, 0.7)' }
+        };
+
+        function calculateRefraction() {
+            const sinAlpha = Math.sin(incidentAngle);
+            const sinBeta = (n1 / n2) * sinAlpha;
+
+            let refractedAngle = null;
+            let isTotalReflection = false;
+
+            if (Math.abs(sinBeta) > 1) {
+                isTotalReflection = true;
+            } else {
+                refractedAngle = Math.asin(sinBeta);
+            }
+
+            let criticalAngle = null;
+            if (n1 > n2) {
+                criticalAngle = Math.asin(n2 / n1);
+            }
+
+            return { refractedAngle, isTotalReflection, criticalAngle };
+        }
+
+        function drawMediums() {
+            // Medium 1 (top)
+            const grad1 = ctx.createLinearGradient(0, 0, 0, centerY);
+            grad1.addColorStop(0, medium1Colors[medium1Name]?.top || 'rgba(135, 206, 250, 0.3)');
+            grad1.addColorStop(1, medium1Colors[medium1Name]?.bottom || 'rgba(100, 149, 237, 0.4)');
+            ctx.fillStyle = grad1;
+            ctx.fillRect(0, 0, canvas.width, centerY);
+
+            // Medium 2 (bottom)
+            const grad2 = ctx.createLinearGradient(0, centerY, 0, canvas.height);
+            grad2.addColorStop(0, medium2Colors[medium2Name]?.top || 'rgba(0, 119, 190, 0.4)');
+            grad2.addColorStop(1, medium2Colors[medium2Name]?.bottom || 'rgba(0, 80, 130, 0.5)');
+            ctx.fillStyle = grad2;
+            ctx.fillRect(0, centerY, canvas.width, centerY);
+
+            // Interface line
+            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(canvas.width, centerY);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText(medium1Name + ' (n₁ = ' + n1.toFixed(2) + ')', 15, 25);
+            ctx.fillText(medium2Name + ' (n₂ = ' + n2.toFixed(2) + ')', 15, canvas.height - 15);
+        }
+
+        function drawNormal() {
+            ctx.setLineDash([8, 8]);
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX, 30);
+            ctx.lineTo(centerX, canvas.height - 30);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('Lot', centerX + 8, 45);
+        }
+
+        function drawLightRay(startX, startY, endX, endY, color, isGlow = true) {
+            if (isGlow) {
+                // Glow effect
+                ctx.strokeStyle = color.replace('1)', '0.3)');
+                ctx.lineWidth = 12;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+
+            // Main ray
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Arrow at end
+            const angle = Math.atan2(endY - startY, endX - startX);
+            const arrowLen = 12;
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - arrowLen * Math.cos(angle - 0.4), endY - arrowLen * Math.sin(angle - 0.4));
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - arrowLen * Math.cos(angle + 0.4), endY - arrowLen * Math.sin(angle + 0.4));
+            ctx.stroke();
+        }
+
+        function drawAngleArc(angle, isTop, color, label) {
+            const radius = 50;
+            const startAngle = isTop ? -Math.PI / 2 : Math.PI / 2;
+            const endAngle = isTop ? -Math.PI / 2 + angle : Math.PI / 2 - angle;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            if (isTop) {
+                ctx.arc(centerX, centerY, radius, Math.min(startAngle, endAngle), Math.max(startAngle, endAngle));
+            } else {
+                ctx.arc(centerX, centerY, radius, Math.min(startAngle, endAngle), Math.max(startAngle, endAngle));
+            }
+            ctx.stroke();
+
+            // Label
+            const labelAngle = (startAngle + endAngle) / 2;
+            const labelX = centerX + (radius + 20) * Math.cos(labelAngle);
+            const labelY = centerY + (radius + 20) * Math.sin(labelAngle);
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText(label, labelX - 10, labelY + 5);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawMediums();
+            drawNormal();
+
+            const { refractedAngle, isTotalReflection, criticalAngle } = calculateRefraction();
+
+            // Calculate ray endpoints
+            const rayLength = 200;
+
+            // Incident ray (coming from top-left)
+            const incidentStartX = centerX - rayLength * Math.sin(incidentAngle);
+            const incidentStartY = centerY - rayLength * Math.cos(incidentAngle);
+            drawLightRay(incidentStartX, incidentStartY, centerX, centerY, 'rgba(255, 235, 59, 1)');
+
+            // Draw incident angle arc
+            drawAngleArc(incidentAngle, true, '#ffeb3b', 'α');
+
+            if (isTotalReflection) {
+                // Total internal reflection
+                const reflectedEndX = centerX + rayLength * Math.sin(incidentAngle);
+                const reflectedEndY = centerY - rayLength * Math.cos(incidentAngle);
+                drawLightRay(centerX, centerY, reflectedEndX, reflectedEndY, 'rgba(255, 152, 0, 1)');
+
+                document.getElementById('totalReflection').style.display = 'block';
+                document.getElementById('angle2Value').textContent = '- (Totalreflexion)';
+            } else {
+                // Refracted ray
+                const refractedEndX = centerX + rayLength * Math.sin(refractedAngle);
+                const refractedEndY = centerY + rayLength * Math.cos(refractedAngle);
+                drawLightRay(centerX, centerY, refractedEndX, refractedEndY, 'rgba(100, 181, 246, 1)');
+
+                // Reflected ray (partial reflection)
+                const reflectedEndX = centerX + rayLength * 0.3 * Math.sin(incidentAngle);
+                const reflectedEndY = centerY - rayLength * 0.3 * Math.cos(incidentAngle);
+                drawLightRay(centerX, centerY, reflectedEndX, reflectedEndY, 'rgba(255, 152, 0, 0.5)', false);
+
+                // Draw refracted angle arc
+                drawAngleArc(refractedAngle, false, '#64b5f6', 'β');
+
+                document.getElementById('totalReflection').style.display = 'none';
+                document.getElementById('angle2Value').textContent = (refractedAngle * 180 / Math.PI).toFixed(1) + '°';
+            }
+
+            // Update displays
+            document.getElementById('angle1Value').textContent = (incidentAngle * 180 / Math.PI).toFixed(1) + '°';
+            document.getElementById('n1Value').textContent = n1.toFixed(2);
+            document.getElementById('n2Value').textContent = n2.toFixed(2);
+
+            if (criticalAngle !== null) {
+                document.getElementById('criticalAngle').textContent = (criticalAngle * 180 / Math.PI).toFixed(1) + '°';
+            } else {
+                document.getElementById('criticalAngle').textContent = '-';
+            }
+
+            // Draw legend
+            ctx.font = '12px Segoe UI';
+            ctx.fillStyle = '#ffeb3b';
+            ctx.fillText('● Einfallender Strahl', canvas.width - 150, 25);
+            ctx.fillStyle = '#64b5f6';
+            ctx.fillText('● Gebrochener Strahl', canvas.width - 150, 45);
+            ctx.fillStyle = '#ff9800';
+            ctx.fillText('● Reflektierter Strahl', canvas.width - 150, 65);
+        }
+
+        // Mouse interaction
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            if (mouseY < centerY) {
+                const dx = mouseX - centerX;
+                const dy = centerY - mouseY;
+                incidentAngle = Math.abs(Math.atan2(dx, dy));
+                incidentAngle = Math.max(0.05, Math.min(incidentAngle, Math.PI / 2 - 0.05));
+                draw();
+            }
+        });
+
+        // Material selection
+        document.querySelectorAll('#medium1Select .material-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#medium1Select .material-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                n1 = parseFloat(btn.dataset.n);
+                medium1Name = btn.dataset.name;
+                draw();
+            });
+        });
+
+        document.querySelectorAll('#medium2Select .material-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#medium2Select .material-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                n2 = parseFloat(btn.dataset.n);
+                medium2Name = btn.dataset.name;
+                draw();
+            });
+        });
+
+        draw();
+    </script>
+</body>
+</html>

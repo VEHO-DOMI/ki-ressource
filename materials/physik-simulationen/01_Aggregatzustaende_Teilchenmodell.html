@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregatzustände - Teilchenmodell</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            color: #4fc3f7;
+        }
+        .subtitle {
+            text-align: center;
+            color: #90a4ae;
+            margin-bottom: 20px;
+        }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #0d1b2a 0%, #1b263b 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .state-btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .state-btn.solid {
+            background: linear-gradient(135deg, #5c6bc0, #3949ab);
+            color: white;
+        }
+        .state-btn.liquid {
+            background: linear-gradient(135deg, #26c6da, #00acc1);
+            color: white;
+        }
+        .state-btn.gas {
+            background: linear-gradient(135deg, #ffca28, #ffa000);
+            color: #333;
+        }
+        .state-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .state-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(79, 195, 247, 0.5);
+        }
+        .temperature-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        .temperature-control label {
+            font-size: 1.1em;
+        }
+        .temperature-slider {
+            width: 300px;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #5c6bc0 0%, #26c6da 50%, #ffca28 100%);
+            border-radius: 4px;
+            outline: none;
+        }
+        .temperature-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .temp-display {
+            font-size: 1.3em;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            color: #4fc3f7;
+        }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+        .info-box p {
+            line-height: 1.6;
+            color: #b0bec5;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 Aggregatzustände im Teilchenmodell</h1>
+        <p class="subtitle">2. Klasse Physik – Beobachte, wie sich Teilchen in verschiedenen Zuständen verhalten</p>
+
+        <div class="simulation-area">
+            <canvas id="particleCanvas" width="800" height="400"></canvas>
+
+            <div class="controls">
+                <button class="state-btn solid active" onclick="setState('solid')">❄️ Fest</button>
+                <button class="state-btn liquid" onclick="setState('liquid')">💧 Flüssig</button>
+                <button class="state-btn gas" onclick="setState('gas')">💨 Gasförmig</button>
+            </div>
+
+            <div class="temperature-control">
+                <label>🌡️ Temperatur:</label>
+                <input type="range" class="temperature-slider" id="tempSlider" min="0" max="100" value="20">
+                <span class="temp-display" id="tempDisplay">20°C</span>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #5c6bc0;"></div>
+                    <span>Teilchen</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: rgba(255,255,255,0.3);"></div>
+                    <span>Bewegungsspur</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box" id="infoBox">
+            <h3>💎 Fester Aggregatzustand</h3>
+            <p>Die Teilchen sind in einem festen Gitter angeordnet und schwingen nur leicht um ihre Ruhelage.
+            Sie haben wenig Energie und sind durch starke Anziehungskräfte gebunden.
+            Feste Stoffe haben eine bestimmte Form und ein bestimmtes Volumen.</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        const tempSlider = document.getElementById('tempSlider');
+        const tempDisplay = document.getElementById('tempDisplay');
+        const infoBox = document.getElementById('infoBox');
+
+        let currentState = 'solid';
+        let temperature = 20;
+        let particles = [];
+        const numParticles = 80;
+
+        const stateInfo = {
+            solid: {
+                title: '💎 Fester Aggregatzustand',
+                text: 'Die Teilchen sind in einem festen Gitter angeordnet und schwingen nur leicht um ihre Ruhelage. Sie haben wenig Energie und sind durch starke Anziehungskräfte gebunden. Feste Stoffe haben eine bestimmte Form und ein bestimmtes Volumen.'
+            },
+            liquid: {
+                title: '💧 Flüssiger Aggregatzustand',
+                text: 'Die Teilchen können sich frei bewegen, bleiben aber nahe beieinander. Sie haben mehr Energie als im festen Zustand. Flüssigkeiten haben ein bestimmtes Volumen, aber keine feste Form – sie passen sich dem Gefäß an.'
+            },
+            gas: {
+                title: '💨 Gasförmiger Aggregatzustand',
+                text: 'Die Teilchen bewegen sich schnell und völlig frei im Raum. Sie haben viel Energie und große Abstände zueinander. Gase haben weder eine feste Form noch ein festes Volumen – sie füllen jeden verfügbaren Raum aus.'
+            }
+        };
+
+        class Particle {
+            constructor(x, y) {
+                this.baseX = x;
+                this.baseY = y;
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = 10;
+                this.trail = [];
+                this.maxTrail = 10;
+                this.hue = 230 + Math.random() * 30;
+            }
+
+            update() {
+                const energyFactor = temperature / 50;
+
+                // Store trail
+                if (currentState !== 'solid') {
+                    this.trail.push({x: this.x, y: this.y});
+                    if (this.trail.length > this.maxTrail) {
+                        this.trail.shift();
+                    }
+                } else {
+                    this.trail = [];
+                }
+
+                if (currentState === 'solid') {
+                    // Vibrate around base position
+                    const vibration = energyFactor * 3;
+                    this.x = this.baseX + (Math.random() - 0.5) * vibration;
+                    this.y = this.baseY + (Math.random() - 0.5) * vibration;
+                } else if (currentState === 'liquid') {
+                    // Slow random movement, stay in lower area
+                    this.vx += (Math.random() - 0.5) * energyFactor * 0.5;
+                    this.vy += (Math.random() - 0.5) * energyFactor * 0.5 + 0.1;
+                    this.vx *= 0.98;
+                    this.vy *= 0.98;
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Boundaries - liquid stays at bottom
+                    const margin = 50;
+                    const liquidTop = canvas.height * 0.3;
+                    if (this.x < margin) { this.x = margin; this.vx *= -0.5; }
+                    if (this.x > canvas.width - margin) { this.x = canvas.width - margin; this.vx *= -0.5; }
+                    if (this.y < liquidTop) { this.y = liquidTop; this.vy *= -0.5; }
+                    if (this.y > canvas.height - margin) { this.y = canvas.height - margin; this.vy *= -0.5; }
+                } else if (currentState === 'gas') {
+                    // Fast random movement, fill entire space
+                    this.vx += (Math.random() - 0.5) * energyFactor * 0.8;
+                    this.vy += (Math.random() - 0.5) * energyFactor * 0.8;
+                    this.vx *= 0.99;
+                    this.vy *= 0.99;
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Boundaries - bounce off walls
+                    const margin = 20;
+                    if (this.x < margin) { this.x = margin; this.vx *= -1; }
+                    if (this.x > canvas.width - margin) { this.x = canvas.width - margin; this.vx *= -1; }
+                    if (this.y < margin) { this.y = margin; this.vy *= -1; }
+                    if (this.y > canvas.height - margin) { this.y = canvas.height - margin; this.vy *= -1; }
+                }
+            }
+
+            draw() {
+                // Draw trail
+                if (this.trail.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.trail[0].x, this.trail[0].y);
+                    for (let i = 1; i < this.trail.length; i++) {
+                        ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                    }
+                    ctx.strokeStyle = `hsla(${this.hue}, 70%, 60%, 0.2)`;
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+
+                // Draw particle with glow
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 1.5);
+                gradient.addColorStop(0, `hsla(${this.hue}, 80%, 70%, 1)`);
+                gradient.addColorStop(0.5, `hsla(${this.hue}, 70%, 50%, 0.8)`);
+                gradient.addColorStop(1, `hsla(${this.hue}, 60%, 40%, 0)`);
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Core
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 0.7, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${this.hue}, 70%, 60%)`;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const cols = 10;
+            const rows = 8;
+            const spacingX = (canvas.width - 200) / cols;
+            const spacingY = (canvas.height - 150) / rows;
+            const startX = 100 + spacingX / 2;
+            const startY = 100;
+
+            for (let i = 0; i < numParticles; i++) {
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const x = startX + col * spacingX + (row % 2) * (spacingX / 2);
+                const y = startY + row * spacingY;
+                particles.push(new Particle(x, y));
+            }
+        }
+
+        function setState(state) {
+            currentState = state;
+
+            // Update buttons
+            document.querySelectorAll('.state-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.state-btn.${state}`).classList.add('active');
+
+            // Update temperature
+            if (state === 'solid') {
+                temperature = 20;
+            } else if (state === 'liquid') {
+                temperature = 50;
+            } else {
+                temperature = 85;
+            }
+            tempSlider.value = temperature;
+            tempDisplay.textContent = temperature + '°C';
+
+            // Update info
+            infoBox.innerHTML = `<h3>${stateInfo[state].title}</h3><p>${stateInfo[state].text}</p>`;
+
+            // Reset particle positions for solid
+            if (state === 'solid') {
+                initParticles();
+            }
+        }
+
+        function drawContainer() {
+            ctx.strokeStyle = 'rgba(79, 195, 247, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+            // Draw state label
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillStyle = '#4fc3f7';
+            const stateLabels = { solid: 'FEST', liquid: 'FLÜSSIG', gas: 'GAS' };
+            ctx.fillText(stateLabels[currentState], 25, 35);
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawContainer();
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        tempSlider.addEventListener('input', (e) => {
+            temperature = parseInt(e.target.value);
+            tempDisplay.textContent = temperature + '°C';
+
+            // Auto-switch state based on temperature
+            if (temperature < 30 && currentState !== 'solid') {
+                setState('solid');
+            } else if (temperature >= 30 && temperature < 70 && currentState !== 'liquid') {
+                setState('liquid');
+            } else if (temperature >= 70 && currentState !== 'gas') {
+                setState('gas');
+            }
+        });
+
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>

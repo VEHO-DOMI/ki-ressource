@@ -935,17 +935,20 @@
             <a href="#" class="nav-item" data-section="materialien">
                 <span class="nav-number">3</span>Unterrichtsmaterialien
             </a>
+            <a href="#" class="nav-item" data-section="suspraxis">
+                <span class="nav-number">4</span>Interaktive Visualisierungen
+            </a>
             <a href="#" class="nav-item placeholder" data-section="beurteilung">
-                <span class="nav-number">4</span>Beurteilung & Notenvergabe
+                <span class="nav-number">5</span>Beurteilung & Notenvergabe
             </a>
             <a href="#" class="nav-item placeholder" data-section="qualitaet">
-                <span class="nav-number">5</span>Qualitätssicherung
+                <span class="nav-number">6</span>Qualitätssicherung
             </a>
             <a href="#" class="nav-item placeholder" data-section="curriculum">
-                <span class="nav-number">6</span>Curriculumentwicklung
+                <span class="nav-number">7</span>Curriculumentwicklung
             </a>
             <a href="#" class="nav-item placeholder" data-section="admin">
-                <span class="nav-number">7</span>Administration
+                <span class="nav-number">8</span>Administration
             </a>
         </div>
     </nav>
@@ -7444,8 +7447,251 @@ INHALT:
         </section>
 
         <!-- SECTION: PuP MATERIALIEN -->
-        
-        <!-- SECTION 4: BEURTEILUNG -->
+
+        <!-- SECTION 4: INTERAKTIVE VISUALISIERUNGEN FÜR SuS -->
+        <section id="suspraxis" class="section">
+            <h1 class="section-title">Interaktive Visualisierungen</h1>
+            <p class="section-subtitle">KI-generierte Physik-Simulationen für den Unterricht</p>
+
+            <!-- 4.1 Übersicht -->
+            <div class="collapsible open">
+                <div class="collapsible-header">
+                    <h3>4.1 Übersicht</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Diese Sektion enthält <strong>10 interaktive Physik-Simulationen</strong>, die vollständig mit KI (Claude) erstellt wurden. Sie decken verschiedene Themen des österreichischen AHS-Physiklehrplans ab und ermöglichen es Schüler:innen, abstrakte Konzepte visuell und interaktiv zu erforschen.</p>
+
+                        <div class="info-box">
+                            <strong>💡 Verwendung im Unterricht:</strong>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                <li>Jede Simulation kann direkt im Browser verwendet werden</li>
+                                <li>Parameter können live angepasst werden, um verschiedene Szenarien zu erkunden</li>
+                                <li>Ideal für Demonstrationen am Beamer oder selbstständiges Experimentieren</li>
+                                <li>Alle Simulationen sind offline-fähig und benötigen keine Installation</li>
+                            </ul>
+                        </div>
+
+                        <table class="comparison-table" style="margin-top: 1rem;">
+                            <thead>
+                                <tr>
+                                    <th>Nr.</th>
+                                    <th>Simulation</th>
+                                    <th>Klasse</th>
+                                    <th>Themenbereich</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>Aggregatzustände & Teilchenmodell</td><td>2. Kl.</td><td>Wärmelehre</td></tr>
+                                <tr><td>2</td><td>Pendel & Energieerhaltung</td><td>5. Kl.</td><td>Mechanik</td></tr>
+                                <tr><td>3</td><td>Lichtbrechung (Snellius)</td><td>4. Kl.</td><td>Optik</td></tr>
+                                <tr><td>4</td><td>Welleninterferenz</td><td>6. Kl.</td><td>Wellen</td></tr>
+                                <tr><td>5</td><td>Elektrisches Feld</td><td>7. Kl.</td><td>Elektrizität</td></tr>
+                                <tr><td>6</td><td>Doppelspalt-Experiment</td><td>8. Kl.</td><td>Quantenphysik</td></tr>
+                                <tr><td>7</td><td>Stromkreis-Simulator</td><td>3. Kl.</td><td>Elektrizität</td></tr>
+                                <tr><td>8</td><td>Harmonische Schwingung</td><td>6. Kl.</td><td>Schwingungen</td></tr>
+                                <tr><td>9</td><td>Radioaktiver Zerfall</td><td>8. Kl.</td><td>Kernphysik</td></tr>
+                                <tr><td>10</td><td>Wurfbewegung (Projektil)</td><td>5. Kl.</td><td>Mechanik</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.2 Aggregatzustände -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.2 Aggregatzustände & Teilchenmodell</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 2. Klasse | <strong>Thema:</strong> Wärmelehre</p>
+                        <p>Visualisiert das Verhalten von Teilchen in den drei Aggregatzuständen (fest, flüssig, gasförmig). Die Temperatur kann stufenlos angepasst werden, wobei die Simulation automatisch zwischen den Zuständen wechselt.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/01_Aggregatzustaende_Teilchenmodell.html"
+                                    style="width: 100%; height: 650px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.3 Pendel -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.3 Pendel & Energieerhaltung</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 5. Klasse | <strong>Thema:</strong> Mechanik, Energieerhaltung</p>
+                        <p>Interaktives Fadenpendel mit Echtzeit-Energiebalken (potentielle, kinetische und Gesamtenergie). Das Pendel kann per Drag & Drop gezogen werden, Parameter wie Länge, Masse und Dämpfung sind einstellbar.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/02_Pendel_Energieerhaltung.html"
+                                    style="width: 100%; height: 700px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.4 Lichtbrechung -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.4 Lichtbrechung (Snellius-Gesetz)</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 4. Klasse | <strong>Thema:</strong> Optik</p>
+                        <p>Demonstration des Snellius'schen Brechungsgesetzes mit verschiedenen Materialien (Luft, Wasser, Glas, Diamant). Zeigt auch die Totalreflexion beim Übergang von optisch dichteren zu dünneren Medien.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/03_Lichtbrechung.html"
+                                    style="width: 100%; height: 700px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.5 Welleninterferenz -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.5 Welleninterferenz</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 6. Klasse | <strong>Thema:</strong> Wellen</p>
+                        <p>Visualisiert die Überlagerung (Interferenz) von zwei Kreiswellen. Die Wellenquellen können verschoben werden, um verschiedene Interferenzmuster zu erzeugen. Verschiedene Farbschemata zur besseren Darstellung.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/04_Welleninterferenz.html"
+                                    style="width: 100%; height: 700px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.6 Elektrisches Feld -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.6 Elektrisches Feld</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 7. Klasse | <strong>Thema:</strong> Elektrizität</p>
+                        <p>Interaktive Visualisierung von elektrischen Feldlinien. Positive und negative Ladungen können platziert und verschoben werden. Verschiedene Darstellungsmodi: Feldlinien, Potential, Vektorfeld.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/05_Elektrisches_Feld.html"
+                                    style="width: 100%; height: 700px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.7 Doppelspalt -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.7 Doppelspalt-Experiment</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 8. Klasse | <strong>Thema:</strong> Quantenphysik</p>
+                        <p>Simulation des berühmten Doppelspalt-Experiments. Zeigt den statistischen Aufbau des Interferenzmusters durch einzelne Photonen oder Elektronen – ein Schlüsselexperiment der Quantenmechanik.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/06_Doppelspalt.html"
+                                    style="width: 100%; height: 700px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.8 Stromkreis -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.8 Stromkreis-Simulator</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 3. Klasse | <strong>Thema:</strong> Elektrizität</p>
+                        <p>Einfacher Stromkreis-Simulator mit animierten Elektronen. Demonstriert das Ohm'sche Gesetz (U = R × I) mit virtuellen Messgeräten. Verschiedene Schaltkreis-Modi verfügbar.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/07_Stromkreis_Simulator.html"
+                                    style="width: 100%; height: 700px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.9 Harmonische Schwingung -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.9 Harmonische Schwingung</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 6. Klasse | <strong>Thema:</strong> Schwingungen</p>
+                        <p>Federpendel-Simulation mit drei synchronisierten Graphen: Auslenkung y(t), Geschwindigkeit v(t) und Beschleunigung a(t). Zeigt die Phasenbeziehungen bei der harmonischen Schwingung.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/08_Harmonische_Schwingung.html"
+                                    style="width: 100%; height: 750px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.10 Radioaktiver Zerfall -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.10 Radioaktiver Zerfall</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 8. Klasse | <strong>Thema:</strong> Kernphysik</p>
+                        <p>Visualisiert den stochastischen Charakter des radioaktiven Zerfalls. Zeigt die Halbwertszeit verschiedener Isotope (C-14, Ra-226, U-238) mit N(t)-Graph und theoretischer Zerfallskurve.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/09_Radioaktiver_Zerfall.html"
+                                    style="width: 100%; height: 700px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.11 Wurfbewegung -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.11 Wurfbewegung (Projektilbewegung)</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p><strong>Schulstufe:</strong> 5. Klasse | <strong>Thema:</strong> Mechanik</p>
+                        <p>Simulation des schrägen Wurfs mit einstellbarem Abschusswinkel und Geschwindigkeit. Zeigt die Überlagerung von gleichförmiger horizontaler und beschleunigter vertikaler Bewegung mit Geschwindigkeitsvektoren.</p>
+                        <div class="simulation-container" style="margin-top: 1rem;">
+                            <iframe src="materials/physik-simulationen/10_Wurfbewegung.html"
+                                    style="width: 100%; height: 750px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
+                                    loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION 5: BEURTEILUNG -->
         <section id="beurteilung" class="section">
             <div class="coming-soon">
                 <div class="icon">📊</div>
@@ -7455,7 +7701,7 @@ INHALT:
             </div>
         </section>
 
-        <!-- SECTION 5: QUALITÄTSSICHERUNG -->
+        <!-- SECTION 6: QUALITÄTSSICHERUNG -->
         <section id="qualitaet" class="section">
             <div class="coming-soon">
                 <div class="icon">✓</div>
@@ -7465,7 +7711,7 @@ INHALT:
             </div>
         </section>
 
-        <!-- SECTION 6: CURRICULUM -->
+        <!-- SECTION 7: CURRICULUM -->
         <section id="curriculum" class="section">
             <div class="coming-soon">
                 <div class="icon">📚</div>
@@ -7475,7 +7721,7 @@ INHALT:
             </div>
         </section>
 
-        <!-- SECTION 7: ADMINISTRATION -->
+        <!-- SECTION 8: ADMINISTRATION -->
         <section id="admin" class="section">
             <div class="coming-soon">
                 <div class="icon">📋</div>

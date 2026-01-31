@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welleninterferenz - Zwei Quellen</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #00bcd4; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-wrapper { display: grid; grid-template-columns: 1fr 260px; gap: 20px; }
+        .canvas-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        canvas { display: block; border-radius: 10px; }
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .panel h3 { font-size: 1em; color: #00bcd4; margin-bottom: 12px; }
+        .control-group { margin-bottom: 15px; }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #b0bec5;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #00bcd4;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .value-display { color: #00bcd4; font-weight: bold; }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #00bcd4;
+        }
+        .checkbox-group label {
+            font-size: 0.9em;
+            color: #b0bec5;
+        }
+        .color-scheme {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .color-btn {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s;
+        }
+        .color-btn.active { border-color: #fff; }
+        .color-btn.rainbow { background: linear-gradient(90deg, #f44336, #ff9800, #ffeb3b, #4caf50, #2196f3, #9c27b0); color: #fff; }
+        .color-btn.blue { background: linear-gradient(90deg, #0d47a1, #42a5f5); color: #fff; }
+        .color-btn.heat { background: linear-gradient(90deg, #000, #ff5722, #ffeb3b, #fff); color: #fff; }
+        .legend {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.75em;
+            color: #90a4ae;
+        }
+        .info-box {
+            background: rgba(0, 188, 212, 0.1);
+            border-left: 4px solid #00bcd4;
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #b0bec5;
+        }
+        .formula {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: #00bcd4;
+        }
+        .instruction {
+            text-align: center;
+            color: #90a4ae;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌊 Welleninterferenz</h1>
+        <p class="subtitle">6. Klasse Physik – Beobachte Interferenzmuster zweier Wellenquellen</p>
+
+        <div class="simulation-wrapper">
+            <div class="canvas-container">
+                <canvas id="waveCanvas" width="680" height="500"></canvas>
+                <p class="instruction">🖱️ Klicke und ziehe die Quellen (●), um sie zu verschieben</p>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>⚙️ Wellenparameter</h3>
+                    <div class="control-group">
+                        <label>Wellenlänge λ <span class="value-display" id="wavelengthVal">40 px</span></label>
+                        <input type="range" id="wavelength" min="20" max="80" value="40">
+                    </div>
+                    <div class="control-group">
+                        <label>Frequenz f <span class="value-display" id="frequencyVal">1.0 Hz</span></label>
+                        <input type="range" id="frequency" min="0.5" max="3" step="0.1" value="1">
+                    </div>
+                    <div class="control-group">
+                        <label>Amplitude A <span class="value-display" id="amplitudeVal">1.0</span></label>
+                        <input type="range" id="amplitude" min="0.2" max="1.5" step="0.1" value="1">
+                    </div>
+                    <div class="control-group">
+                        <label>Quellenabstand d <span class="value-display" id="distanceVal">120 px</span></label>
+                        <input type="range" id="distance" min="40" max="250" value="120">
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>🎨 Darstellung</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showRings" checked>
+                        <label for="showRings">Wellenringe anzeigen</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showMaxima">
+                        <label for="showMaxima">Maxima-Linien anzeigen</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="animate" checked>
+                        <label for="animate">Animation</label>
+                    </div>
+                    <div class="color-scheme">
+                        <button class="color-btn rainbow active" data-scheme="rainbow">🌈</button>
+                        <button class="color-btn blue" data-scheme="blue">💙</button>
+                        <button class="color-btn heat" data-scheme="heat">🔥</button>
+                    </div>
+                    <div class="legend">
+                        <span>Min (destruktiv)</span>
+                        <span>Max (konstruktiv)</span>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>📊 Interferenzbedingungen</h3>
+                    <div style="font-size: 0.85em; color: #b0bec5; line-height: 1.8;">
+                        <strong style="color: #4caf50;">Konstruktiv (Maximum):</strong><br>
+                        <span class="formula">Δs = n · λ</span> (n = 0, 1, 2, ...)<br><br>
+                        <strong style="color: #f44336;">Destruktiv (Minimum):</strong><br>
+                        <span class="formula">Δs = (n + ½) · λ</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Interferenz:</strong> Wenn zwei Wellen aufeinandertreffen, überlagern sie sich. Bei <em>konstruktiver</em> Interferenz verstärken sie sich, bei <em>destruktiver</em> Interferenz löschen sie sich aus.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let wavelength = 40;
+        let frequency = 1;
+        let amplitude = 1;
+        let sourceDistance = 120;
+        let time = 0;
+        let colorScheme = 'rainbow';
+        let showRings = true;
+        let showMaxima = false;
+        let animate = true;
+
+        // Source positions
+        let source1 = { x: canvas.width/2 - 60, y: canvas.height/2 };
+        let source2 = { x: canvas.width/2 + 60, y: canvas.height/2 };
+
+        let draggingSource = null;
+
+        // Create image data for pixel manipulation
+        let imageData = ctx.createImageData(canvas.width, canvas.height);
+
+        function getColor(value, scheme) {
+            // value from -1 to 1
+            const t = (value + 1) / 2; // normalize to 0-1
+
+            if (scheme === 'rainbow') {
+                const hue = (1 - t) * 240; // Blue to red
+                return hslToRgb(hue / 360, 0.8, 0.5);
+            } else if (scheme === 'blue') {
+                const r = Math.floor(t * 100);
+                const g = Math.floor(t * 180 + 50);
+                const b = Math.floor(200 + t * 55);
+                return [r, g, b];
+            } else if (scheme === 'heat') {
+                if (t < 0.5) {
+                    return [Math.floor(t * 2 * 255), Math.floor(t * 2 * 100), 0];
+                } else {
+                    return [255, Math.floor((t - 0.5) * 2 * 200 + 100), Math.floor((t - 0.5) * 2 * 255)];
+                }
+            }
+            return [128, 128, 128];
+        }
+
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+
+        function calculateWaveValue(x, y, t) {
+            const d1 = Math.sqrt((x - source1.x) ** 2 + (y - source1.y) ** 2);
+            const d2 = Math.sqrt((x - source2.x) ** 2 + (y - source2.y) ** 2);
+
+            const k = 2 * Math.PI / wavelength;
+            const omega = 2 * Math.PI * frequency;
+
+            // Wave from source 1
+            const wave1 = amplitude * Math.sin(k * d1 - omega * t) / Math.max(1, Math.sqrt(d1) * 0.1);
+            // Wave from source 2
+            const wave2 = amplitude * Math.sin(k * d2 - omega * t) / Math.max(1, Math.sqrt(d2) * 0.1);
+
+            return (wave1 + wave2) / 2;
+        }
+
+        function drawInterference() {
+            const data = imageData.data;
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const value = calculateWaveValue(x, y, time);
+                    const clampedValue = Math.max(-1, Math.min(1, value));
+                    const [r, g, b] = getColor(clampedValue, colorScheme);
+
+                    const idx = (y * canvas.width + x) * 4;
+                    data[idx] = r;
+                    data[idx + 1] = g;
+                    data[idx + 2] = b;
+                    data[idx + 3] = 255;
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function drawWaveRings() {
+            if (!showRings) return;
+
+            const maxRings = 15;
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1;
+
+            // Rings from source 1
+            for (let i = 1; i <= maxRings; i++) {
+                const radius = (i * wavelength + (time * frequency * wavelength) % wavelength);
+                if (radius < 500) {
+                    ctx.beginPath();
+                    ctx.arc(source1.x, source1.y, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+
+            // Rings from source 2
+            for (let i = 1; i <= maxRings; i++) {
+                const radius = (i * wavelength + (time * frequency * wavelength) % wavelength);
+                if (radius < 500) {
+                    ctx.beginPath();
+                    ctx.arc(source2.x, source2.y, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function drawMaximaLines() {
+            if (!showMaxima) return;
+
+            ctx.strokeStyle = 'rgba(76, 175, 80, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+
+            // Calculate maxima lines (where path difference = n*λ)
+            const midX = (source1.x + source2.x) / 2;
+            const midY = (source1.y + source2.y) / 2;
+
+            // Central maximum (n=0)
+            const dx = source2.x - source1.x;
+            const dy = source2.y - source1.y;
+            const perpX = -dy;
+            const perpY = dx;
+            const len = Math.sqrt(perpX*perpX + perpY*perpY);
+
+            ctx.beginPath();
+            ctx.moveTo(midX - perpX/len * 300, midY - perpY/len * 300);
+            ctx.lineTo(midX + perpX/len * 300, midY + perpY/len * 300);
+            ctx.stroke();
+
+            ctx.setLineDash([]);
+        }
+
+        function drawSources() {
+            // Source 1
+            ctx.beginPath();
+            ctx.arc(source1.x, source1.y, 12, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.strokeStyle = '#00bcd4';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.fillStyle = '#00bcd4';
+            ctx.font = 'bold 10px Segoe UI';
+            ctx.fillText('Q1', source1.x - 8, source1.y + 4);
+
+            // Source 2
+            ctx.beginPath();
+            ctx.arc(source2.x, source2.y, 12, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.strokeStyle = '#00bcd4';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.fillStyle = '#00bcd4';
+            ctx.fillText('Q2', source2.x - 8, source2.y + 4);
+
+            // Distance line
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(source1.x, source1.y);
+            ctx.lineTo(source2.x, source2.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Distance label
+            const d = Math.sqrt((source2.x - source1.x)**2 + (source2.y - source1.y)**2);
+            const midX = (source1.x + source2.x) / 2;
+            const midY = (source1.y + source2.y) / 2;
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('d = ' + Math.round(d) + ' px', midX - 25, midY - 10);
+        }
+
+        function draw() {
+            drawInterference();
+            drawWaveRings();
+            drawMaximaLines();
+            drawSources();
+        }
+
+        function animateFrame() {
+            if (animate) {
+                time += 0.03;
+            }
+            draw();
+            requestAnimationFrame(animateFrame);
+        }
+
+        function updateSourceDistance() {
+            const midX = canvas.width / 2;
+            const midY = canvas.height / 2;
+            source1.x = midX - sourceDistance / 2;
+            source2.x = midX + sourceDistance / 2;
+            source1.y = midY;
+            source2.y = midY;
+        }
+
+        // Event listeners
+        document.getElementById('wavelength').addEventListener('input', (e) => {
+            wavelength = parseInt(e.target.value);
+            document.getElementById('wavelengthVal').textContent = wavelength + ' px';
+        });
+
+        document.getElementById('frequency').addEventListener('input', (e) => {
+            frequency = parseFloat(e.target.value);
+            document.getElementById('frequencyVal').textContent = frequency.toFixed(1) + ' Hz';
+        });
+
+        document.getElementById('amplitude').addEventListener('input', (e) => {
+            amplitude = parseFloat(e.target.value);
+            document.getElementById('amplitudeVal').textContent = amplitude.toFixed(1);
+        });
+
+        document.getElementById('distance').addEventListener('input', (e) => {
+            sourceDistance = parseInt(e.target.value);
+            document.getElementById('distanceVal').textContent = sourceDistance + ' px';
+            updateSourceDistance();
+        });
+
+        document.getElementById('showRings').addEventListener('change', (e) => {
+            showRings = e.target.checked;
+        });
+
+        document.getElementById('showMaxima').addEventListener('change', (e) => {
+            showMaxima = e.target.checked;
+        });
+
+        document.getElementById('animate').addEventListener('change', (e) => {
+            animate = e.target.checked;
+        });
+
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                colorScheme = btn.dataset.scheme;
+            });
+        });
+
+        // Drag sources
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (Math.hypot(x - source1.x, y - source1.y) < 20) {
+                draggingSource = source1;
+            } else if (Math.hypot(x - source2.x, y - source2.y) < 20) {
+                draggingSource = source2;
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!draggingSource) return;
+            const rect = canvas.getBoundingClientRect();
+            draggingSource.x = e.clientX - rect.left;
+            draggingSource.y = e.clientY - rect.top;
+
+            const d = Math.sqrt((source2.x - source1.x)**2 + (source2.y - source1.y)**2);
+            document.getElementById('distance').value = d;
+            document.getElementById('distanceVal').textContent = Math.round(d) + ' px';
+        });
+
+        canvas.addEventListener('mouseup', () => { draggingSource = null; });
+        canvas.addEventListener('mouseleave', () => { draggingSource = null; });
+
+        animateFrame();
+    </script>
+</body>
+</html>

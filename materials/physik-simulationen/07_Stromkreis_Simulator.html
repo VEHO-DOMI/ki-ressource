@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stromkreis Simulator - Ohmsches Gesetz</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a237e 0%, #0d1b2a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #ffc107; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-wrapper { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+        .canvas-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        canvas { display: block; border-radius: 10px; background: #0a0a15; }
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .panel h3 { font-size: 1em; color: #ffc107; margin-bottom: 12px; }
+        .control-group { margin-bottom: 15px; }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #b0bec5;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #ffc107;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .value-display { color: #ffc107; font-weight: bold; }
+        .meter {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .meter-label { font-size: 0.8em; color: #90a4ae; margin-bottom: 5px; }
+        .meter-value { font-size: 1.8em; font-family: 'Courier New', monospace; font-weight: bold; }
+        .meter-unit { font-size: 0.9em; color: #90a4ae; }
+        .meter.voltage .meter-value { color: #f44336; }
+        .meter.current .meter-value { color: #4caf50; }
+        .meter.resistance .meter-value { color: #2196f3; }
+        .meter.power .meter-value { color: #ff9800; }
+        .formula-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .formula {
+            font-size: 1.4em;
+            font-family: 'Times New Roman', serif;
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+        .formula-variants {
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.9em;
+            color: #b0bec5;
+        }
+        .circuit-mode {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .mode-btn {
+            padding: 10px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .mode-btn:hover { background: rgba(255,255,255,0.2); }
+        .mode-btn.active { border-color: #ffc107; background: rgba(255, 193, 7, 0.2); }
+        .info-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #b0bec5;
+        }
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .switch {
+            width: 50px;
+            height: 26px;
+            background: #444;
+            border-radius: 13px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+        .switch.on { background: #4caf50; }
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+        .switch.on::after { left: 26px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Stromkreis Simulator</h1>
+        <p class="subtitle">3. Klasse Physik – Ohmsches Gesetz interaktiv erleben</p>
+
+        <div class="simulation-wrapper">
+            <div class="canvas-container">
+                <canvas id="circuitCanvas" width="650" height="480"></canvas>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>🔌 Schaltung</h3>
+                    <div class="switch-container">
+                        <span>Schalter</span>
+                        <div class="switch on" id="circuitSwitch" onclick="toggleSwitch()"></div>
+                    </div>
+                    <div class="circuit-mode">
+                        <button class="mode-btn active" data-mode="simple">Einfach</button>
+                        <button class="mode-btn" data-mode="series">Reihenschaltung</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>⚙️ Parameter</h3>
+                    <div class="control-group">
+                        <label>Spannung U <span class="value-display" id="voltageVal">9 V</span></label>
+                        <input type="range" id="voltage" min="1" max="24" value="9">
+                    </div>
+                    <div class="control-group">
+                        <label>Widerstand R₁ <span class="value-display" id="resistance1Val">100 Ω</span></label>
+                        <input type="range" id="resistance1" min="10" max="1000" value="100">
+                    </div>
+                    <div class="control-group" id="resistance2Group" style="display: none;">
+                        <label>Widerstand R₂ <span class="value-display" id="resistance2Val">100 Ω</span></label>
+                        <input type="range" id="resistance2" min="10" max="1000" value="100">
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>📊 Messwerte</h3>
+                    <div class="meter voltage">
+                        <div class="meter-label">Spannung</div>
+                        <div class="meter-value" id="meterVoltage">9.0</div>
+                        <div class="meter-unit">Volt (V)</div>
+                    </div>
+                    <div class="meter current">
+                        <div class="meter-label">Stromstärke</div>
+                        <div class="meter-value" id="meterCurrent">90.0</div>
+                        <div class="meter-unit">Milliampere (mA)</div>
+                    </div>
+                    <div class="meter resistance">
+                        <div class="meter-label">Gesamtwiderstand</div>
+                        <div class="meter-value" id="meterResistance">100</div>
+                        <div class="meter-unit">Ohm (Ω)</div>
+                    </div>
+                    <div class="meter power">
+                        <div class="meter-label">Leistung</div>
+                        <div class="meter-value" id="meterPower">0.81</div>
+                        <div class="meter-unit">Watt (W)</div>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <div class="formula">U = R · I</div>
+                    <div class="formula-variants">
+                        <span>I = U/R</span>
+                        <span>R = U/I</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Ohmsches Gesetz:</strong> Die Stromstärke I ist direkt proportional zur Spannung U und umgekehrt proportional zum Widerstand R.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('circuitCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let voltage = 9;
+        let resistance1 = 100;
+        let resistance2 = 100;
+        let circuitMode = 'simple';
+        let switchOn = true;
+        let electronPositions = [];
+        let time = 0;
+
+        // Initialize electrons
+        function initElectrons() {
+            electronPositions = [];
+            const numElectrons = 20;
+            for (let i = 0; i < numElectrons; i++) {
+                electronPositions.push(i / numElectrons);
+            }
+        }
+
+        function getTotalResistance() {
+            if (circuitMode === 'simple') {
+                return resistance1;
+            } else {
+                return resistance1 + resistance2;
+            }
+        }
+
+        function getCurrent() {
+            if (!switchOn) return 0;
+            return (voltage / getTotalResistance()) * 1000; // in mA
+        }
+
+        function getPower() {
+            if (!switchOn) return 0;
+            const I = getCurrent() / 1000; // back to Amperes
+            return voltage * I;
+        }
+
+        function updateMeters() {
+            const current = getCurrent();
+            const totalR = getTotalResistance();
+            const power = getPower();
+
+            document.getElementById('meterVoltage').textContent = voltage.toFixed(1);
+            document.getElementById('meterCurrent').textContent = current.toFixed(1);
+            document.getElementById('meterResistance').textContent = totalR;
+            document.getElementById('meterPower').textContent = power.toFixed(2);
+        }
+
+        function drawBattery(x, y) {
+            // Battery body
+            ctx.fillStyle = '#333';
+            ctx.fillRect(x - 25, y - 40, 50, 80);
+
+            // Positive terminal
+            ctx.fillStyle = '#f44336';
+            ctx.fillRect(x - 10, y - 50, 20, 10);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('+', x - 5, y - 55);
+
+            // Negative terminal
+            ctx.fillStyle = '#333';
+            ctx.fillRect(x - 10, y + 40, 20, 10);
+            ctx.fillStyle = '#fff';
+            ctx.fillText('−', x - 5, y + 60);
+
+            // Voltage label
+            ctx.fillStyle = '#f44336';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText(voltage + 'V', x - 12, y + 5);
+        }
+
+        function drawResistor(x, y, horizontal, value, label) {
+            ctx.strokeStyle = '#78909c';
+            ctx.lineWidth = 3;
+
+            if (horizontal) {
+                // Zigzag pattern
+                ctx.beginPath();
+                ctx.moveTo(x - 40, y);
+                const zigzagWidth = 80;
+                const zigzagHeight = 15;
+                const segments = 6;
+                for (let i = 0; i <= segments; i++) {
+                    const xPos = x - 40 + (i / segments) * zigzagWidth;
+                    const yPos = y + (i % 2 === 0 ? -zigzagHeight : zigzagHeight);
+                    ctx.lineTo(xPos, yPos);
+                }
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = '#2196f3';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText(label + ' = ' + value + 'Ω', x - 30, y - 25);
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(x, y - 40);
+                const segments = 6;
+                for (let i = 0; i <= segments; i++) {
+                    const yPos = y - 40 + (i / segments) * 80;
+                    const xPos = x + (i % 2 === 0 ? -15 : 15);
+                    ctx.lineTo(xPos, yPos);
+                }
+                ctx.stroke();
+
+                ctx.fillStyle = '#2196f3';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText(label + ' = ' + value + 'Ω', x + 25, y);
+            }
+        }
+
+        function drawSwitch(x, y, isOn) {
+            ctx.strokeStyle = '#78909c';
+            ctx.lineWidth = 3;
+
+            // Fixed contact
+            ctx.beginPath();
+            ctx.arc(x - 20, y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#78909c';
+            ctx.fill();
+
+            // Moving contact
+            ctx.beginPath();
+            ctx.arc(x + 20, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Switch arm
+            if (isOn) {
+                ctx.beginPath();
+                ctx.moveTo(x - 15, y);
+                ctx.lineTo(x + 15, y);
+                ctx.strokeStyle = '#4caf50';
+                ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(x - 15, y);
+                ctx.lineTo(x + 10, y - 20);
+                ctx.strokeStyle = '#f44336';
+                ctx.stroke();
+            }
+        }
+
+        function drawBulb(x, y, brightness) {
+            // Bulb glass
+            ctx.beginPath();
+            ctx.arc(x, y, 25, 0, Math.PI * 2);
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, 30);
+            gradient.addColorStop(0, `rgba(255, 235, 59, ${brightness})`);
+            gradient.addColorStop(0.5, `rgba(255, 193, 7, ${brightness * 0.5})`);
+            gradient.addColorStop(1, 'rgba(100, 100, 100, 0.3)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Filament
+            ctx.strokeStyle = brightness > 0.1 ? '#ff9800' : '#666';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x - 10, y + 10);
+            ctx.lineTo(x - 5, y - 5);
+            ctx.lineTo(x, y + 5);
+            ctx.lineTo(x + 5, y - 5);
+            ctx.lineTo(x + 10, y + 10);
+            ctx.stroke();
+
+            // Base
+            ctx.fillStyle = '#555';
+            ctx.fillRect(x - 12, y + 25, 24, 15);
+        }
+
+        function drawWire(points, hasElectrons = true) {
+            ctx.strokeStyle = '#546e7a';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.stroke();
+
+            // Draw electrons
+            if (hasElectrons && switchOn) {
+                const current = getCurrent();
+                const speed = current * 0.0003;
+
+                ctx.fillStyle = '#42a5f5';
+                for (let i = 0; i < electronPositions.length; i++) {
+                    electronPositions[i] = (electronPositions[i] + speed) % 1;
+                    const pos = electronPositions[i];
+
+                    // Calculate position along path
+                    let totalLength = 0;
+                    const segments = [];
+                    for (let j = 1; j < points.length; j++) {
+                        const dx = points[j].x - points[j-1].x;
+                        const dy = points[j].y - points[j-1].y;
+                        const len = Math.sqrt(dx*dx + dy*dy);
+                        segments.push({ start: points[j-1], end: points[j], length: len });
+                        totalLength += len;
+                    }
+
+                    let targetDist = pos * totalLength;
+                    let accumulatedDist = 0;
+                    for (const seg of segments) {
+                        if (accumulatedDist + seg.length >= targetDist) {
+                            const t = (targetDist - accumulatedDist) / seg.length;
+                            const ex = seg.start.x + t * (seg.end.x - seg.start.x);
+                            const ey = seg.start.y + t * (seg.end.y - seg.start.y);
+
+                            ctx.beginPath();
+                            ctx.arc(ex, ey, 4, 0, Math.PI * 2);
+                            ctx.fill();
+                            break;
+                        }
+                        accumulatedDist += seg.length;
+                    }
+                }
+            }
+        }
+
+        function drawSimpleCircuit() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Circuit path
+            const path = [
+                {x: 100, y: centerY - 100},  // Top left
+                {x: centerX, y: centerY - 100},  // Top center
+                {x: canvas.width - 100, y: centerY - 100},  // Top right
+                {x: canvas.width - 100, y: centerY + 100},  // Bottom right
+                {x: centerX, y: centerY + 100},  // Bottom center
+                {x: 100, y: centerY + 100},  // Bottom left
+                {x: 100, y: centerY - 100}   // Back to top
+            ];
+
+            drawWire(path);
+
+            // Components
+            drawBattery(100, centerY);
+            drawSwitch(centerX, centerY - 100, switchOn);
+            drawResistor(canvas.width - 100, centerY, false, resistance1, 'R');
+
+            const brightness = switchOn ? Math.min(1, getCurrent() / 200) : 0;
+            drawBulb(centerX, centerY + 100, brightness);
+
+            // Labels
+            ctx.fillStyle = '#90a4ae';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('Spannungsquelle', 60, centerY + 80);
+            ctx.fillText('Glühlampe', centerX - 30, centerY + 160);
+            ctx.fillText('Schalter', centerX - 20, centerY - 120);
+        }
+
+        function drawSeriesCircuit() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            const path = [
+                {x: 100, y: centerY - 120},
+                {x: canvas.width - 100, y: centerY - 120},
+                {x: canvas.width - 100, y: centerY},
+                {x: canvas.width - 100, y: centerY + 120},
+                {x: 100, y: centerY + 120},
+                {x: 100, y: centerY - 120}
+            ];
+
+            drawWire(path);
+
+            drawBattery(100, centerY);
+            drawSwitch(centerX, centerY - 120, switchOn);
+            drawResistor(canvas.width - 100, centerY - 60, false, resistance1, 'R₁');
+            drawResistor(canvas.width - 100, centerY + 60, false, resistance2, 'R₂');
+
+            const brightness = switchOn ? Math.min(1, getCurrent() / 100) : 0;
+            drawBulb(centerX, centerY + 120, brightness);
+
+            // Series info
+            ctx.fillStyle = '#ffc107';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText('Rges = R₁ + R₂ = ' + getTotalResistance() + ' Ω', centerX - 60, centerY + 180);
+        }
+
+        function draw() {
+            ctx.fillStyle = '#0a0a15';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Title
+            ctx.fillStyle = '#ffc107';
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillText(circuitMode === 'simple' ? 'Einfacher Stromkreis' : 'Reihenschaltung', 20, 30);
+
+            if (circuitMode === 'simple') {
+                drawSimpleCircuit();
+            } else {
+                drawSeriesCircuit();
+            }
+
+            // Current direction arrow
+            if (switchOn && getCurrent() > 0) {
+                ctx.fillStyle = '#4caf50';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('Stromrichtung →', 20, canvas.height - 20);
+                ctx.fillStyle = '#42a5f5';
+                ctx.fillText('Elektronenfluss ←', 20, canvas.height - 40);
+            }
+
+            updateMeters();
+        }
+
+        function toggleSwitch() {
+            switchOn = !switchOn;
+            document.getElementById('circuitSwitch').classList.toggle('on', switchOn);
+        }
+
+        function animate() {
+            time += 0.016;
+            draw();
+            requestAnimationFrame(animate);
+        }
+
+        // Event listeners
+        document.getElementById('voltage').addEventListener('input', (e) => {
+            voltage = parseInt(e.target.value);
+            document.getElementById('voltageVal').textContent = voltage + ' V';
+        });
+
+        document.getElementById('resistance1').addEventListener('input', (e) => {
+            resistance1 = parseInt(e.target.value);
+            document.getElementById('resistance1Val').textContent = resistance1 + ' Ω';
+        });
+
+        document.getElementById('resistance2').addEventListener('input', (e) => {
+            resistance2 = parseInt(e.target.value);
+            document.getElementById('resistance2Val').textContent = resistance2 + ' Ω';
+        });
+
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                circuitMode = btn.dataset.mode;
+                document.getElementById('resistance2Group').style.display =
+                    circuitMode === 'series' ? 'block' : 'none';
+            });
+        });
+
+        initElectrons();
+        animate();
+    </script>
+</body>
+</html>

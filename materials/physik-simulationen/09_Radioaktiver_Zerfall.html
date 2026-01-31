@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radioaktiver Zerfall - Halbwertszeit</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #76ff03; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-wrapper { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+        .main-area { display: flex; flex-direction: column; gap: 15px; }
+        .canvas-container {
+            background: rgba(0,0,0,0.4);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        canvas { display: block; border-radius: 10px; }
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .panel h3 { font-size: 1em; color: #76ff03; margin-bottom: 12px; }
+        .isotope-select {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .isotope-btn {
+            padding: 10px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .isotope-btn:hover { background: rgba(255,255,255,0.2); }
+        .isotope-btn.active { border-color: #76ff03; background: rgba(118, 255, 3, 0.2); }
+        .isotope-btn .name { font-weight: bold; }
+        .isotope-btn .halflife { font-size: 0.8em; color: #90a4ae; }
+        .control-group { margin-bottom: 15px; }
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #b0bec5;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #76ff03;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .value-display { color: #76ff03; font-weight: bold; }
+        .stats-display {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9em;
+        }
+        .stats-row:last-child { border-bottom: none; }
+        .stats-row .label { color: #90a4ae; }
+        .stats-row .value { font-family: monospace; font-weight: bold; }
+        .stats-row .value.active { color: #76ff03; }
+        .stats-row .value.decayed { color: #ff5252; }
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: #76ff03; color: #1a1a1a; font-weight: bold; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn:hover { opacity: 0.9; }
+        .formula-box {
+            background: rgba(118, 255, 3, 0.1);
+            border: 1px solid rgba(118, 255, 3, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .formula {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+            color: #76ff03;
+        }
+        .info-box {
+            background: rgba(118, 255, 3, 0.1);
+            border-left: 4px solid #76ff03;
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #b0bec5;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+        .legend span { display: flex; align-items: center; gap: 5px; }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☢️ Radioaktiver Zerfall</h1>
+        <p class="subtitle">8. Klasse Physik – Zerfallsgesetz und Halbwertszeit</p>
+
+        <div class="simulation-wrapper">
+            <div class="main-area">
+                <div class="canvas-container">
+                    <canvas id="atomCanvas" width="650" height="300"></canvas>
+                    <div class="legend">
+                        <span><div class="legend-dot" style="background: #76ff03;"></div> Aktive Kerne</span>
+                        <span><div class="legend-dot" style="background: #ff5252;"></div> Zerfallene Kerne</span>
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="graphCanvas" width="650" height="180"></canvas>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>⚛️ Isotop wählen</h3>
+                    <div class="isotope-select">
+                        <button class="isotope-btn active" data-halflife="5" data-name="Demo-Isotop">
+                            <span class="name">Demo-Isotop</span>
+                            <span class="halflife">T½ = 5 Sekunden</span>
+                        </button>
+                        <button class="isotope-btn" data-halflife="8" data-name="Iod-131">
+                            <span class="name">¹³¹I (Iod-131)</span>
+                            <span class="halflife">T½ = 8 Tage (sim: 8s)</span>
+                        </button>
+                        <button class="isotope-btn" data-halflife="30" data-name="Cäsium-137">
+                            <span class="name">¹³⁷Cs (Cäsium-137)</span>
+                            <span class="halflife">T½ = 30 Jahre (sim: 30s)</span>
+                        </button>
+                        <button class="isotope-btn" data-halflife="3" data-name="Radon-222">
+                            <span class="name">²²²Rn (Radon-222)</span>
+                            <span class="halflife">T½ = 3.8 Tage (sim: 4s)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>⚙️ Einstellungen</h3>
+                    <div class="control-group">
+                        <label>Anfangsanzahl N₀ <span class="value-display" id="n0Val">200</span></label>
+                        <input type="range" id="initialAtoms" min="50" max="500" step="50" value="200">
+                    </div>
+                    <div class="control-group">
+                        <label>Zeitraffer <span class="value-display" id="speedVal">1x</span></label>
+                        <input type="range" id="simSpeed" min="1" max="5" value="1">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="startSimulation()">▶ Start</button>
+                        <button class="btn btn-secondary" onclick="resetSimulation()">↺ Reset</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>📊 Statistik</h3>
+                    <div class="stats-display">
+                        <div class="stats-row">
+                            <span class="label">Zeit t:</span>
+                            <span class="value" id="timeValue">0.0 s</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="label">Aktive Kerne N(t):</span>
+                            <span class="value active" id="activeValue">200</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="label">Zerfallene Kerne:</span>
+                            <span class="value decayed" id="decayedValue">0</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="label">Vergangene Halbwertszeiten:</span>
+                            <span class="value" id="halflifesPassed">0</span>
+                        </div>
+                        <div class="stats-row">
+                            <span class="label">Theoretisch N(t):</span>
+                            <span class="value" id="theoreticalValue">200</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <div class="formula">N(t) = N₀ · (½)^(t/T½)</div>
+                    <div style="font-size: 0.8em; color: #90a4ae; margin-top: 8px;">
+                        = N₀ · e^(-λt)
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Halbwertszeit T½:</strong> Die Zeit, nach der im Durchschnitt die Hälfte aller Kerne zerfallen ist. Der Zerfall ist ein statistischer Prozess – jeder einzelne Kern zerfällt zufällig!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const atomCanvas = document.getElementById('atomCanvas');
+        const atomCtx = atomCanvas.getContext('2d');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const graphCtx = graphCanvas.getContext('2d');
+
+        let initialAtoms = 200;
+        let halfLife = 5;
+        let simSpeed = 1;
+        let isotopeName = 'Demo-Isotop';
+
+        let atoms = [];
+        let time = 0;
+        let isRunning = false;
+        let history = [];
+
+        class Atom {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.decayed = false;
+                this.decayTime = null;
+                this.pulsePhase = Math.random() * Math.PI * 2;
+            }
+
+            update(dt) {
+                if (this.decayed) return;
+
+                // Probability of decay in this time step
+                const lambda = Math.log(2) / halfLife;
+                const decayProb = 1 - Math.exp(-lambda * dt * simSpeed);
+
+                if (Math.random() < decayProb) {
+                    this.decayed = true;
+                    this.decayTime = time;
+                }
+
+                this.pulsePhase += dt * 3;
+            }
+
+            draw(ctx) {
+                const radius = 6;
+                const pulse = Math.sin(this.pulsePhase) * 0.3 + 1;
+
+                if (this.decayed) {
+                    // Decayed atom - red, no pulse
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, radius * 0.8, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 82, 82, 0.6)';
+                    ctx.fill();
+                } else {
+                    // Active atom - green, pulsing
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, radius * pulse * 1.5);
+                    gradient.addColorStop(0, 'rgba(118, 255, 3, 0.9)');
+                    gradient.addColorStop(0.5, 'rgba(118, 255, 3, 0.5)');
+                    gradient.addColorStop(1, 'rgba(118, 255, 3, 0)');
+
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, radius * pulse * 1.5, 0, Math.PI * 2);
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = '#76ff03';
+                    ctx.fill();
+                }
+            }
+        }
+
+        function initAtoms() {
+            atoms = [];
+            const cols = Math.ceil(Math.sqrt(initialAtoms * 2));
+            const rows = Math.ceil(initialAtoms / cols);
+            const spacingX = (atomCanvas.width - 40) / cols;
+            const spacingY = (atomCanvas.height - 40) / rows;
+
+            for (let i = 0; i < initialAtoms; i++) {
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const x = 20 + col * spacingX + spacingX / 2 + (Math.random() - 0.5) * spacingX * 0.5;
+                const y = 20 + row * spacingY + spacingY / 2 + (Math.random() - 0.5) * spacingY * 0.5;
+                atoms.push(new Atom(x, y));
+            }
+        }
+
+        function getActiveCount() {
+            return atoms.filter(a => !a.decayed).length;
+        }
+
+        function getTheoreticalCount() {
+            return initialAtoms * Math.pow(0.5, time / halfLife);
+        }
+
+        function updateStats() {
+            const active = getActiveCount();
+            const decayed = initialAtoms - active;
+            const theoretical = getTheoreticalCount();
+            const halflifesPassed = Math.floor(time / halfLife);
+
+            document.getElementById('timeValue').textContent = time.toFixed(1) + ' s';
+            document.getElementById('activeValue').textContent = active;
+            document.getElementById('decayedValue').textContent = decayed;
+            document.getElementById('halflifesPassed').textContent = halflifesPassed;
+            document.getElementById('theoreticalValue').textContent = Math.round(theoretical);
+        }
+
+        function drawAtoms() {
+            atomCtx.fillStyle = '#111';
+            atomCtx.fillRect(0, 0, atomCanvas.width, atomCanvas.height);
+
+            // Draw all atoms
+            for (const atom of atoms) {
+                atom.draw(atomCtx);
+            }
+
+            // Info text
+            atomCtx.fillStyle = '#90a4ae';
+            atomCtx.font = '12px Segoe UI';
+            atomCtx.fillText(`${isotopeName} | T½ = ${halfLife}s | N₀ = ${initialAtoms}`, 10, 20);
+        }
+
+        function drawGraph() {
+            graphCtx.fillStyle = '#111';
+            graphCtx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+            const w = graphCanvas.width;
+            const h = graphCanvas.height;
+            const padding = { left: 50, right: 20, top: 20, bottom: 30 };
+            const graphW = w - padding.left - padding.right;
+            const graphH = h - padding.top - padding.bottom;
+
+            // Axes
+            graphCtx.strokeStyle = '#444';
+            graphCtx.lineWidth = 1;
+            graphCtx.beginPath();
+            graphCtx.moveTo(padding.left, padding.top);
+            graphCtx.lineTo(padding.left, h - padding.bottom);
+            graphCtx.lineTo(w - padding.right, h - padding.bottom);
+            graphCtx.stroke();
+
+            // Labels
+            graphCtx.fillStyle = '#90a4ae';
+            graphCtx.font = '11px Segoe UI';
+            graphCtx.fillText('N(t)', 10, padding.top + 10);
+            graphCtx.fillText('t (s)', w - padding.right - 20, h - 5);
+            graphCtx.fillText(initialAtoms.toString(), 5, padding.top + 5);
+            graphCtx.fillText('0', 5, h - padding.bottom + 5);
+
+            // Theoretical curve
+            const maxTime = Math.max(halfLife * 5, time + halfLife);
+            graphCtx.beginPath();
+            graphCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            graphCtx.setLineDash([5, 5]);
+            for (let t = 0; t <= maxTime; t += 0.5) {
+                const x = padding.left + (t / maxTime) * graphW;
+                const y = padding.top + (1 - Math.pow(0.5, t / halfLife)) * graphH;
+                if (t === 0) graphCtx.moveTo(x, y);
+                else graphCtx.lineTo(x, y);
+            }
+            graphCtx.stroke();
+            graphCtx.setLineDash([]);
+
+            // Actual data
+            if (history.length > 1) {
+                graphCtx.beginPath();
+                graphCtx.strokeStyle = '#76ff03';
+                graphCtx.lineWidth = 2;
+                for (let i = 0; i < history.length; i++) {
+                    const x = padding.left + (history[i].t / maxTime) * graphW;
+                    const y = padding.top + (1 - history[i].n / initialAtoms) * graphH;
+                    if (i === 0) graphCtx.moveTo(x, y);
+                    else graphCtx.lineTo(x, y);
+                }
+                graphCtx.stroke();
+            }
+
+            // Half-life markers
+            graphCtx.fillStyle = 'rgba(118, 255, 3, 0.3)';
+            graphCtx.font = '10px Segoe UI';
+            for (let i = 1; i <= 5; i++) {
+                const t = i * halfLife;
+                if (t <= maxTime) {
+                    const x = padding.left + (t / maxTime) * graphW;
+                    graphCtx.setLineDash([3, 3]);
+                    graphCtx.strokeStyle = 'rgba(118, 255, 3, 0.3)';
+                    graphCtx.beginPath();
+                    graphCtx.moveTo(x, padding.top);
+                    graphCtx.lineTo(x, h - padding.bottom);
+                    graphCtx.stroke();
+                    graphCtx.setLineDash([]);
+                    graphCtx.fillText(`${i}T½`, x - 10, h - 5);
+                }
+            }
+        }
+
+        function update() {
+            if (!isRunning) return;
+
+            const dt = 0.05;
+            time += dt * simSpeed;
+
+            for (const atom of atoms) {
+                atom.update(dt);
+            }
+
+            // Record history
+            if (history.length === 0 || time - history[history.length - 1].t >= 0.2) {
+                history.push({ t: time, n: getActiveCount() });
+            }
+
+            drawAtoms();
+            drawGraph();
+            updateStats();
+
+            requestAnimationFrame(update);
+        }
+
+        function startSimulation() {
+            if (!isRunning) {
+                isRunning = true;
+                update();
+            }
+        }
+
+        function resetSimulation() {
+            isRunning = false;
+            time = 0;
+            history = [];
+            initAtoms();
+            drawAtoms();
+            drawGraph();
+            updateStats();
+        }
+
+        // Event listeners
+        document.querySelectorAll('.isotope-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.isotope-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                halfLife = parseFloat(btn.dataset.halflife);
+                isotopeName = btn.dataset.name;
+                resetSimulation();
+            });
+        });
+
+        document.getElementById('initialAtoms').addEventListener('input', (e) => {
+            initialAtoms = parseInt(e.target.value);
+            document.getElementById('n0Val').textContent = initialAtoms;
+            resetSimulation();
+        });
+
+        document.getElementById('simSpeed').addEventListener('input', (e) => {
+            simSpeed = parseInt(e.target.value);
+            document.getElementById('speedVal').textContent = simSpeed + 'x';
+        });
+
+        // Initialize
+        initAtoms();
+        drawAtoms();
+        drawGraph();
+        updateStats();
+    </script>
+</body>
+</html>

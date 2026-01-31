@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendel - Energieerhaltung</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            color: #ffd54f;
+        }
+        .subtitle {
+            text-align: center;
+            color: #90a4ae;
+            margin-bottom: 20px;
+        }
+        .simulation-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+        .canvas-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        canvas {
+            display: block;
+            background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+            border-radius: 10px;
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .energy-display {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .energy-display h3 {
+            font-size: 1em;
+            color: #ffd54f;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .energy-bar-container {
+            margin-bottom: 12px;
+        }
+        .energy-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            margin-bottom: 4px;
+        }
+        .energy-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .energy-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.05s ease;
+        }
+        .energy-fill.potential {
+            background: linear-gradient(90deg, #42a5f5, #1e88e5);
+        }
+        .energy-fill.kinetic {
+            background: linear-gradient(90deg, #ef5350, #e53935);
+        }
+        .energy-fill.total {
+            background: linear-gradient(90deg, #66bb6a, #43a047);
+        }
+        .controls {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .controls h3 {
+            font-size: 1em;
+            color: #ffd54f;
+            margin-bottom: 12px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group label {
+            display: block;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            color: #b0bec5;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #ffd54f;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .value-display {
+            text-align: right;
+            font-size: 0.9em;
+            color: #ffd54f;
+            margin-top: 3px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #ffd54f;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .physics-values {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .physics-values h3 {
+            font-size: 1em;
+            color: #ffd54f;
+            margin-bottom: 12px;
+        }
+        .physics-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85em;
+        }
+        .physics-row:last-child {
+            border-bottom: none;
+        }
+        .physics-row .label { color: #90a4ae; }
+        .physics-row .value { color: #fff; font-family: monospace; }
+        .info-box {
+            background: rgba(255, 213, 79, 0.1);
+            border-left: 4px solid #ffd54f;
+            padding: 12px;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+            color: #b0bec5;
+        }
+        .instruction {
+            text-align: center;
+            color: #90a4ae;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Pendel & Energieerhaltung</h1>
+        <p class="subtitle">5. Klasse Physik – Ziehe das Pendel und beobachte die Energieumwandlung</p>
+
+        <div class="simulation-wrapper">
+            <div class="canvas-container">
+                <canvas id="pendulumCanvas" width="650" height="500"></canvas>
+                <p class="instruction">🖱️ Klicke und ziehe die Kugel, um das Pendel auszulenken</p>
+            </div>
+
+            <div class="sidebar">
+                <div class="energy-display">
+                    <h3>⚡ Energieverteilung</h3>
+                    <div class="energy-bar-container">
+                        <div class="energy-label">
+                            <span>Potentielle Energie (Epot)</span>
+                            <span id="potValue">0 J</span>
+                        </div>
+                        <div class="energy-bar">
+                            <div class="energy-fill potential" id="potBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="energy-bar-container">
+                        <div class="energy-label">
+                            <span>Kinetische Energie (Ekin)</span>
+                            <span id="kinValue">0 J</span>
+                        </div>
+                        <div class="energy-bar">
+                            <div class="energy-fill kinetic" id="kinBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="energy-bar-container">
+                        <div class="energy-label">
+                            <span>Gesamtenergie (Eges)</span>
+                            <span id="totalValue">0 J</span>
+                        </div>
+                        <div class="energy-bar">
+                            <div class="energy-fill total" id="totalBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <h3>⚙️ Parameter</h3>
+                    <div class="control-group">
+                        <label>Pendellänge (L)</label>
+                        <input type="range" id="lengthSlider" min="100" max="300" value="200">
+                        <div class="value-display" id="lengthValue">2.0 m</div>
+                    </div>
+                    <div class="control-group">
+                        <label>Masse (m)</label>
+                        <input type="range" id="massSlider" min="1" max="10" value="5">
+                        <div class="value-display" id="massValue">5.0 kg</div>
+                    </div>
+                    <div class="control-group">
+                        <label>Dämpfung</label>
+                        <input type="range" id="dampingSlider" min="0" max="100" value="0">
+                        <div class="value-display" id="dampingValue">0%</div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="resetPendulum()">↺ Reset</button>
+                        <button class="btn btn-secondary" id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+                    </div>
+                </div>
+
+                <div class="physics-values">
+                    <h3>📊 Messwerte</h3>
+                    <div class="physics-row">
+                        <span class="label">Winkel θ</span>
+                        <span class="value" id="angleValue">0.0°</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Geschwindigkeit v</span>
+                        <span class="value" id="velocityValue">0.00 m/s</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Höhe h</span>
+                        <span class="value" id="heightValue">0.00 m</span>
+                    </div>
+                    <div class="physics-row">
+                        <span class="label">Periode T</span>
+                        <span class="value" id="periodValue">0.00 s</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Energieerhaltungssatz:</strong><br>
+                    E<sub>pot</sub> + E<sub>kin</sub> = E<sub>ges</sub> = const.<br>
+                    Die Gesamtenergie bleibt ohne Dämpfung konstant!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('pendulumCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const g = 9.81;
+        const pivotX = canvas.width / 2;
+        const pivotY = 60;
+
+        let length = 200;
+        let mass = 5;
+        let damping = 0;
+        let angle = 0;
+        let angularVelocity = 0;
+        let isPaused = false;
+        let isDragging = false;
+        let maxEnergy = 0;
+        let trail = [];
+
+        const lengthSlider = document.getElementById('lengthSlider');
+        const massSlider = document.getElementById('massSlider');
+        const dampingSlider = document.getElementById('dampingSlider');
+
+        function getBobPosition() {
+            return {
+                x: pivotX + length * Math.sin(angle),
+                y: pivotY + length * Math.cos(angle)
+            };
+        }
+
+        function getHeight() {
+            return length * (1 - Math.cos(angle)) / 100; // Convert to meters
+        }
+
+        function getPotentialEnergy() {
+            return mass * g * getHeight();
+        }
+
+        function getKineticEnergy() {
+            const v = (length / 100) * Math.abs(angularVelocity);
+            return 0.5 * mass * v * v;
+        }
+
+        function updatePhysics() {
+            if (isDragging || isPaused) return;
+
+            const lengthMeters = length / 100;
+            const acceleration = -(g / lengthMeters) * Math.sin(angle);
+            angularVelocity += acceleration * 0.016;
+            angularVelocity *= (1 - damping * 0.0005);
+            angle += angularVelocity * 0.016;
+        }
+
+        function updateEnergyDisplay() {
+            const pot = getPotentialEnergy();
+            const kin = getKineticEnergy();
+            const total = pot + kin;
+
+            if (total > maxEnergy) maxEnergy = total;
+            const displayMax = maxEnergy > 0 ? maxEnergy : 1;
+
+            document.getElementById('potValue').textContent = pot.toFixed(1) + ' J';
+            document.getElementById('kinValue').textContent = kin.toFixed(1) + ' J';
+            document.getElementById('totalValue').textContent = total.toFixed(1) + ' J';
+
+            document.getElementById('potBar').style.width = (pot / displayMax * 100) + '%';
+            document.getElementById('kinBar').style.width = (kin / displayMax * 100) + '%';
+            document.getElementById('totalBar').style.width = (total / displayMax * 100) + '%';
+
+            const v = (length / 100) * Math.abs(angularVelocity);
+            const period = 2 * Math.PI * Math.sqrt((length / 100) / g);
+
+            document.getElementById('angleValue').textContent = (angle * 180 / Math.PI).toFixed(1) + '°';
+            document.getElementById('velocityValue').textContent = v.toFixed(2) + ' m/s';
+            document.getElementById('heightValue').textContent = getHeight().toFixed(2) + ' m';
+            document.getElementById('periodValue').textContent = period.toFixed(2) + ' s';
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw reference line (equilibrium)
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.beginPath();
+            ctx.moveTo(pivotX, pivotY);
+            ctx.lineTo(pivotX, pivotY + length + 30);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw height reference
+            const bob = getBobPosition();
+            const h = getHeight();
+            if (h > 0.01) {
+                ctx.fillStyle = 'rgba(66, 165, 245, 0.2)';
+                ctx.fillRect(pivotX + length + 40, bob.y, 30, pivotY + length - bob.y);
+                ctx.fillStyle = '#42a5f5';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('h=' + h.toFixed(2) + 'm', pivotX + length + 45, bob.y - 5);
+            }
+
+            // Draw trail
+            if (trail.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(trail[0].x, trail[0].y);
+                for (let i = 1; i < trail.length; i++) {
+                    ctx.lineTo(trail[i].x, trail[i].y);
+                }
+                ctx.strokeStyle = 'rgba(255, 213, 79, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Draw pivot
+            ctx.beginPath();
+            ctx.arc(pivotX, pivotY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#78909c';
+            ctx.fill();
+
+            // Draw rod
+            ctx.beginPath();
+            ctx.moveTo(pivotX, pivotY);
+            ctx.lineTo(bob.x, bob.y);
+            ctx.strokeStyle = '#b0bec5';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Draw bob with gradient
+            const bobRadius = 15 + mass * 2;
+            const gradient = ctx.createRadialGradient(bob.x - bobRadius/3, bob.y - bobRadius/3, 0, bob.x, bob.y, bobRadius);
+            gradient.addColorStop(0, '#ffd54f');
+            gradient.addColorStop(0.7, '#ff8f00');
+            gradient.addColorStop(1, '#e65100');
+
+            ctx.beginPath();
+            ctx.arc(bob.x, bob.y, bobRadius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Draw velocity vector
+            if (Math.abs(angularVelocity) > 0.01) {
+                const vScale = 30;
+                const vx = length * angularVelocity * Math.cos(angle) * 0.1;
+                const vy = -length * angularVelocity * Math.sin(angle) * 0.1;
+                ctx.beginPath();
+                ctx.moveTo(bob.x, bob.y);
+                ctx.lineTo(bob.x + vx * vScale, bob.y + vy * vScale);
+                ctx.strokeStyle = '#ef5350';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                // Arrow head
+                const arrowAngle = Math.atan2(vy, vx);
+                ctx.beginPath();
+                ctx.moveTo(bob.x + vx * vScale, bob.y + vy * vScale);
+                ctx.lineTo(bob.x + vx * vScale - 10 * Math.cos(arrowAngle - 0.4), bob.y + vy * vScale - 10 * Math.sin(arrowAngle - 0.4));
+                ctx.moveTo(bob.x + vx * vScale, bob.y + vy * vScale);
+                ctx.lineTo(bob.x + vx * vScale - 10 * Math.cos(arrowAngle + 0.4), bob.y + vy * vScale - 10 * Math.sin(arrowAngle + 0.4));
+                ctx.stroke();
+            }
+
+            // Update trail
+            trail.push({x: bob.x, y: bob.y});
+            if (trail.length > 100) trail.shift();
+
+            // Labels
+            ctx.fillStyle = '#90a4ae';
+            ctx.font = '13px Segoe UI';
+            ctx.fillText('Aufhängepunkt', pivotX + 15, pivotY - 5);
+        }
+
+        function animate() {
+            updatePhysics();
+            draw();
+            updateEnergyDisplay();
+            requestAnimationFrame(animate);
+        }
+
+        function resetPendulum() {
+            angle = 0;
+            angularVelocity = 0;
+            maxEnergy = 0;
+            trail = [];
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('pauseBtn').textContent = isPaused ? '▶ Start' : '⏸ Pause';
+        }
+
+        // Mouse/touch interaction
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const bob = getBobPosition();
+            const dist = Math.sqrt((mouseX - bob.x) ** 2 + (mouseY - bob.y) ** 2);
+            if (dist < 40) {
+                isDragging = true;
+                trail = [];
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            angle = Math.atan2(mouseX - pivotX, mouseY - pivotY);
+            angularVelocity = 0;
+            maxEnergy = getPotentialEnergy();
+        });
+
+        canvas.addEventListener('mouseup', () => { isDragging = false; });
+        canvas.addEventListener('mouseleave', () => { isDragging = false; });
+
+        // Sliders
+        lengthSlider.addEventListener('input', (e) => {
+            length = parseInt(e.target.value);
+            document.getElementById('lengthValue').textContent = (length / 100).toFixed(1) + ' m';
+            resetPendulum();
+        });
+
+        massSlider.addEventListener('input', (e) => {
+            mass = parseFloat(e.target.value);
+            document.getElementById('massValue').textContent = mass.toFixed(1) + ' kg';
+        });
+
+        dampingSlider.addEventListener('input', (e) => {
+            damping = parseInt(e.target.value);
+            document.getElementById('dampingValue').textContent = damping + '%';
+        });
+
+        animate();
+    </script>
+</body>
+</html>
