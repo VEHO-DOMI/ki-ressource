@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KI im Schulalltag – Ressourcen für Lehrpersonen</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>KI im Schulalltag – Ressource für Lehrpersonen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,574 +13,360 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #ec4899;
-            --accent: #f59e0b;
-            --success: #10b981;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(255, 255, 255, 0.03);
-            --bg-card-hover: rgba(255, 255, 255, 0.06);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(255, 255, 255, 0.15);
-            --gradient-1: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-            --gradient-2: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
-            --gradient-3: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            /* Frutiger Aero Color Palette */
+            --sky-light: #e8f4fc;
+            --sky-medium: #b8dff5;
+            --sky-blue: #4aa3df;
+            --sky-deep: #2b7bb9;
+            --ocean-teal: #3ba99c;
+            --grass-green: #7cb342;
+            --sun-gold: #f9a825;
+            --cloud-white: #ffffff;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --glass-blue: rgba(74, 163, 223, 0.15);
+            --text-dark: #1a3d5c;
+            --text-medium: #4a6785;
+            --text-light: #7a9ab5;
+            --shadow-soft: 0 4px 20px rgba(43, 123, 185, 0.15);
+            --shadow-card: 0 2px 12px rgba(43, 123, 185, 0.1);
+            --shadow-glow: 0 0 30px rgba(74, 163, 223, 0.2);
+            --border-glass: rgba(255, 255, 255, 0.6);
+            --sidebar-width: 280px;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, sans-serif;
             line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(180deg, var(--sky-light) 0%, #d4ecf9 50%, var(--sky-medium) 100%);
+            background-attachment: fixed;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Animated Background */
-        .bg-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background:
-                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(168, 85, 247, 0.08) 0%, transparent 70%),
-                var(--bg-dark);
-        }
-
-        /* Navigation */
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 1rem 2rem;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .nav-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .nav-logo {
-            width: 40px;
-            height: 40px;
-            background: var(--gradient-1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-
-        .nav-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-subtitle {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .nav-link {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-        }
-
-        /* Main Content */
-        .main {
-            padding: 6rem 2rem 4rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            padding: 4rem 0;
-            margin-bottom: 3rem;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 100px;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-badge-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-description {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-
-        /* Filter Section */
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            justify-content: center;
-            margin-bottom: 3rem;
-            padding: 1.5rem;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-label {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-secondary);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-btn:hover {
-            border-color: var(--border-hover);
-            color: var(--text-primary);
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
-        .filter-divider {
-            width: 1px;
-            height: 24px;
-            background: var(--border);
-            margin: 0 0.5rem;
-        }
-
-        /* Section Tabs */
-        .section-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            padding: 0.5rem;
-            background: var(--glass);
-            border-radius: 12px;
-            overflow-x: auto;
-        }
-
-        .section-tab {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .section-tab:hover {
-            color: var(--text-primary);
-            background: var(--bg-card-hover);
-        }
-
-        .section-tab.active {
-            background: var(--gradient-1);
-            color: white;
-        }
-
-        /* Category Section */
-        .category-section {
-            margin-bottom: 4rem;
-            display: none;
-        }
-
-        .category-section.active {
-            display: block;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .category-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .category-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .category-icon.grammar { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
-        .category-icon.writing { background: linear-gradient(135deg, #ec4899, #f43f5e); }
-        .category-icon.video { background: linear-gradient(135deg, #f59e0b, #f97316); }
-        .category-icon.speaking { background: linear-gradient(135deg, #10b981, #14b8a6); }
-        .category-icon.test { background: linear-gradient(135deg, #0ea5e9, #3b82f6); }
-        .category-icon.vocab { background: linear-gradient(135deg, #a855f7, #d946ef); }
-        .category-icon.pup { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
-        .category-icon.info { background: linear-gradient(135deg, #64748b, #475569); }
-
-        .category-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-        }
-
-        .category-count {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-        }
-
-        /* Resource Cards */
-        .resources-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .resource-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .resource-card::before {
+        /* Frutiger Aero Background with clouds */
+        body::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--gradient-1);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .resource-card:hover {
-            border-color: var(--border-hover);
-            background: var(--bg-card-hover);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
-        }
-
-        .resource-card:hover::before {
-            opacity: 1;
-        }
-
-        .resource-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .resource-tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .resource-tag {
-            padding: 0.25rem 0.75rem;
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .resource-tag.grade {
-            background: rgba(99, 102, 241, 0.2);
-            color: var(--primary-light);
-        }
-
-        .resource-tag.level {
-            background: rgba(16, 185, 129, 0.2);
-            color: #34d399;
-        }
-
-        .resource-tag.subject {
-            background: rgba(236, 72, 153, 0.2);
-            color: #f472b6;
-        }
-
-        .resource-expand {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            transition: all 0.2s;
-        }
-
-        .resource-card:hover .resource-expand {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
-        .resource-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            line-height: 1.4;
-        }
-
-        .resource-description {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-
-        .resource-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .resource-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        /* Modal */
-        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(255, 255, 255, 0.8) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+                radial-gradient(ellipse at 60% 80%, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
-        .modal-overlay.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal {
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            max-width: 900px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow);
-        }
-
-        .modal-header {
-            padding: 2rem;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
+        /* Glossy Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
             top: 0;
-            background: var(--bg-dark);
-            z-index: 10;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, var(--sky-deep) 0%, #1e5f8a 50%, #164a6e 100%);
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+            padding-bottom: 2rem;
+            box-shadow: 4px 0 30px rgba(26, 61, 92, 0.3);
         }
 
-        .modal-close {
+        /* Glossy shine effect on sidebar */
+        .sidebar::before {
+            content: '';
             position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            color: var(--text-secondary);
-            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-header .subtitle {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .sidebar-logo {
+            width: 55px;
+            height: 55px;
+            margin-bottom: 0.75rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .nav-section {
+            padding: 1rem 0;
+            position: relative;
+        }
+
+        .nav-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            transition: all 0.2s;
+            padding: 0.85rem 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
+            border-left: 3px solid transparent;
+            position: relative;
         }
 
-        .modal-close:hover {
-            background: var(--secondary);
-            border-color: var(--secondary);
+        .nav-item:hover {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
             color: white;
         }
 
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-left-color: var(--sun-gold);
+            color: white;
+            font-weight: 500;
+        }
+
+        .nav-item .nav-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 50%;
+            font-size: 0.75rem;
+            margin-right: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-item.placeholder {
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 2rem 3rem;
+            max-width: 1100px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glossy Card Base */
+        .glass-card {
+            background: linear-gradient(135deg, var(--glass-white) 0%, rgba(255, 255, 255, 0.75) 100%);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
+            pointer-events: none;
+            border-radius: 12px 12px 0 0;
+        }
+
+        /* Typography */
+        h1.section-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--sky-deep);
             margin-bottom: 0.5rem;
-            padding-right: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--sky-blue);
+            text-shadow: 0 1px 0 white;
         }
 
-        .modal-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .modal-content {
-            padding: 2rem;
-        }
-
-        .modal-section {
+        .section-subtitle {
+            color: var(--text-medium);
+            font-size: 1.1rem;
             margin-bottom: 2rem;
         }
 
-        .modal-section-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--primary-light);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        h2 {
+            font-size: 1.5rem;
+            color: var(--sky-deep);
+            margin: 2.5rem 0 1.25rem;
+            text-shadow: 0 1px 0 white;
         }
 
-        /* Prompt Box */
-        .prompt-box {
-            background: #1e1e2e;
+        h3 {
+            font-size: 1.15rem;
+            color: var(--sky-deep);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        /* Collapsible Sections - Glossy Style */
+        .collapsible {
+            background: linear-gradient(135deg, var(--glass-white) 0%, rgba(255, 255, 255, 0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.7);
             border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .collapsible-header {
+            padding: 1.1rem 1.5rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 100%);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .collapsible-header:hover {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
+        }
+
+        .collapsible-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--text-dark);
+        }
+
+        .toggle-icon {
+            color: var(--sky-blue);
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 5000px;
+        }
+
+        .collapsible-inner {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(74, 163, 223, 0.2);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Category Badges */
+        .category-badge {
+            display: inline-block;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .category-badge.english {
+            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--sky-deep) 100%);
+            color: white;
+        }
+
+        .category-badge.pup {
+            background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+            color: white;
+        }
+
+        .grade-level {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            background: linear-gradient(135deg, var(--glass-white) 0%, rgba(240, 240, 240, 0.9) 100%);
+            border: 1px solid rgba(74, 163, 223, 0.3);
+            border-radius: 15px;
+            font-size: 0.75rem;
+            color: var(--text-medium);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Prompt Box - Glossy */
+        .prompt-box {
+            background: linear-gradient(135deg, #f0f7fb 0%, #e3f0f7 100%);
+            border: 1px solid rgba(74, 163, 223, 0.3);
+            border-radius: 10px;
             overflow: hidden;
             margin-bottom: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
         .prompt-header {
             padding: 0.75rem 1rem;
-            background: rgba(255, 255, 255, 0.03);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 100%);
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
         .prompt-header:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 100%);
         }
 
         .prompt-header span {
             font-size: 0.85rem;
-            color: var(--primary-light);
+            color: var(--sky-deep);
+            font-weight: 500;
         }
 
-        .prompt-toggle {
+        .toggle-prompt {
             font-size: 0.75rem;
-            color: var(--text-muted);
+            color: var(--text-light);
         }
 
         .prompt-content {
@@ -590,22 +376,24 @@
         }
 
         .prompt-box.open .prompt-content {
-            max-height: 2000px;
+            max-height: 3000px;
         }
 
         .prompt-inner {
             padding: 1rem;
             position: relative;
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .prompt-inner pre {
             margin: 0;
-            color: #e2e8f0;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            color: var(--text-dark);
+            font-family: 'Consolas', 'Monaco', monospace;
             font-size: 0.8rem;
             line-height: 1.6;
             white-space: pre-wrap;
             word-wrap: break-word;
+            padding-right: 70px;
         }
 
         .copy-btn {
@@ -613,872 +401,1301 @@
             top: 0.75rem;
             right: 0.75rem;
             padding: 0.4rem 0.8rem;
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--sky-deep) 100%);
             border: none;
             border-radius: 6px;
-            color: var(--text-secondary);
+            color: white;
             font-size: 0.75rem;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(43, 123, 185, 0.3);
         }
 
         .copy-btn:hover {
-            background: var(--primary);
-            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(43, 123, 185, 0.4);
         }
 
         .copy-btn.copied {
-            background: var(--success);
-            color: white;
+            background: linear-gradient(135deg, var(--grass-green) 0%, #5a9e2f 100%);
         }
 
-        /* Materials Box */
+        /* Materials Box - Glossy Green */
         .materials-box {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(124, 179, 66, 0.15) 0%, rgba(124, 179, 66, 0.1) 100%);
+            border: 1px solid rgba(124, 179, 66, 0.4);
+            border-radius: 10px;
             padding: 1.25rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
         .materials-box h4 {
-            color: #34d399;
-            font-size: 0.9rem;
+            color: #558b2f;
+            font-size: 0.95rem;
             margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .materials-list {
+        .materials-box ul {
             list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        .materials-list li {
+        .materials-box li {
             padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(124, 179, 66, 0.2);
         }
 
-        .materials-list li:last-child {
+        .materials-box li:last-child {
             border-bottom: none;
         }
 
-        .materials-list a {
-            color: #34d399;
+        .materials-box a {
+            color: #2e7d32;
             text-decoration: none;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-size: 0.9rem;
             transition: color 0.2s;
         }
 
-        .materials-list a:hover {
-            color: #6ee7b7;
+        .materials-box a:hover {
+            color: var(--grass-green);
+            text-decoration: underline;
         }
 
-        /* Highlight Box */
+        .file-icon {
+            margin-right: 0.5rem;
+        }
+
+        /* Highlight Box - Glossy Gold */
         .highlight-box {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(236, 72, 153, 0.1));
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(249, 168, 37, 0.15) 0%, rgba(249, 168, 37, 0.08) 100%);
+            border: 1px solid rgba(249, 168, 37, 0.4);
+            border-radius: 10px;
             padding: 1.25rem;
             margin-bottom: 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
         }
 
         .highlight-box h4 {
-            color: var(--accent);
-            font-size: 0.9rem;
+            color: #e65100;
+            font-size: 0.95rem;
             margin-bottom: 0.5rem;
         }
 
         .highlight-box p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
+            color: var(--text-dark);
+            font-size: 0.9rem;
             margin: 0;
         }
 
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+        /* Template Box - Glossy Blue */
+        .template-box {
+            background: linear-gradient(135deg, rgba(74, 163, 223, 0.12) 0%, rgba(74, 163, 223, 0.06) 100%);
+            border: 1px solid rgba(74, 163, 223, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
         }
 
-        .stat-card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
+        .template-header {
+            padding: 0.85rem 1.25rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
         }
 
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .template-header:hover {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
         }
 
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
+        .template-header span {
+            color: var(--sky-deep);
+            font-weight: 500;
+        }
+
+        .template-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .template-box.open .template-content {
+            max-height: 5000px;
+        }
+
+        .template-inner {
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .template-description {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-medium);
+        }
+
+        .template-inner pre {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            color: var(--text-dark);
+            border: 1px solid rgba(74, 163, 223, 0.2);
+        }
+
+        /* Section Controls */
+        .section-controls {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--glass-white) 0%, rgba(240, 240, 240, 0.9) 100%);
+            border: 1px solid rgba(74, 163, 223, 0.3);
+            border-radius: 8px;
+            color: var(--text-medium);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--sky-deep) 100%);
+            color: white;
+            border-color: var(--sky-blue);
+            transform: translateY(-1px);
+        }
+
+        /* Category Tabs for Materials */
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--glass-white) 0%, rgba(255, 255, 255, 0.7) 100%);
+            border-radius: 12px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .category-tab {
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.6) 100%);
+            border: 1px solid rgba(74, 163, 223, 0.25);
+            border-radius: 20px;
+            color: var(--text-medium);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .category-tab:hover {
+            border-color: var(--sky-blue);
+            color: var(--sky-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(74, 163, 223, 0.15);
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--sky-deep) 100%);
+            color: white;
+            border-color: var(--sky-deep);
+            box-shadow: 0 4px 12px rgba(43, 123, 185, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        /* Material Category Sections */
+        .material-category {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .material-category.active {
+            display: block;
+        }
+
+        .category-section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, var(--glass-white) 0%, rgba(255, 255, 255, 0.8) 100%);
+            border-radius: 12px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .category-icon.grammar { background: linear-gradient(135deg, #5c6bc0 0%, #3949ab 100%); }
+        .category-icon.writing { background: linear-gradient(135deg, #ec407a 0%, #d81b60 100%); }
+        .category-icon.video { background: linear-gradient(135deg, #ff7043 0%, #e64a19 100%); }
+        .category-icon.speaking { background: linear-gradient(135deg, #26a69a 0%, #00897b 100%); }
+        .category-icon.test { background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%); }
+        .category-icon.vocab { background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); }
+
+        .category-section-title {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .category-count {
+            font-size: 0.85rem;
+            color: var(--text-light);
             margin-top: 0.25rem;
         }
 
+        /* Grade Filter Pills */
+        .grade-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, rgba(74, 163, 223, 0.08) 0%, rgba(74, 163, 223, 0.04) 100%);
+            border-radius: 10px;
+        }
+
+        .grade-filter-label {
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            padding: 0.4rem 0;
+            margin-right: 0.5rem;
+        }
+
+        .grade-pill {
+            padding: 0.4rem 0.9rem;
+            background: white;
+            border: 1px solid rgba(74, 163, 223, 0.3);
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--text-medium);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .grade-pill:hover {
+            border-color: var(--sky-blue);
+            color: var(--sky-deep);
+        }
+
+        .grade-pill.active {
+            background: var(--sky-blue);
+            color: white;
+            border-color: var(--sky-blue);
+        }
+
+        /* Sub-collapsible */
+        .sub-collapsible {
+            margin-top: 1rem;
+            background: rgba(74, 163, 223, 0.06);
+            border: 1px solid rgba(74, 163, 223, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .sub-collapsible-header {
+            padding: 0.75rem 1rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--sky-deep);
+            font-weight: 500;
+        }
+
+        .sub-collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .sub-collapsible.open .sub-collapsible-content {
+            max-height: 10000px;
+        }
+
+        .sub-collapsible-inner {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-medium) 100%);
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(74, 163, 223, 0.15);
+            font-size: 0.85rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(74, 163, 223, 0.05);
+        }
+
         /* Responsive */
-        @media (max-width: 768px) {
-            .nav {
-                padding: 1rem;
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 240px;
             }
 
-            .nav-links {
-                display: none;
-            }
-
-            .main {
-                padding: 5rem 1rem 2rem;
-            }
-
-            .hero {
-                padding: 2rem 0;
-            }
-
-            .resources-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .filters {
-                padding: 1rem;
-            }
-
-            .filter-divider {
-                display: none;
-            }
-
-            .section-tabs {
-                flex-wrap: nowrap;
-                padding: 0.25rem;
-            }
-
-            .section-tab {
-                padding: 0.5rem 1rem;
-                font-size: 0.8rem;
+            .main-content {
+                margin-left: 240px;
+                padding: 1.5rem;
             }
         }
 
-        /* Scrollbar */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .category-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+        }
+
+        /* Scrollbar Styling */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--bg-dark);
+            background: var(--sky-light);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
+            background: linear-gradient(180deg, var(--sky-blue) 0%, var(--sky-deep) 100%);
+            border-radius: 5px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
+            background: var(--sky-deep);
         }
 
-        /* Hidden */
-        .hidden {
-            display: none !important;
+        /* Links */
+        a {
+            color: var(--sky-deep);
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--sky-blue);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
         }
     </style>
 </head>
 <body>
-    <div class="bg-gradient"></div>
-
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-inner">
-            <div class="nav-brand">
-                <div class="nav-logo">KI</div>
-                <div>
-                    <div class="nav-title">KI im Schulalltag</div>
-                    <div class="nav-subtitle">Gymnasium der Dominikanerinnen</div>
-                </div>
-            </div>
-            <div class="nav-links">
-                <a href="#grundlagen" class="nav-link" data-section="grundlagen">Grundlagen</a>
-                <a href="#materialien" class="nav-link active" data-section="materialien">Materialien</a>
-                <a href="#pup" class="nav-link" data-section="pup">PuP</a>
-            </div>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://via.placeholder.com/55x55/2b7bb9/ffffff?text=KI" alt="Logo" class="sidebar-logo">
+            <h1>KI im Schulalltag</h1>
+            <div class="subtitle">Gymnasium der Dominikanerinnen</div>
+        </div>
+        <div class="nav-section">
+            <a href="#" class="nav-item active" data-section="grundlagen">
+                <span class="nav-number">1</span>Grundlagen
+            </a>
+            <a href="#" class="nav-item" data-section="vorbereitung">
+                <span class="nav-number">2</span>Vorbereitung & Anwendung
+            </a>
+            <a href="#" class="nav-item" data-section="materialien">
+                <span class="nav-number">3</span>Unterrichtsmaterialien
+            </a>
+            <a href="#" class="nav-item" data-section="pup">
+                <span class="nav-number">4</span>PuP Materialien
+            </a>
+            <a href="#" class="nav-item placeholder" data-section="beurteilung">
+                <span class="nav-number">5</span>Beurteilung & Notenvergabe
+            </a>
+            <a href="#" class="nav-item placeholder" data-section="qualitaet">
+                <span class="nav-number">6</span>Qualitätssicherung
+            </a>
+            <a href="#" class="nav-item placeholder" data-section="curriculum">
+                <span class="nav-number">7</span>Curriculumentwicklung
+            </a>
+            <a href="#" class="nav-item placeholder" data-section="admin">
+                <span class="nav-number">8</span>Administration
+            </a>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-badge">
-                <span class="hero-badge-dot"></span>
-                <span>150+ Anwendungsfälle dokumentiert</span>
-            </div>
-            <h1>KI-gestützte Unterrichtsmaterialien</h1>
-            <p class="hero-description">Praxiserprobte Prompts und Materialien für den modernen Schulalltag – nach Kategorien organisiert für schnellen Zugriff.</p>
-        </section>
+    <!-- Main Content Area -->
+    <main class="main-content">
 
-        <!-- Stats -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value">25+</div>
-                <div class="stat-label">Materialien</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">7</div>
-                <div class="stat-label">Kategorien</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">5</div>
-                <div class="stat-label">Klassenstufen</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">2</div>
-                <div class="stat-label">Fächer</div>
-            </div>
-        </div>
+        <!-- SECTION 1: GRUNDLAGEN -->
+        <section id="grundlagen" class="section active">
+            <h1 class="section-title">Grundlagen der KI-Integration</h1>
+            <p class="section-subtitle">Einführung in die Nutzung von generativer KI im Schulalltag</p>
 
-        <!-- Filters -->
-        <div class="filters">
-            <div class="filter-group">
-                <span class="filter-label">Klassenstufe:</span>
-                <button class="filter-btn active" data-filter="grade" data-value="all">Alle</button>
-                <button class="filter-btn" data-filter="grade" data-value="2">2. Klasse</button>
-                <button class="filter-btn" data-filter="grade" data-value="3">3. Klasse</button>
-                <button class="filter-btn" data-filter="grade" data-value="4">4. Klasse</button>
-                <button class="filter-btn" data-filter="grade" data-value="5">5. Klasse</button>
-                <button class="filter-btn" data-filter="grade" data-value="pup">PuP WPF</button>
+            <div class="highlight-box">
+                <h4>📌 Über diese Ressource</h4>
+                <p>Diese Sammlung dokumentiert praxiserprobte Anwendungsfälle von KI (insbesondere Claude) im Schulalltag. Die Materialien wurden über das Schuljahr 2024/25 entwickelt und getestet.</p>
             </div>
-            <div class="filter-divider"></div>
-            <div class="filter-group">
-                <span class="filter-label">Fach:</span>
-                <button class="filter-btn active" data-filter="subject" data-value="all">Alle</button>
-                <button class="filter-btn" data-filter="subject" data-value="english">Englisch</button>
-                <button class="filter-btn" data-filter="subject" data-value="pup">PuP</button>
-            </div>
-        </div>
 
-        <!-- Section Tabs -->
-        <div class="section-tabs">
-            <button class="section-tab active" data-category="all">📚 Alle Kategorien</button>
-            <button class="section-tab" data-category="grammar">📝 Grammatik</button>
-            <button class="section-tab" data-category="writing">✍️ Schreiben</button>
-            <button class="section-tab" data-category="video">🎬 Video & Medien</button>
-            <button class="section-tab" data-category="speaking">🗣️ Sprechen</button>
-            <button class="section-tab" data-category="test">📊 Testvorbereitung</button>
-            <button class="section-tab" data-category="vocab">📖 Vokabular</button>
-            <button class="section-tab" data-category="pup">🧠 PuP</button>
-        </div>
+            <h2>Was ist generative KI?</h2>
+            <p>Generative KI-Systeme wie ChatGPT, Claude oder Gemini können Texte, Bilder und andere Inhalte erstellen. Im Bildungskontext bieten sie vielfältige Einsatzmöglichkeiten für Lehrpersonen – von der Materialerstellung bis zur Differenzierung.</p>
 
-        <!-- Category: Grammar -->
-        <section class="category-section active" id="cat-grammar" data-category="grammar">
-            <div class="category-header">
-                <div class="category-icon grammar">📝</div>
-                <div>
-                    <h2 class="category-title">Grammatik-Materialien</h2>
-                    <p class="category-count">6 Ressourcen</p>
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>Kernkonzepte verstehen</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Large Language Models (LLMs)</h4>
+                        <p>LLMs sind auf riesigen Textmengen trainierte Modelle, die Muster in Sprache erkennen und reproduzieren können. Sie "verstehen" nicht im menschlichen Sinne, sondern berechnen statistische Wahrscheinlichkeiten für passende Textfortsetzungen.</p>
+
+                        <h4>Prompts & Prompt Engineering</h4>
+                        <p>Die Qualität der KI-Ausgabe hängt stark von der Eingabe (dem "Prompt") ab. Gute Prompts sind klar strukturiert, geben Kontext und definieren das gewünschte Format.</p>
+
+                        <h4>Halluzinationen</h4>
+                        <p>KI-Modelle können plausibel klingende aber faktisch falsche Informationen generieren. Besondere Vorsicht bei Fakten, Zitaten und Statistiken!</p>
+                    </div>
                 </div>
             </div>
-            <div class="resources-grid">
-                <!-- Resource Card 1 -->
-                <div class="resource-card" data-grade="2" data-subject="english" onclick="openModal('modal-rules')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">2. Klasse</span>
-                            <span class="resource-tag level">A1+/A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Talking about Rules: HAVE TO & MUST</h3>
-                    <p class="resource-description">School Exercise als Handout mit Modal Verbs für Regeln. Foto der handschriftlichen Notizen → KI erstellt formatiertes Handout mit zwei Kopien pro Seite.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 2 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 1 Prompt</span>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>Ethische Grundlagen</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Transparenz</h4>
+                        <p>Offene Kommunikation über den KI-Einsatz gegenüber Schüler:innen und Kolleg:innen.</p>
+
+                        <h4>Datenschutz</h4>
+                        <p>Keine personenbezogenen Daten von Schüler:innen in KI-Systeme eingeben. Bei Fallbeispielen immer anonymisieren.</p>
+
+                        <h4>Kritische Prüfung</h4>
+                        <p>Alle KI-generierten Inhalte vor der Verwendung auf Richtigkeit und Angemessenheit prüfen.</p>
+
+                        <h4>Urheberrecht</h4>
+                        <p>KI-generierte Inhalte kritisch auf mögliche Urheberrechtsverletzungen prüfen, besonders bei spezifischen Formulierungen oder Stilnachahmungen.</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Resource Card 2 -->
-                <div class="resource-card" data-grade="2" data-subject="english" onclick="openModal('modal-christmas')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">2. Klasse</span>
-                            <span class="resource-tag level">A1+/A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Christmas Grammar: going to + might</h3>
-                    <p class="resource-description">Weihnachts-Grammatik-Handout mit "going to" für Pläne und "might" für Möglichkeiten. Inkl. Übungen und Klassenaktivitäten.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 3 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 6 Prompts</span>
-                    </div>
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>Verfügbare KI-Tools im Überblick</h3>
+                    <span class="toggle-icon">▼</span>
                 </div>
-
-                <!-- Resource Card 3 -->
-                <div class="resource-card" data-grade="3" data-subject="english" onclick="openModal('modal-conditional')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">3. Klasse</span>
-                            <span class="resource-tag level">A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">First Conditional: Express it Four Ways!</h3>
-                    <p class="resource-description">Übung zu First Conditional mit if/unless – derselbe Gedanke auf vier Arten ausdrücken. Klassenaktivität mit rotierenden Reihen.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 2 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 1 Prompt</span>
-                    </div>
-                </div>
-
-                <!-- Resource Card 4 -->
-                <div class="resource-card" data-grade="3" data-subject="english" onclick="openModal('modal-dangerous')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">3. Klasse</span>
-                            <span class="resource-tag level">A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Countable/Uncountable: fewer vs. less</h3>
-                    <p class="resource-description">Induktive Grammatikeinführung mit "The World's Most Dangerous Animals" – Schüler:innen entdecken many/much/few/little durch einen Noticing-Text.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 1 Material</span>
-                        <span class="resource-meta-item">⏱️ 10 Prompts</span>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <table>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Stärken</th>
+                                <th>Besonderheiten</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Claude</strong> (Anthropic)</td>
+                                <td>Nuanciertes Schreiben, lange Kontexte, gute Didaktik</td>
+                                <td>Bis zu 200k Token Kontext, Projects-Feature für strukturierte Arbeit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ChatGPT</strong> (OpenAI)</td>
+                                <td>Vielseitig, gute Plugins, Code-Interpreter</td>
+                                <td>DALL-E Integration für Bilder, GPTs für wiederkehrende Aufgaben</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gemini</strong> (Google)</td>
+                                <td>Google-Integration, multimodal</td>
+                                <td>Kostenlos in Workspace integriert</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Perplexity</strong></td>
+                                <td>Recherche mit Quellenangaben</td>
+                                <td>Ideal für faktenbasierte Recherche</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Category: Writing -->
-        <section class="category-section active" id="cat-writing" data-category="writing">
-            <div class="category-header">
-                <div class="category-icon writing">✍️</div>
-                <div>
-                    <h2 class="category-title">Schreibaufgaben & Projekte</h2>
-                    <p class="category-count">5 Ressourcen</p>
-                </div>
-            </div>
-            <div class="resources-grid">
-                <!-- Resource Card -->
-                <div class="resource-card" data-grade="2" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">2. Klasse</span>
-                            <span class="resource-tag level">A1+/A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">My New Year's Resolutions</h3>
-                    <p class="resource-description">Schreibaufgabe mit "going to" und "might" – Schüler:innen schreiben über ihre Vorsätze für das neue Jahr.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 1 Material</span>
-                    </div>
-                </div>
+        <!-- SECTION 2: VORBEREITUNG & ANWENDUNG -->
+        <section id="vorbereitung" class="section">
+            <h1 class="section-title">Vorbereitung & Anwendung</h1>
+            <p class="section-subtitle">Praktische Anleitungen für den Einstieg</p>
 
-                <div class="resource-card" data-grade="3" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">3. Klasse</span>
-                            <span class="resource-tag level">A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">My Year of Travelling Adventures – Diary Entry</h3>
-                    <p class="resource-description">Kreative Schreibaufgabe: Schüler:innen schreiben einen Tagebucheintrag von ihrer fiktiven Weltreise nach der Schule.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">⏱️ Iterativer Prozess</span>
-                    </div>
-                </div>
+            <h2>Erste Schritte mit Claude</h2>
 
-                <div class="resource-card" data-grade="5" data-subject="english" onclick="openModal('modal-blogpost')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">5. Klasse</span>
-                            <span class="resource-tag level">B1</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Blog Post: Trends (PEEL Paragraph)</h3>
-                    <p class="resource-description">Drei Blog-Post-Optionen über Trends + PEEL-Struktur + Peer Feedback Commenting Task. Mit Model Texts für alle Optionen.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 2 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 4 Prompts</span>
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>Account-Einrichtung & Grundlagen</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4>Schritt 1: Account erstellen</h4>
+                        <p>Besuche <a href="https://claude.ai" target="_blank">claude.ai</a> und erstelle einen kostenlosen Account. Die Basisversion bietet bereits umfangreiche Funktionen.</p>
+
+                        <h4>Schritt 2: Interface kennenlernen</h4>
+                        <p>Das Chat-Interface ist minimalistisch gehalten. Wichtige Elemente:</p>
+                        <ul>
+                            <li><strong>Chat-Verlauf</strong>: Links findest du alle bisherigen Konversationen</li>
+                            <li><strong>Eingabefeld</strong>: Hier gibst du deine Prompts ein</li>
+                            <li><strong>Anhänge</strong>: Dokumente (PDF, Word, Bilder) können hochgeladen werden</li>
+                        </ul>
+
+                        <h4>Schritt 3: Projects nutzen (Pro-Feature)</h4>
+                        <p>Mit Claude Pro kannst du "Projects" erstellen – thematische Sammlungen mit:</p>
+                        <ul>
+                            <li>Hochgeladenen Dokumenten als Wissensgrundlage</li>
+                            <li>Benutzerdefinierten Anweisungen (System Prompt)</li>
+                            <li>Mehreren Konversationen zum selben Thema</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- Category: Video & Media -->
-        <section class="category-section active" id="cat-video" data-category="video">
-            <div class="category-header">
-                <div class="category-icon video">🎬</div>
-                <div>
-                    <h2 class="category-title">Video & Medien-Projekte</h2>
-                    <p class="category-count">4 Ressourcen</p>
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>Effektive Prompt-Struktur</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div class="highlight-box">
+                            <h4>🎯 Die 5 Elemente eines guten Prompts</h4>
+                            <p><strong>1. Rolle</strong> – Wer soll die KI sein?<br>
+                            <strong>2. Kontext</strong> – Was ist die Situation?<br>
+                            <strong>3. Aufgabe</strong> – Was genau soll erstellt werden?<br>
+                            <strong>4. Format</strong> – Wie soll die Ausgabe aussehen?<br>
+                            <strong>5. Einschränkungen</strong> – Was soll vermieden werden?</p>
+                        </div>
+
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>📋 Beispiel: Gut strukturierter Prompt</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Du bist eine erfahrene EFL-Lehrerin an einem österreichischen Gymnasium.
+
+KONTEXT:
+Ich unterrichte eine 3. Klasse (A2-Niveau) und beginne nächste Woche mit Unit 5 "Adventures".
+
+AUFGABE:
+Erstelle 5 Aufwärmfragen zum Thema "Abenteuer", die:
+- Zum Sprechen anregen
+- A2-gerechtes Vokabular verwenden
+- Persönliche Erfahrungen einbeziehen
+
+FORMAT:
+- Nummerierte Liste
+- Je eine Follow-up-Frage pro Hauptfrage
+- Deutsche Übersetzung schwieriger Wörter in Klammern
+
+HINWEIS:
+Vermeide abstrakte philosophische Fragen – fokussiere auf konkrete Erlebnisse.</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="resources-grid">
-                <div class="resource-card" data-grade="2" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">2. Klasse</span>
-                            <span class="resource-tag level">A1+/A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Voyager Golden Record Lesson (Unit 8: UFOs)</h3>
-                    <p class="resource-description">Video-basierte Lektion über die Voyager-Mission. Kreativprojekt: Schüler:innen erstellen ihre eigene "Class Golden Record".</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 1 Material</span>
-                    </div>
-                </div>
 
-                <div class="resource-card" data-grade="4" data-subject="english" onclick="openModal('modal-nyc')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">4. Klasse</span>
-                            <span class="resource-tag level">A2+</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">NYC Video While-Watching Tasks</h3>
-                    <p class="resource-description">16-Min Video auf 7-8 Min gekürzt. KI analysiert Transkript und erstellt While-Watching Tasks mit Timestamp-Referenzen für Pair Work.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 2 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 5 Prompts</span>
-                    </div>
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>Iteratives Arbeiten</h3>
+                    <span class="toggle-icon">▼</span>
                 </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>KI-Arbeit ist selten ein One-Shot-Prozess. Die besten Ergebnisse entstehen durch iteratives Verfeinern:</p>
 
-                <div class="resource-card" data-grade="5" data-subject="english" onclick="openModal('modal-foodvlog')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">5. Klasse</span>
-                            <span class="resource-tag level">B1</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Food Vlog Project (Unit 4)</h3>
-                    <p class="resource-description">Videoprojekt: 30-60 Sekunden Food-Vlog als Instagram Reel mit Voiceover. 4-Wochen-Timeline mit TikTok-Beispielen.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 4 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 5 Prompts</span>
-                    </div>
-                </div>
+                        <h4>Der iterative Zyklus</h4>
+                        <ol>
+                            <li><strong>Erster Prompt</strong> – Grundidee kommunizieren</li>
+                            <li><strong>Evaluieren</strong> – Was fehlt? Was passt nicht?</li>
+                            <li><strong>Nachfragen/Anpassen</strong> – Spezifisches Feedback geben</li>
+                            <li><strong>Wiederholen</strong> – Bis das Ergebnis passt</li>
+                        </ol>
 
-                <div class="resource-card" data-grade="5" data-subject="english" onclick="openModal('modal-dps')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">5. Klasse</span>
-                            <span class="resource-tag level">B1</span>
+                        <div class="highlight-box">
+                            <h4>💡 Tipp: Feedback-Sprache</h4>
+                            <p>Statt "Das gefällt mir nicht" sag: "Die Fragen sind zu abstrakt für A2-Niveau. Mach sie konkreter mit Beispielen aus dem Alltag von 13-Jährigen."</p>
                         </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Dead Poets Society – EFL Film Unit</h3>
-                    <p class="resource-description">3-Stunden Film Unit mit Matura-Format-Aufgaben (MC, Banked Cloze, Word Formation, Open Cloze). 38 Iterationen.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 8 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 38 Prompts</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Category: Speaking -->
-        <section class="category-section active" id="cat-speaking" data-category="speaking">
-            <div class="category-header">
-                <div class="category-icon speaking">🗣️</div>
-                <div>
-                    <h2 class="category-title">Sprechaktivitäten</h2>
-                    <p class="category-count">4 Ressourcen</p>
+        <!-- SECTION 3: UNTERRICHTSMATERIALIEN -->
+        <section id="materialien" class="section">
+            <h1 class="section-title">Unterrichtsmaterialien</h1>
+            <p class="section-subtitle">Nach Kategorie organisierte Materialsammlung für den Englischunterricht</p>
+
+            <!-- Grade Filter -->
+            <div class="grade-filter">
+                <span class="grade-filter-label">Filtern nach Klasse:</span>
+                <button class="grade-pill active" data-grade="all">Alle</button>
+                <button class="grade-pill" data-grade="2">2. Klasse</button>
+                <button class="grade-pill" data-grade="3">3. Klasse</button>
+                <button class="grade-pill" data-grade="4">4. Klasse</button>
+                <button class="grade-pill" data-grade="5">5. Klasse</button>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="all">📚 Alle</button>
+                <button class="category-tab" data-category="grammar">📝 Grammatik</button>
+                <button class="category-tab" data-category="writing">✍️ Schreiben</button>
+                <button class="category-tab" data-category="video">🎬 Video & Medien</button>
+                <button class="category-tab" data-category="speaking">🗣️ Sprechen</button>
+                <button class="category-tab" data-category="test">📊 Testvorbereitung</button>
+                <button class="category-tab" data-category="vocab">📖 Vokabular</button>
+            </div>
+
+            <!-- GRAMMAR MATERIALS -->
+            <div class="material-category active" data-category="grammar">
+                <div class="category-section-header">
+                    <div class="category-icon grammar">📝</div>
+                    <div>
+                        <h2 class="category-section-title">Grammatik-Materialien</h2>
+                        <p class="category-count">Handouts, Übungen und induktive Einführungen</p>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="2">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Talking about Rules: HAVE TO & MUST</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">2. Klasse • A1+/A2</span>
+
+                            <p><strong>Kontext:</strong> School Exercise als Handout mit Modal Verbs für Regeln. Foto der handschriftlichen Notizen → KI erstellt formatiertes Handout.</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/2A/Talking_about_Rules_HAVE_TO_MUST.docx">Talking about Rules Handout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="2">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Christmas Grammar: going to + might</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">2. Klasse • A1+/A2</span>
+
+                            <p><strong>Kontext:</strong> Weihnachts-Grammatik-Handout mit "going to" für Pläne und "might" für Möglichkeiten. Inkl. Übungen und Klassenaktivitäten.</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/2A/Christmas_Grammar_goingto_might.docx">Christmas Grammar Handout</a></li>
+                                    <li><span class="file-icon">📊</span> <a href="materials/2A/Christmas_Activities.pptx">Christmas Activities Slides</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="3">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>First Conditional: Express it Four Ways!</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">3. Klasse • A2</span>
+
+                            <p><strong>Kontext:</strong> Übung zu First Conditional mit if/unless – derselbe Gedanke auf vier Arten ausdrücken. Klassenaktivität mit rotierenden Reihen.</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/3A/First_Conditional_Four_Ways.docx">First Conditional Worksheet</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="3">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Countable/Uncountable: fewer vs. less</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">3. Klasse • A2</span>
+
+                            <p><strong>Kontext:</strong> Induktive Grammatikeinführung mit "The World's Most Dangerous Animals" – Schüler:innen entdecken many/much/few/little durch einen Noticing-Text.</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/3A/Dangerous_Animals_Handout.docx">Dangerous Animals Handout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="resources-grid">
-                <div class="resource-card" data-grade="2" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">2. Klasse</span>
-                            <span class="resource-tag level">A1+/A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Christmas Activities: Find Someone Who</h3>
-                    <p class="resource-description">Mingle-Aktivitäten für Weihnachten: Find Someone Who, Christmas Survey, Guess Who – mit "going to" und "might".</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 Slides + Worksheet</span>
+
+            <!-- WRITING MATERIALS -->
+            <div class="material-category" data-category="writing">
+                <div class="category-section-header">
+                    <div class="category-icon writing">✍️</div>
+                    <div>
+                        <h2 class="category-section-title">Schreibaufgaben & Projekte</h2>
+                        <p class="category-count">Blog Posts, Diary Entries und kreative Schreibaufgaben</p>
                     </div>
                 </div>
 
-                <div class="resource-card" data-grade="3" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">3. Klasse</span>
-                            <span class="resource-tag level">A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
+                <div class="collapsible" data-grade="2">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>My New Year's Resolutions</h3>
+                        <span class="toggle-icon">▼</span>
                     </div>
-                    <h3 class="resource-title">Pair Reading Activity mit Leitfragen</h3>
-                    <p class="resource-description">Zwei parallele Texte (James Holman, Mary Kingsley) – jeder liest einen, fasst für Partner zusammen, der andere macht die Aufgabe.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">⏱️ 3 Prompts</span>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">2. Klasse • A1+/A2</span>
+
+                            <p><strong>Kontext:</strong> Schreibaufgabe mit "going to" und "might" – Schüler:innen schreiben über ihre Vorsätze für das neue Jahr.</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/2A/New_Years_Resolutions.docx">Resolutions Worksheet</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="resource-card" data-grade="3" data-subject="english" onclick="openModal('modal-boundaries')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">3. Klasse</span>
-                            <span class="resource-tag level">A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
+                <div class="collapsible" data-grade="5">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Blog Post: Trends (PEEL Paragraph)</h3>
+                        <span class="toggle-icon">▼</span>
                     </div>
-                    <h3 class="resource-title">Setting Boundaries – Speaking Activities</h3>
-                    <p class="resource-description">Testvorbereitung mit Scenario Cards (Give & Get Advice) und Agree/Disagree Corners. Intensive Iteration: 29 Prompts.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 2 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 29 Prompts</span>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">5. Klasse • B1</span>
+
+                            <p><strong>Kontext:</strong> Unit 6 "All the Rage" über Modetrends, Body Image und was "trendy" bedeutet. Drei Blog-Post-Optionen + PEEL-Struktur + Peer Feedback Commenting Task.</p>
+
+                            <div class="highlight-box">
+                                <h4>Die 3 Optionen</h4>
+                                <p><strong>Option 1:</strong> Bring back an old trend<br>
+                                <strong>Option 2:</strong> A stupid trend that should disappear<br>
+                                <strong>Option 3:</strong> Invent a new trend</p>
+                            </div>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/5B/Writing%20Task%20Blog%20Post.docx">Blog Post Writing Task</a></li>
+                                    <li><span class="file-icon">📄</span> <a href="materials/5B/Unit6_Model_Texts.docx">Model Texts (alle 3 Optionen)</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO & MEDIA MATERIALS -->
+            <div class="material-category" data-category="video">
+                <div class="category-section-header">
+                    <div class="category-icon video">🎬</div>
+                    <div>
+                        <h2 class="category-section-title">Video & Medien-Projekte</h2>
+                        <p class="category-count">While-Watching Tasks, Film Units und Video-Projekte</p>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="4">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>NYC Video While-Watching Tasks</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">4. Klasse • A2+</span>
+
+                            <p><strong>Kontext:</strong> 16-Min Video auf 7-8 Min gekürzt. KI analysiert Transkript und erstellt While-Watching Tasks mit Timestamp-Referenzen für Pair Work.</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/4B/NYC_Video_Worksheet.docx">NYC While-Watching Worksheet</a></li>
+                                    <li><span class="file-icon">📕</span> <a href="materials/4B/NYC%20Quiz.pdf">NYC Quiz</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="5">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Food Vlog Project (Unit 4)</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">5. Klasse • B1</span>
+
+                            <p><strong>Kontext:</strong> Videoprojekt zur Unit "Eat, Sleep, Repeat": Schüler:innen erstellen einen 30–60-sekündigen Food-Vlog als Instagram Reel mit Voiceover.</p>
+
+                            <div class="highlight-box">
+                                <h4>4-Wochen-Timeline</h4>
+                                <p>Week 1: Planning & Food Choice<br>
+                                Week 2: Recording Video Footage<br>
+                                Week 3: Writing Voiceover Script<br>
+                                Week 4: Recording & Submitting Final Video</p>
+                            </div>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📊</span> <a href="materials/5B/Unit%204%20PROJECT%20Create%20Your%20Own%20Food%20Vlog.pptx">Food Vlog Project Instructions</a></li>
+                                    <li><span class="file-icon">📄</span> <a href="materials/5B/Food_Vlogs_KEYS.docx">While-Watching Tasks Answer Keys</a></li>
+                                    <li><span class="file-icon">📊</span> <a href="materials/5B/Food%20vocabulary%20for%20food%20reviews.pptx">Food Vocabulary Presentation</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="5">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Dead Poets Society – EFL Film Unit (3 Stunden)</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">5. Klasse • B1</span>
+
+                            <p><strong>Kontext:</strong> Drei Stunden vor Weihnachten. Film "Dead Poets Society" mit integrierten EFL-Aufgaben im Matura-Format: MC, Banked Cloze, Word Formation, Open Cloze.</p>
+
+                            <div class="highlight-box">
+                                <h4>⚡ Das ist die Art von Material, die ohne KI nicht möglich wäre</h4>
+                                <p>Drei vollständige Arbeitsblätter mit kontextualisierten Vokabelübungen im Matura-Format – basierend auf einem konkreten Film. Der manuelle Aufwand wäre Wochen. Mit KI: Ein intensiver Nachmittag mit 38 Iterationen.</p>
+                            </div>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📊</span> <a href="materials/5B/Dead%20Poets%20Society.pptx">Dead Poets Society Main Presentation</a></li>
+                                    <li><span class="file-icon">📄</span> <a href="materials/5B/DPS%205B%20Day%201.docx">DPS Day 1 Worksheet</a></li>
+                                    <li><span class="file-icon">📄</span> <a href="materials/5B/DPS_Day1_Answer_Key_Full.docx">Day 1 Answer Key</a></li>
+                                    <li><span class="file-icon">📄</span> <a href="materials/5B/DPS%20FRI%20Day%202.docx">DPS Day 2 Worksheet</a></li>
+                                    <li><span class="file-icon">📄</span> <a href="materials/5B/DPS%205B%20MO%20Day%203.docx">DPS Day 3 Worksheet</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SPEAKING MATERIALS -->
+            <div class="material-category" data-category="speaking">
+                <div class="category-section-header">
+                    <div class="category-icon speaking">🗣️</div>
+                    <div>
+                        <h2 class="category-section-title">Sprechaktivitäten</h2>
+                        <p class="category-count">Pair Work, Role Play und Diskussionsaufgaben</p>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="2">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Christmas Activities: Find Someone Who</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">2. Klasse • A1+/A2</span>
+
+                            <p><strong>Kontext:</strong> Mingle-Aktivitäten für Weihnachten: Find Someone Who, Christmas Survey, Guess Who – mit "going to" und "might".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="3">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Setting Boundaries – Speaking Activities</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">3. Klasse • A2</span>
+
+                            <p><strong>Kontext:</strong> Testvorbereitung mit Scenario Cards (Give & Get Advice) und Agree/Disagree Corners. 29 Iterationen für perfekte Balance.</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/3A/Setting_Boundaries_Cards.docx">Scenario Cards</a></li>
+                                    <li><span class="file-icon">📊</span> <a href="materials/3A/Setting_Boundaries_Slides.pptx">Activity Slides</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEST PREP MATERIALS -->
+            <div class="material-category" data-category="test">
+                <div class="category-section-header">
+                    <div class="category-icon test">📊</div>
+                    <div>
+                        <h2 class="category-section-title">Testvorbereitung</h2>
+                        <p class="category-count">Quizzes, Model Texts und Fehleranalysen</p>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="3">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Year 2 Revision: "Can you remember...?"</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">3. Klasse • A2</span>
+
+                            <p><strong>Kontext:</strong> Wiederholungsquiz zum Schuljahresbeginn: Content, Grammar ("What do you say if...?"), Vocabulary ("5 words for...").</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="4">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Model Texts Analysis – How to Get Full Points</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">4. Klasse • A2+</span>
+
+                            <p><strong>Kontext:</strong> Zwei Schülertexte mit voller Punktzahl als Musterbeispiele analysieren – farbcodiert nach Bewertungskriterien.</p>
+
+                            <p><strong>Kernbotschaft:</strong> "Both approaches earn full points – choose the path that fits your strengths."</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📊</span> <a href="materials/4B/model-texts-analysis.pptx">Model Texts Analysis (PowerPoint)</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOCAB MATERIALS -->
+            <div class="material-category" data-category="vocab">
+                <div class="category-section-header">
+                    <div class="category-icon vocab">📖</div>
+                    <div>
+                        <h2 class="category-section-title">Vokabular & Lesen</h2>
+                        <p class="category-count">Wortschatzarbeit und Leseaktivitäten</p>
+                    </div>
+                </div>
+
+                <div class="collapsible" data-grade="4">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <h3>Gen Alpha Slang – End-of-Year Reflection</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <span class="category-badge english">Englisch</span>
+                            <span class="grade-level">4. Klasse • A2+</span>
+
+                            <p><strong>Kontext:</strong> Letzte Schulwoche, Noten bereits vergeben. Reflexionsaktivität über das Schuljahr, verpackt in Gen-Alpha-Slang als Aufhänger.</p>
+
+                            <div class="materials-box">
+                                <h4>📂 Erstellte Materialien</h4>
+                                <ul>
+                                    <li><span class="file-icon">📄</span> <a href="materials/4B/Gen%20Alpha%20Slang.docx">Gen Alpha Slang Worksheet</a></li>
+                                    <li><span class="file-icon">📄</span> <a href="materials/4B/Gen%20Alpha%20Slang%202.docx">Gen Alpha Slang 2</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECTION 4: PuP MATERIALIEN -->
+        <section id="pup" class="section">
+            <h1 class="section-title">Psychologie und Philosophie (PuP)</h1>
+            <p class="section-subtitle">WPF Materialien für 7./8. Klasse AHS</p>
+
+            <div class="highlight-box">
+                <h4>Übersicht: 5 Unterrichtsprojekte</h4>
+                <p><strong>Psychologie:</strong> Entwicklungspsychologie (Bindungstheorie), Sozialpsychologie (Werbepsychologie), Persönlichkeitspsychologie (Big Five)<br>
+                <strong>Philosophie:</strong> Philosophische Anthropologie (Transhumanismus), Normative Ethik (Utilitarismus & Pflichtethik)</p>
+            </div>
+
+            <h2>PSYCHOLOGIE</h2>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>PuP.1 Entwicklungspsychologie & Bindungstheorie</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <span class="category-badge pup">Psychologie</span>
+                        <span class="grade-level">7./8. Klasse • WPF</span>
+
+                        <p><strong>Kontext:</strong> Von Harlow zu Ainsworth: Theorie-Handout, Fallstudien, Dating-Profile als Veranschaulichung der Bindungsstile.</p>
+
+                        <div class="materials-box">
+                            <h4>📂 Erstellte Materialien</h4>
+                            <ul>
+                                <li><span class="file-icon">📊</span> <a href="materials/PuP/Themenblock1/Zwillingsforschung_Einfuehrung_Bindungstheorie.pptx">Hauptpräsentation</a></li>
+                                <li><span class="file-icon">📄</span> <a href="materials/PuP/Themenblock1/Handout_Bindungstheorien.docx">Theoretisches Handout</a></li>
+                                <li><span class="file-icon">📄</span> <a href="materials/PuP/Themenblock1/Fallbeispiele_Strange_Situation.docx">4 Fallstudien</a></li>
+                                <li><span class="file-icon">📄</span> <a href="materials/PuP/Themenblock1/Dating_Profile_Loesungen.docx">4 Dating-Profile mit Lösungen</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>PuP.2 Werbepsychologie-Unterrichtseinheit</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <span class="category-badge pup">Psychologie</span>
+                        <span class="grade-level">7./8. Klasse • WPF</span>
+
+                        <p><strong>Kontext:</strong> AIDA-Modell + 8 psychologische Taktiken (Social Proof, Urgency, FOMO, etc.) mit echten Werbetexten zur Analyse.</p>
+
+                        <div class="materials-box">
+                            <h4>📂 Erstellte Materialien</h4>
+                            <ul>
+                                <li><span class="file-icon">📊</span> <a href="materials/PuP/Themenblock3/Themenblock3_Werbepsychologie.pptx">Hauptpräsentation</a></li>
+                                <li><span class="file-icon">📄</span> <a href="materials/PuP/Themenblock3/Psychologie_im_Supermarkt.docx">Arbeitsblatt Werbeanalyse</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>PuP.3 Persönlichkeitsdiagnostik & Big Five</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <span class="category-badge pup">Psychologie</span>
+                        <span class="grade-level">7./8. Klasse • WPF</span>
+
+                        <p><strong>Kontext:</strong> Gütekriterien (O-R-V), authentische IPIP/BFI Items, Reflexionsaufgabe "Der Schul-Persönlichkeitstest".</p>
+
+                        <div class="materials-box">
+                            <h4>📂 Erstellte Materialien</h4>
+                            <ul>
+                                <li><span class="file-icon">📊</span> <a href="materials/PuP/Themenblock5/Folien_Persoenlichkeitstheorien.pptx">Hauptpräsentation</a></li>
+                                <li><span class="file-icon">📄</span> <a href="materials/PuP/Themenblock5/Arbeitsblatt_SchulPersoenlichkeitstest.docx">Schüler:innen-Arbeitsblatt</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>PHILOSOPHIE</h2>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>PuP.4 Transhumanismus & Anthropologie</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <span class="category-badge pup">Philosophie</span>
+                        <span class="grade-level">7./8. Klasse • WPF</span>
+
+                        <p><strong>Kontext:</strong> Von Gehlens "Mängelwesen" zu Bostrom, More, de Grey, Kurzweil. Toulmin-Analyse transhumanistischer Argumente.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h3>PuP.5 Normative Ethik: Utilitarismus & Pflichtethik</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <span class="category-badge pup">Philosophie</span>
+                        <span class="grade-level">7./8. Klasse • WPF</span>
+
+                        <p><strong>Kontext:</strong> Trolley Problem, moralische Dilemmata, Vergleich von konsequentialistischen und deontologischen Ansätzen.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Category: Test Prep -->
-        <section class="category-section active" id="cat-test" data-category="test">
-            <div class="category-header">
-                <div class="category-icon test">📊</div>
-                <div>
-                    <h2 class="category-title">Testvorbereitung</h2>
-                    <p class="category-count">4 Ressourcen</p>
-                </div>
-            </div>
-            <div class="resources-grid">
-                <div class="resource-card" data-grade="3" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">3. Klasse</span>
-                            <span class="resource-tag level">A2</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Year 2 Revision: "Can you remember...?"</h3>
-                    <p class="resource-description">Wiederholungsquiz zum Schuljahresbeginn: Content, Grammar ("What do you say if...?"), Vocabulary ("5 words for...").</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 1 Material</span>
-                    </div>
-                </div>
-
-                <div class="resource-card" data-grade="4" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">4. Klasse</span>
-                            <span class="resource-tag level">A2+</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Common Writing Mistakes Presentation</h3>
-                    <p class="resource-description">Häufige Fehler und gelungene Ausdrücke aus Übungstexten auf Folien zur Besprechung vor dem Test.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📊 PowerPoint</span>
-                    </div>
-                </div>
-
-                <div class="resource-card" data-grade="4" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">4. Klasse</span>
-                            <span class="resource-tag level">A2+</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Model Texts Analysis – Full Points</h3>
-                    <p class="resource-description">Zwei Schülertexte mit voller Punktzahl analysiert – farbcodiert nach Bewertungskriterien. "Both approaches earn full points."</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📊 PowerPoint</span>
-                    </div>
-                </div>
-
-                <div class="resource-card" data-grade="5" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">Matura</span>
-                            <span class="resource-tag level">B2+</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Matura-Aufgaben-Generator (Claude Project)</h3>
-                    <p class="resource-description">Automatische Generierung von mündlichen Matura-Aufgaben für Englisch. 18 Themenblöcke, Variabilitätsprüfung, Bildgenerierungs-Prompts.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">🤖 Claude Project</span>
-                    </div>
-                </div>
+        <!-- SECTION 5-8: PLACEHOLDERS -->
+        <section id="beurteilung" class="section">
+            <h1 class="section-title">Beurteilung & Notenvergabe</h1>
+            <p class="section-subtitle">Dieses Kapitel wird noch entwickelt.</p>
+            <div class="highlight-box">
+                <h4>🚧 In Arbeit</h4>
+                <p>Hier werden Anwendungsbeispiele zur KI-gestützten Beurteilung dokumentiert.</p>
             </div>
         </section>
 
-        <!-- Category: Vocab -->
-        <section class="category-section active" id="cat-vocab" data-category="vocab">
-            <div class="category-header">
-                <div class="category-icon vocab">📖</div>
-                <div>
-                    <h2 class="category-title">Vokabular & Lesen</h2>
-                    <p class="category-count">2 Ressourcen</p>
-                </div>
-            </div>
-            <div class="resources-grid">
-                <div class="resource-card" data-grade="3" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">3./4. Klasse</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Gen Alpha Slang – Reflection Worksheet</h3>
-                    <p class="resource-description">Ende-des-Jahres-Reflexion über das Schuljahr, verpackt in Gen-Alpha-Slang als Aufhänger mit "normaler" Übersetzung.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 2 Materialien</span>
-                    </div>
-                </div>
-
-                <div class="resource-card" data-grade="5" data-subject="english">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag grade">5. Klasse</span>
-                            <span class="resource-tag level">B1</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Food Vocabulary for Reviews</h3>
-                    <p class="resource-description">Umfassende Vokabellisten aus TikTok-Transkripten: Taste & Flavor, Texture, Size & Portion, Quality & Experience.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📊 PowerPoint</span>
-                    </div>
-                </div>
-            </div>
+        <section id="qualitaet" class="section">
+            <h1 class="section-title">Qualitätssicherung</h1>
+            <p class="section-subtitle">Dieses Kapitel wird noch entwickelt.</p>
         </section>
 
-        <!-- Category: PuP -->
-        <section class="category-section active" id="cat-pup" data-category="pup">
-            <div class="category-header">
-                <div class="category-icon pup">🧠</div>
-                <div>
-                    <h2 class="category-title">Psychologie & Philosophie (PuP)</h2>
-                    <p class="category-count">5 Ressourcen</p>
-                </div>
-            </div>
-            <div class="resources-grid">
-                <div class="resource-card" data-grade="pup" data-subject="pup" onclick="openModal('modal-bindung')">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag subject">Psychologie</span>
-                            <span class="resource-tag grade">WPF 7./8.</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Entwicklungspsychologie & Bindungstheorie</h3>
-                    <p class="resource-description">Von Harlow zu Ainsworth: Theorie-Handout, Fallstudien, Dating-Profile als Veranschaulichung der Bindungsstile.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 5 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 6 Prompts</span>
-                    </div>
-                </div>
-
-                <div class="resource-card" data-grade="pup" data-subject="pup">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag subject">Psychologie</span>
-                            <span class="resource-tag grade">WPF 7./8.</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Werbepsychologie-Unterrichtseinheit</h3>
-                    <p class="resource-description">AIDA-Modell + 8 psychologische Taktiken (Social Proof, Urgency, FOMO, etc.) mit echten Werbetexten zur Analyse.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 4 Materialien</span>
-                    </div>
-                </div>
-
-                <div class="resource-card" data-grade="pup" data-subject="pup">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag subject">Psychologie</span>
-                            <span class="resource-tag grade">WPF 7./8.</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Persönlichkeitsdiagnostik & Big Five</h3>
-                    <p class="resource-description">Gütekriterien (O-R-V), authentische IPIP/BFI Items, Reflexionsaufgabe "Der Schul-Persönlichkeitstest".</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 6 Materialien</span>
-                        <span class="resource-meta-item">⏱️ 4 Prompts</span>
-                    </div>
-                </div>
-
-                <div class="resource-card" data-grade="pup" data-subject="pup">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag subject">Philosophie</span>
-                            <span class="resource-tag grade">WPF 7./8.</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Transhumanismus & Anthropologie</h3>
-                    <p class="resource-description">Von Gehlens "Mängelwesen" zu Bostrom, More, de Grey, Kurzweil. Toulmin-Analyse transhumanistischer Argumente.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 4+ Materialien</span>
-                    </div>
-                </div>
-
-                <div class="resource-card" data-grade="pup" data-subject="pup">
-                    <div class="resource-header">
-                        <div class="resource-tags">
-                            <span class="resource-tag subject">Philosophie</span>
-                            <span class="resource-tag grade">WPF 7./8.</span>
-                        </div>
-                        <div class="resource-expand">→</div>
-                    </div>
-                    <h3 class="resource-title">Normative Ethik: Utilitarismus & Pflichtethik</h3>
-                    <p class="resource-description">Trolley Problem, moralische Dilemmata, Vergleich von konsequentialistischen und deontologischen Ansätzen.</p>
-                    <div class="resource-meta">
-                        <span class="resource-meta-item">📄 Materialien</span>
-                    </div>
-                </div>
-            </div>
+        <section id="curriculum" class="section">
+            <h1 class="section-title">Curriculumentwicklung</h1>
+            <p class="section-subtitle">Dieses Kapitel wird noch entwickelt.</p>
         </section>
+
+        <section id="admin" class="section">
+            <h1 class="section-title">Administration</h1>
+            <p class="section-subtitle">Dieses Kapitel wird noch entwickelt.</p>
+        </section>
+
     </main>
 
-    <!-- Modal Overlay -->
-    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
-        <div class="modal" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <button class="modal-close" onclick="closeModal()">×</button>
-                <h2 class="modal-title" id="modal-title">Ressourcen-Details</h2>
-                <p class="modal-subtitle" id="modal-subtitle">Vollständige Dokumentation</p>
-            </div>
-            <div class="modal-content" id="modal-content">
-                <!-- Content will be injected here -->
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Section Tab Functionality
-        document.querySelectorAll('.section-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Update active tab
-                document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = item.dataset.section;
 
-                const category = tab.dataset.category;
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
 
-                // Show/hide sections
-                document.querySelectorAll('.category-section').forEach(section => {
-                    if (category === 'all') {
-                        section.classList.add('active');
-                    } else if (section.dataset.category === category) {
-                        section.classList.add('active');
-                    } else {
-                        section.classList.remove('active');
-                    }
-                });
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
             });
         });
 
-        // Filter Functionality
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const filterType = btn.dataset.filter;
-                const filterValue = btn.dataset.value;
-
-                // Update active button in this filter group
-                document.querySelectorAll(`.filter-btn[data-filter="${filterType}"]`).forEach(b => {
-                    b.classList.remove('active');
-                });
-                btn.classList.add('active');
-
-                // Apply filters to resource cards
-                applyFilters();
-            });
-        });
-
-        function applyFilters() {
-            const gradeFilter = document.querySelector('.filter-btn[data-filter="grade"].active')?.dataset.value || 'all';
-            const subjectFilter = document.querySelector('.filter-btn[data-filter="subject"].active')?.dataset.value || 'all';
-
-            document.querySelectorAll('.resource-card').forEach(card => {
-                const cardGrade = card.dataset.grade;
-                const cardSubject = card.dataset.subject;
-
-                let showGrade = gradeFilter === 'all' || cardGrade === gradeFilter;
-                let showSubject = subjectFilter === 'all' || cardSubject === subjectFilter;
-
-                if (showGrade && showSubject) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-
-            // Hide empty sections
-            document.querySelectorAll('.category-section').forEach(section => {
-                const visibleCards = section.querySelectorAll('.resource-card:not(.hidden)');
-                if (visibleCards.length === 0) {
-                    section.style.display = 'none';
-                } else {
-                    section.style.display = 'block';
-                }
-            });
+        // Collapsible toggle
+        function toggleCollapsible(header) {
+            const collapsible = header.closest('.collapsible');
+            collapsible.classList.toggle('open');
         }
 
-        // Modal Functions
-        function openModal(modalId) {
-            const overlay = document.getElementById('modal-overlay');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // Load modal content based on ID
-            loadModalContent(modalId);
-        }
-
-        function closeModal(event) {
-            if (event && event.target !== event.currentTarget) return;
-            const overlay = document.getElementById('modal-overlay');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function loadModalContent(modalId) {
-            const title = document.getElementById('modal-title');
-            const subtitle = document.getElementById('modal-subtitle');
-            const content = document.getElementById('modal-content');
-
-            // This would be populated with actual content
-            // For now, showing placeholder
-            title.textContent = 'Ressourcen-Details';
-            subtitle.textContent = 'Vollständige Dokumentation wird geladen...';
-            content.innerHTML = `
-                <div class="highlight-box">
-                    <h4>⚡ Feature in Entwicklung</h4>
-                    <p>Die vollständige Dokumentation mit Prompts, Chat-Verläufen und One-Shot-Templates wird hier angezeigt.</p>
-                </div>
-            `;
-        }
-
-        // Prompt Box Toggle
+        // Prompt toggle
         function togglePrompt(header) {
             const box = header.closest('.prompt-box');
             box.classList.toggle('open');
-            const toggle = header.querySelector('.prompt-toggle');
+            const toggle = header.querySelector('.toggle-prompt');
             toggle.textContent = box.classList.contains('open') ? '▲ ausblenden' : '▼ anzeigen';
         }
 
-        // Copy Button
+        // Template toggle
+        function toggleTemplate(header) {
+            const box = header.closest('.template-box');
+            box.classList.toggle('open');
+        }
+
+        // Sub-collapsible toggle
+        function toggleSubCollapsible(header) {
+            const sub = header.closest('.sub-collapsible');
+            sub.classList.toggle('open');
+        }
+
+        // Copy button
         function copyPrompt(btn) {
             const pre = btn.parentElement.querySelector('pre');
             navigator.clipboard.writeText(pre.textContent);
@@ -1490,19 +1707,50 @@
             }, 2000);
         }
 
-        // Escape key closes modal
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
+        // Category tabs
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
 
-        // Navigation Links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
+                const category = tab.dataset.category;
+
+                document.querySelectorAll('.material-category').forEach(cat => {
+                    if (category === 'all' || cat.dataset.category === category) {
+                        cat.classList.add('active');
+                    } else {
+                        cat.classList.remove('active');
+                    }
+                });
             });
         });
+
+        // Grade filter
+        document.querySelectorAll('.grade-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                document.querySelectorAll('.grade-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+
+                const grade = pill.dataset.grade;
+
+                document.querySelectorAll('.collapsible[data-grade]').forEach(item => {
+                    if (grade === 'all' || item.dataset.grade === grade) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Expand/Collapse all
+        function expandAll() {
+            document.querySelectorAll('.collapsible').forEach(c => c.classList.add('open'));
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.collapsible').forEach(c => c.classList.remove('open'));
+        }
     </script>
 </body>
 </html>
