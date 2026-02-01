@@ -5,543 +5,978 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zell-Explorer</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a192f 0%, #112240 50%, #0a192f 100%);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
             color: #fff;
         }
-        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
-        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
-        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
-        .simulation-area {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
+
+        .bg-molecules {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
         }
+
+        .molecule {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(100, 255, 218, 0.15);
+            border-radius: 50%;
+            animation: drift 25s infinite linear;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translate(80px, -100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #64ffda, #00d4aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.5);
+            font-weight: 300;
+        }
+
         .cell-toggle {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 25px;
         }
+
         .toggle-btn {
-            padding: 15px 40px;
-            font-size: 1.1em;
-            border: 3px solid;
-            background: transparent;
-            border-radius: 30px;
+            padding: 14px 40px;
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            background: rgba(100, 255, 218, 0.05);
+            color: rgba(255,255,255,0.6);
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.4s;
         }
-        .toggle-btn.animal { border-color: #e74c3c; color: #e74c3c; }
-        .toggle-btn.plant { border-color: #27ae60; color: #27ae60; }
-        .toggle-btn.active.animal { background: #e74c3c; color: white; }
-        .toggle-btn.active.plant { background: #27ae60; color: white; }
-        .main-grid {
+
+        .toggle-btn:hover {
+            border-color: rgba(100, 255, 218, 0.5);
+            background: rgba(100, 255, 218, 0.1);
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, rgba(100,255,218,0.25), rgba(0,212,170,0.15));
+            border-color: #64ffda;
+            color: #64ffda;
+            box-shadow: 0 0 30px rgba(100,255,218,0.2);
+        }
+
+        .main-content {
             display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            align-items: start;
         }
-        @media (max-width: 900px) {
-            .main-grid { grid-template-columns: 1fr; }
+
+        @media (max-width: 1050px) {
+            .main-content { grid-template-columns: 1fr; }
         }
+
+        .cell-viewport {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #152238 0%, #0a192f 100%);
+            border: 1px solid rgba(100,255,218,0.15);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4), inset 0 0 80px rgba(100,255,218,0.03);
+        }
+
         canvas {
             display: block;
-            margin: 0 auto;
-            border-radius: 50%;
-            border: 3px solid #4fc3f7;
-            max-width: 100%;
+            width: 100%;
             height: auto;
-            cursor: pointer;
         }
-        #animalCanvas { background: radial-gradient(ellipse at center, #3a1a1a 0%, #1a0a0a 100%); }
-        #plantCanvas { background: radial-gradient(ellipse at center, #1a3a1a 0%, #0a1a0a 100%); display: none; }
+
+        .hover-label {
+            position: absolute;
+            padding: 8px 16px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(100,255,218,0.4);
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #64ffda;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.25s;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        .hover-label.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .info-panel {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 20px;
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(100,255,218,0.1);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-        .organelle-title {
+
+        .panel-header {
+            padding: 18px 22px;
+            background: linear-gradient(135deg, rgba(100,255,218,0.12), rgba(100,255,218,0.03));
+            border-bottom: 1px solid rgba(100,255,218,0.1);
+        }
+
+        .panel-header h2 {
+            font-size: 1.2em;
+            color: #64ffda;
+            margin-bottom: 4px;
+        }
+
+        .panel-header p {
+            font-size: 0.8em;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .organelle-list {
+            padding: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .organelle-list::-webkit-scrollbar { width: 5px; }
+        .organelle-list::-webkit-scrollbar-track { background: rgba(100,255,218,0.03); }
+        .organelle-list::-webkit-scrollbar-thumb { background: rgba(100,255,218,0.2); border-radius: 3px; }
+
+        .organelle-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-bottom: 6px;
+        }
+
+        .organelle-item:hover {
+            background: rgba(100,255,218,0.08);
+        }
+
+        .organelle-item.active {
+            background: linear-gradient(135deg, rgba(100,255,218,0.15), rgba(100,255,218,0.05));
+            border: 1px solid rgba(100,255,218,0.25);
+        }
+
+        .organelle-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.3em;
-            color: #4fc3f7;
+            flex-shrink: 0;
+        }
+
+        .organelle-info h4 {
+            font-size: 0.9em;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .organelle-info p {
+            font-size: 0.7em;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .detail-card {
+            margin: 12px;
+            padding: 18px;
+            background: linear-gradient(135deg, rgba(100,255,218,0.08), rgba(100,255,218,0.02));
+            border-radius: 14px;
+            border: 1px solid rgba(100,255,218,0.15);
+            display: none;
+        }
+
+        .detail-card.visible { display: block; }
+
+        .detail-card h3 {
+            color: #64ffda;
+            font-size: 1.1em;
             margin-bottom: 10px;
         }
-        .organelle-desc {
+
+        .detail-card p {
+            color: rgba(255,255,255,0.65);
             line-height: 1.6;
-            color: #b0bec5;
+            font-size: 0.85em;
+        }
+
+        .detail-features {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .feature-tag {
+            padding: 5px 12px;
+            background: rgba(100,255,218,0.1);
+            border-radius: 15px;
+            font-size: 0.7em;
+            color: #64ffda;
+            border: 1px solid rgba(100,255,218,0.15);
+        }
+
+        .plant-only-tag {
+            background: rgba(34,197,94,0.12);
+            color: #22c55e;
+            border-color: rgba(34,197,94,0.25);
+        }
+
+        .comparison-footer {
+            margin-top: 25px;
+            padding: 22px;
+            background: rgba(100,255,218,0.03);
+            border-radius: 18px;
+            border: 1px solid rgba(100,255,218,0.08);
+        }
+
+        .comparison-footer h3 {
+            color: #64ffda;
+            font-size: 1em;
             margin-bottom: 15px;
+            text-align: center;
         }
-        .function-box {
-            background: rgba(46, 204, 113, 0.1);
-            border-left: 3px solid #2ecc71;
-            padding: 12px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 15px;
-        }
-        .function-box h4 { color: #2ecc71; margin-bottom: 5px; }
-        .comparison {
-            background: rgba(155, 89, 182, 0.1);
-            border: 1px solid #9b59b6;
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 15px;
-        }
-        .comparison h4 { color: #9b59b6; margin-bottom: 8px; }
+
         .comparison-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            font-size: 0.85em;
+            gap: 15px;
         }
-        .comparison-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .check { color: #2ecc71; }
-        .cross { color: #e74c3c; }
-        .legend {
-            margin-top: 15px;
-            padding: 10px;
+
+        .comparison-card {
+            padding: 15px;
             background: rgba(0,0,0,0.2);
-            border-radius: 10px;
+            border-radius: 12px;
+            text-align: center;
         }
-        .legend h4 { color: #4fc3f7; margin-bottom: 10px; font-size: 0.95em; }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 0;
-            cursor: pointer;
-            transition: all 0.2s;
+
+        .comparison-card h4 {
+            font-size: 0.85em;
+            margin-bottom: 10px;
+            color: rgba(255,255,255,0.7);
         }
-        .legend-item:hover { background: rgba(255,255,255,0.05); margin: 0 -10px; padding: 5px 10px; }
-        .legend-item.active { background: rgba(79, 195, 247, 0.2); margin: 0 -10px; padding: 5px 10px; border-radius: 5px; }
-        .legend-dot { width: 14px; height: 14px; border-radius: 50%; }
-        .legend-name { font-size: 0.85em; }
-        .info-box {
-            background: rgba(79, 195, 247, 0.1);
-            border-left: 4px solid #4fc3f7;
-            padding: 15px 20px;
-            border-radius: 0 10px 10px 0;
-            margin-top: 20px;
+
+        .comparison-list {
+            font-size: 0.75em;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.8;
         }
-        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
-        .info-box p { line-height: 1.6; color: #b0bec5; }
+
+        .has { color: #22c55e; }
+        .missing { color: #ef4444; opacity: 0.4; text-decoration: line-through; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔬 Zell-Explorer</h1>
-        <p class="subtitle">5. Klasse Biologie – Vergleiche Tier- und Pflanzenzelle</p>
+    <div class="bg-molecules" id="molecules"></div>
 
-        <div class="simulation-area">
-            <div class="cell-toggle">
-                <button class="toggle-btn animal active" onclick="showCell('animal')">🐾 Tierzelle</button>
-                <button class="toggle-btn plant" onclick="showCell('plant')">🌿 Pflanzenzelle</button>
+    <div class="container">
+        <header>
+            <h1>🔬 Zell-Explorer</h1>
+            <p class="subtitle">Entdecke die faszinierende Welt der Zellen</p>
+        </header>
+
+        <div class="cell-toggle">
+            <button class="toggle-btn active" onclick="setCellType('animal')">🦠 Tierzelle</button>
+            <button class="toggle-btn" onclick="setCellType('plant')">🌱 Pflanzenzelle</button>
+        </div>
+
+        <div class="main-content">
+            <div class="cell-viewport">
+                <canvas id="canvas" width="750" height="600"></canvas>
+                <div class="hover-label" id="hoverLabel">Organelle</div>
             </div>
 
-            <div class="main-grid">
-                <div class="canvas-container">
-                    <canvas id="animalCanvas" width="500" height="500"></canvas>
-                    <canvas id="plantCanvas" width="500" height="500"></canvas>
+            <div class="info-panel">
+                <div class="panel-header">
+                    <h2 id="panelTitle">🦠 Tierzelle</h2>
+                    <p>Klicke auf ein Organell für Details</p>
                 </div>
 
-                <div class="info-panel">
-                    <div class="organelle-title" id="organelleTitle">Klicke auf eine Organelle!</div>
-                    <div class="organelle-desc" id="organelleDesc">
-                        Erkunde die Zelle, indem du auf die verschiedenen Bestandteile klickst.
-                    </div>
-                    <div class="function-box" id="functionBox" style="display: none;">
-                        <h4>⚡ Funktion</h4>
-                        <p id="functionText"></p>
-                    </div>
+                <div class="organelle-list" id="organelleList"></div>
 
-                    <div class="legend" id="animalLegend">
-                        <h4>Organellen</h4>
-                        <div class="legend-item" onclick="selectOrganelle('nucleus')">
-                            <div class="legend-dot" style="background: #9b59b6;"></div>
-                            <span class="legend-name">Zellkern (Nucleus)</span>
-                        </div>
-                        <div class="legend-item" onclick="selectOrganelle('mitochondria')">
-                            <div class="legend-dot" style="background: #e74c3c;"></div>
-                            <span class="legend-name">Mitochondrien</span>
-                        </div>
-                        <div class="legend-item" onclick="selectOrganelle('er')">
-                            <div class="legend-dot" style="background: #3498db;"></div>
-                            <span class="legend-name">Endoplasmatisches Retikulum</span>
-                        </div>
-                        <div class="legend-item" onclick="selectOrganelle('golgi')">
-                            <div class="legend-dot" style="background: #f1c40f;"></div>
-                            <span class="legend-name">Golgi-Apparat</span>
-                        </div>
-                        <div class="legend-item" onclick="selectOrganelle('ribosome')">
-                            <div class="legend-dot" style="background: #e67e22;"></div>
-                            <span class="legend-name">Ribosomen</span>
-                        </div>
-                        <div class="legend-item" onclick="selectOrganelle('membrane')">
-                            <div class="legend-dot" style="background: #1abc9c;"></div>
-                            <span class="legend-name">Zellmembran</span>
-                        </div>
-                    </div>
-
-                    <div class="comparison">
-                        <h4>📊 Unterschiede</h4>
-                        <div class="comparison-grid">
-                            <div><strong>Tierzelle:</strong></div>
-                            <div><strong>Pflanzenzelle:</strong></div>
-                            <div class="comparison-item"><span class="cross">✗</span> Zellwand</div>
-                            <div class="comparison-item"><span class="check">✓</span> Zellwand</div>
-                            <div class="comparison-item"><span class="cross">✗</span> Chloroplasten</div>
-                            <div class="comparison-item"><span class="check">✓</span> Chloroplasten</div>
-                            <div class="comparison-item"><span class="cross">✗</span> Große Vakuole</div>
-                            <div class="comparison-item"><span class="check">✓</span> Große Vakuole</div>
-                            <div class="comparison-item"><span class="check">✓</span> Zentriolen</div>
-                            <div class="comparison-item"><span class="cross">✗</span> Zentriolen</div>
-                        </div>
-                    </div>
+                <div class="detail-card" id="detailCard">
+                    <h3 id="detailTitle">Organelle</h3>
+                    <p id="detailDesc">Beschreibung</p>
+                    <div class="detail-features" id="detailFeatures"></div>
                 </div>
             </div>
         </div>
 
-        <div class="info-box">
-            <h3>📚 Tier- vs. Pflanzenzelle</h3>
-            <p>Beide Zelltypen haben einen <strong>Zellkern</strong>, <strong>Mitochondrien</strong> und andere gemeinsame Organellen.
-            Pflanzenzellen haben zusätzlich eine <strong>Zellwand</strong> (Stabilität), <strong>Chloroplasten</strong> (Fotosynthese)
-            und eine große <strong>Vakuole</strong> (Speicher). Tierzellen haben <strong>Zentriolen</strong> für die Zellteilung.</p>
+        <div class="comparison-footer">
+            <h3>🔄 Vergleich: Tier- vs. Pflanzenzelle</h3>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>🦠 Tierzelle</h4>
+                    <div class="comparison-list">
+                        <div class="has">✓ Zellmembran</div>
+                        <div class="has">✓ Zellkern</div>
+                        <div class="has">✓ Mitochondrien</div>
+                        <div class="has">✓ Lysosomen</div>
+                        <div class="has">✓ Zentriolen</div>
+                        <div class="missing">✗ Zellwand</div>
+                        <div class="missing">✗ Chloroplasten</div>
+                        <div class="missing">✗ Vakuole</div>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <h4>🌱 Pflanzenzelle</h4>
+                    <div class="comparison-list">
+                        <div class="has">✓ Zellwand</div>
+                        <div class="has">✓ Zellkern</div>
+                        <div class="has">✓ Chloroplasten</div>
+                        <div class="has">✓ Vakuole</div>
+                        <div class="has">✓ Mitochondrien</div>
+                        <div class="missing">✗ Lysosomen</div>
+                        <div class="missing">✗ Zentriolen</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const animalCanvas = document.getElementById('animalCanvas');
-        const plantCanvas = document.getElementById('plantCanvas');
-        const actx = animalCanvas.getContext('2d');
-        const pctx = plantCanvas.getContext('2d');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-        let currentCellType = 'animal';
+        let cellType = 'animal';
         let selectedOrganelle = null;
+        let hoveredOrganelle = null;
+        let animTime = 0;
 
-        const organelleData = {
+        const organelles = {
             nucleus: {
-                title: '🟣 Zellkern (Nucleus)',
-                desc: 'Das Kontrollzentrum der Zelle. Enthält die DNA mit allen genetischen Informationen.',
-                function: 'Steuert alle Zellaktivitäten, speichert Erbinformation, koordiniert Zellteilung.'
+                name: 'Zellkern (Nucleus)',
+                icon: '🟣',
+                color: '#9b59b6',
+                desc: 'Das Kontrollzentrum der Zelle. Enthält die DNA mit allen genetischen Informationen und steuert alle Zellaktivitäten.',
+                features: ['Enthält DNA', 'Steuert Zellaktivität', 'Doppelmembran'],
+                both: true, x: 375, y: 300, radius: 60
             },
             mitochondria: {
-                title: '🔴 Mitochondrien',
-                desc: 'Die "Kraftwerke" der Zelle. Haben eine eigene DNA und doppelte Membran.',
-                function: 'Zellatmung: Wandeln Glukose + O₂ in ATP (Energie) um.'
+                name: 'Mitochondrien',
+                icon: '⚡',
+                color: '#e74c3c',
+                desc: 'Die "Kraftwerke" der Zelle! Hier wird durch Zellatmung ATP (Energie) produziert. Haben eigene DNA.',
+                features: ['ATP-Produktion', 'Eigene DNA', 'Zellatmung'],
+                both: true,
+                positions: [{ x: 220, y: 250 }, { x: 530, y: 320 }, { x: 280, y: 420 }, { x: 480, y: 200 }]
             },
             er: {
-                title: '🔵 Endoplasmatisches Retikulum',
-                desc: 'Membransystem, das den Zellkern umgibt. Raues ER hat Ribosomen, glattes ER nicht.',
-                function: 'Raues ER: Proteinsynthese. Glattes ER: Lipidsynthese, Entgiftung.'
+                name: 'Endoplasmatisches Retikulum',
+                icon: '🌀',
+                color: '#f39c12',
+                desc: 'Ein verzweigtes Membransystem für Protein- und Lipidsynthese sowie den Transport von Stoffen.',
+                features: ['Proteinsynthese', 'Lipidsynthese', 'Transport'],
+                both: true
             },
             golgi: {
-                title: '🟡 Golgi-Apparat',
-                desc: 'Stapel flacher Membransäckchen. Sortier- und Versandzentrum der Zelle.',
-                function: 'Modifiziert, verpackt und transportiert Proteine und Lipide.'
+                name: 'Golgi-Apparat',
+                icon: '📦',
+                color: '#1abc9c',
+                desc: 'Die "Versandabteilung" – modifiziert, sortiert und verpackt Proteine in Vesikel.',
+                features: ['Verpackung', 'Modifikation', 'Sekretion'],
+                both: true, x: 260, y: 220
             },
-            ribosome: {
-                title: '🟠 Ribosomen',
-                desc: 'Kleine Partikel aus RNA und Proteinen. Frei im Zytoplasma oder am ER.',
-                function: 'Proteinbiosynthese: Übersetzen mRNA in Aminosäureketten.'
+            ribosomes: {
+                name: 'Ribosomen',
+                icon: '🔘',
+                color: '#95a5a6',
+                desc: 'Winzige Proteinfabriken – übersetzen genetische Information in Proteine.',
+                features: ['Translation', 'Proteinsynthese'],
+                both: true
             },
-            membrane: {
-                title: '🟢 Zellmembran',
-                desc: 'Doppelte Phospholipidschicht mit Proteinen. Umhüllt die gesamte Zelle.',
-                function: 'Kontrolliert Stoffaustausch, Schutz, Kommunikation mit anderen Zellen.'
+            lysosome: {
+                name: 'Lysosomen',
+                icon: '🗑️',
+                color: '#e67e22',
+                desc: 'Recyclingzentren mit Verdauungsenzymen zum Abbau von Zellabfällen.',
+                features: ['Verdauung', 'Recycling', 'Saurer pH'],
+                both: false, animalOnly: true, x: 500, y: 420
+            },
+            centrioles: {
+                name: 'Zentriolen',
+                icon: '✖️',
+                color: '#8e44ad',
+                desc: 'Organisieren die Spindelfasern bei der Zellteilung.',
+                features: ['Zellteilung', 'Spindelapparat'],
+                both: false, animalOnly: true, x: 440, y: 180
             },
             chloroplast: {
-                title: '💚 Chloroplasten',
-                desc: 'Grüne Organellen mit Chlorophyll. Nur in Pflanzenzellen!',
-                function: 'Fotosynthese: Wandeln Licht + CO₂ + H₂O in Glukose + O₂ um.'
+                name: 'Chloroplasten',
+                icon: '🌿',
+                color: '#27ae60',
+                desc: 'Ort der Fotosynthese! Wandeln Licht, CO₂ und Wasser in Glukose und Sauerstoff um.',
+                features: ['Fotosynthese', 'Chlorophyll', 'Eigene DNA'],
+                both: false, plantOnly: true,
+                positions: [{ x: 210, y: 350 }, { x: 540, y: 260 }, { x: 300, y: 470 }]
             },
             vacuole: {
-                title: '💧 Vakuole',
-                desc: 'Große, flüssigkeitsgefüllte Blase. In Pflanzenzellen riesig (bis 90% des Volumens).',
-                function: 'Speichert Wasser, Nährstoffe, Abfallstoffe. Erzeugt Turgor (Zellinnendruck).'
+                name: 'Vakuole',
+                icon: '💧',
+                color: '#00bcd4',
+                desc: 'Großer Wasserspeicher – hält den Turgor aufrecht und speichert Stoffe.',
+                features: ['Wasserspeicher', 'Turgor', 'Stoffspeicher'],
+                both: false, plantOnly: true, x: 375, y: 300, radius: 110
             },
-            cellwall: {
-                title: '🧱 Zellwand',
-                desc: 'Stabile Schicht aus Cellulose außerhalb der Membran. Nur bei Pflanzen!',
-                function: 'Gibt der Zelle Form und Stabilität, schützt vor Platzen.'
-            },
-            centriole: {
-                title: '⚙️ Zentriolen',
-                desc: 'Zylindrische Strukturen nahe dem Zellkern. Nur in Tierzellen!',
-                function: 'Organisieren Mikrotubuli bei der Zellteilung (Spindelapparat).'
+            cellWall: {
+                name: 'Zellwand',
+                icon: '🧱',
+                color: '#8d6e63',
+                desc: 'Stabile Hülle aus Zellulose – gibt der Pflanzenzelle Form und Schutz.',
+                features: ['Zellulose', 'Stabilität', 'Schutz'],
+                both: false, plantOnly: true
             }
         };
 
-        function drawAnimalCell() {
-            actx.clearRect(0, 0, 500, 500);
-            const cx = 250, cy = 250;
-
-            // Cell membrane
-            actx.beginPath();
-            actx.arc(cx, cy, 220, 0, Math.PI * 2);
-            const memGrad = actx.createRadialGradient(cx, cy, 200, cx, cy, 230);
-            memGrad.addColorStop(0, 'rgba(26, 188, 156, 0.3)');
-            memGrad.addColorStop(1, 'rgba(26, 188, 156, 0.8)');
-            actx.fillStyle = memGrad;
-            actx.fill();
-
-            // Cytoplasm
-            actx.beginPath();
-            actx.arc(cx, cy, 210, 0, Math.PI * 2);
-            actx.fillStyle = 'rgba(255, 200, 200, 0.2)';
-            actx.fill();
-
-            // ER (wavy lines)
-            actx.strokeStyle = selectedOrganelle === 'er' ? '#5dade2' : '#3498db';
-            actx.lineWidth = selectedOrganelle === 'er' ? 4 : 3;
-            for (let i = 0; i < 3; i++) {
-                actx.beginPath();
-                for (let x = 100; x < 200; x += 5) {
-                    const y = 150 + i * 25 + Math.sin(x * 0.1) * 8;
-                    if (x === 100) actx.moveTo(x, y);
-                    else actx.lineTo(x, y);
-                }
-                actx.stroke();
-            }
-
-            // Golgi apparatus
-            actx.fillStyle = selectedOrganelle === 'golgi' ? '#f4d03f' : '#f1c40f';
-            for (let i = 0; i < 4; i++) {
-                actx.beginPath();
-                actx.ellipse(350, 150 + i * 15, 40, 8, 0.3, 0, Math.PI * 2);
-                actx.fill();
-            }
-
-            // Mitochondria
-            const mitoColor = selectedOrganelle === 'mitochondria' ? '#ec7063' : '#e74c3c';
-            [[320, 300], [150, 320], [180, 180], [350, 350]].forEach(([x, y]) => {
-                actx.fillStyle = mitoColor;
-                actx.beginPath();
-                actx.ellipse(x, y, 25, 12, Math.random(), 0, Math.PI * 2);
-                actx.fill();
-                // Inner membrane folds
-                actx.strokeStyle = 'rgba(255,255,255,0.4)';
-                actx.lineWidth = 1;
-                for (let i = -15; i < 15; i += 8) {
-                    actx.beginPath();
-                    actx.moveTo(x + i, y - 8);
-                    actx.lineTo(x + i, y + 8);
-                    actx.stroke();
-                }
+        function getVisibleOrganelles() {
+            return Object.entries(organelles).filter(([key, org]) => {
+                if (org.both) return true;
+                if (cellType === 'animal' && org.animalOnly) return true;
+                if (cellType === 'plant' && org.plantOnly) return true;
+                return false;
             });
-
-            // Ribosomes
-            actx.fillStyle = selectedOrganelle === 'ribosome' ? '#f39c12' : '#e67e22';
-            for (let i = 0; i < 30; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const r = 80 + Math.random() * 100;
-                actx.beginPath();
-                actx.arc(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, 3, 0, Math.PI * 2);
-                actx.fill();
-            }
-
-            // Nucleus
-            actx.beginPath();
-            actx.arc(cx, cy, 60, 0, Math.PI * 2);
-            const nucGrad = actx.createRadialGradient(cx - 20, cy - 20, 5, cx, cy, 60);
-            nucGrad.addColorStop(0, selectedOrganelle === 'nucleus' ? '#a569bd' : '#9b59b6');
-            nucGrad.addColorStop(1, selectedOrganelle === 'nucleus' ? '#7d3c98' : '#6c3483');
-            actx.fillStyle = nucGrad;
-            actx.fill();
-
-            // Nucleolus
-            actx.beginPath();
-            actx.arc(cx + 15, cy - 10, 15, 0, Math.PI * 2);
-            actx.fillStyle = '#5b2c6f';
-            actx.fill();
-
-            // Centrioles
-            actx.fillStyle = selectedOrganelle === 'centriole' ? '#aab7b8' : '#7f8c8d';
-            actx.save();
-            actx.translate(120, 280);
-            actx.rotate(0.3);
-            actx.fillRect(-15, -5, 30, 10);
-            actx.rotate(Math.PI / 2);
-            actx.fillRect(-15, -5, 30, 10);
-            actx.restore();
         }
 
-        function drawPlantCell() {
-            pctx.clearRect(0, 0, 500, 500);
-            const cx = 250, cy = 250;
+        function renderOrganelleList() {
+            const list = document.getElementById('organelleList');
+            list.innerHTML = '';
+            getVisibleOrganelles().forEach(([key, org]) => {
+                const item = document.createElement('div');
+                item.className = 'organelle-item' + (selectedOrganelle === key ? ' active' : '');
+                item.onclick = () => selectOrganelle(key);
+                item.innerHTML = `
+                    <div class="organelle-icon" style="background: ${org.color}22; color: ${org.color};">${org.icon}</div>
+                    <div class="organelle-info">
+                        <h4>${org.name}</h4>
+                        <p>${org.plantOnly ? '🌱 Nur Pflanze' : org.animalOnly ? '🦠 Nur Tier' : '🔄 Beide'}</p>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
 
-            // Cell wall
-            pctx.strokeStyle = selectedOrganelle === 'cellwall' ? '#58d68d' : '#27ae60';
-            pctx.lineWidth = selectedOrganelle === 'cellwall' ? 15 : 12;
-            pctx.strokeRect(30, 30, 440, 440);
+        function selectOrganelle(key) {
+            selectedOrganelle = key;
+            const org = organelles[key];
+            document.getElementById('detailTitle').innerHTML = `${org.icon} ${org.name}`;
+            document.getElementById('detailDesc').textContent = org.desc;
+            const features = document.getElementById('detailFeatures');
+            features.innerHTML = org.features.map(f =>
+                `<span class="feature-tag ${org.plantOnly ? 'plant-only-tag' : ''}">${f}</span>`
+            ).join('');
+            document.getElementById('detailCard').classList.add('visible');
+            renderOrganelleList();
+        }
+
+        function setCellType(type) {
+            cellType = type;
+            selectedOrganelle = null;
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('panelTitle').textContent = type === 'animal' ? '🦠 Tierzelle' : '🌱 Pflanzenzelle';
+            document.getElementById('detailCard').classList.remove('visible');
+            renderOrganelleList();
+        }
+
+        function drawCell() {
+            const cx = 375, cy = 300;
+
+            // Cell wall (plant only)
+            if (cellType === 'plant') {
+                ctx.beginPath();
+                ctx.roundRect(50, 40, 650, 520, 25);
+                ctx.strokeStyle = '#8d6e63';
+                ctx.lineWidth = 12;
+                ctx.stroke();
+            }
+
+            // Cell membrane glow
+            const memGlow = ctx.createRadialGradient(cx, cy, 180, cx, cy, 280);
+            memGlow.addColorStop(0, 'rgba(52, 152, 219, 0)');
+            memGlow.addColorStop(0.7, 'rgba(52, 152, 219, 0.1)');
+            memGlow.addColorStop(1, 'rgba(52, 152, 219, 0)');
+            ctx.fillStyle = memGlow;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 300, 250, 0, 0, Math.PI * 2);
+            ctx.fill();
 
             // Cell membrane
-            pctx.strokeStyle = selectedOrganelle === 'membrane' ? '#48c9b0' : '#1abc9c';
-            pctx.lineWidth = 4;
-            pctx.strokeRect(45, 45, 410, 410);
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 280, 230, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(100, 255, 218, 0.02)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(52, 152, 219, 0.7)';
+            ctx.lineWidth = 4;
+            ctx.stroke();
 
-            // Large central vacuole
-            pctx.beginPath();
-            pctx.ellipse(cx, cy + 20, 150, 120, 0, 0, Math.PI * 2);
-            const vacGrad = pctx.createRadialGradient(cx, cy, 20, cx, cy + 20, 140);
-            vacGrad.addColorStop(0, selectedOrganelle === 'vacuole' ? 'rgba(133, 193, 233, 0.6)' : 'rgba(133, 193, 233, 0.4)');
-            vacGrad.addColorStop(1, selectedOrganelle === 'vacuole' ? 'rgba(46, 134, 193, 0.7)' : 'rgba(46, 134, 193, 0.5)');
-            pctx.fillStyle = vacGrad;
-            pctx.fill();
-            pctx.strokeStyle = '#2980b9';
-            pctx.lineWidth = 2;
-            pctx.stroke();
-
-            // Chloroplasts
-            const chloroColor = selectedOrganelle === 'chloroplast' ? '#2ecc71' : '#27ae60';
-            [[100, 120], [380, 100], [80, 350], [400, 380], [150, 420], [350, 420]].forEach(([x, y]) => {
-                pctx.fillStyle = chloroColor;
-                pctx.beginPath();
-                pctx.ellipse(x, y, 30, 15, Math.random() * 0.5, 0, Math.PI * 2);
-                pctx.fill();
-                // Thylakoid stacks
-                pctx.strokeStyle = 'rgba(0, 100, 0, 0.5)';
-                pctx.lineWidth = 2;
-                for (let i = -20; i < 20; i += 8) {
-                    pctx.beginPath();
-                    pctx.moveTo(x + i, y - 5);
-                    pctx.lineTo(x + i, y + 5);
-                    pctx.stroke();
-                }
-            });
-
-            // Nucleus (pushed to side by vacuole)
-            pctx.beginPath();
-            pctx.arc(100, 200, 40, 0, Math.PI * 2);
-            const nucGrad = pctx.createRadialGradient(90, 190, 5, 100, 200, 40);
-            nucGrad.addColorStop(0, selectedOrganelle === 'nucleus' ? '#a569bd' : '#9b59b6');
-            nucGrad.addColorStop(1, '#6c3483');
-            pctx.fillStyle = nucGrad;
-            pctx.fill();
-
-            // Mitochondria
-            [[380, 200], [420, 300]].forEach(([x, y]) => {
-                pctx.fillStyle = selectedOrganelle === 'mitochondria' ? '#ec7063' : '#e74c3c';
-                pctx.beginPath();
-                pctx.ellipse(x, y, 20, 10, 0.5, 0, Math.PI * 2);
-                pctx.fill();
-            });
+            // Vacuole (plant, draw first)
+            if (cellType === 'plant') drawVacuole(cx, cy);
 
             // ER
-            pctx.strokeStyle = selectedOrganelle === 'er' ? '#5dade2' : '#3498db';
-            pctx.lineWidth = 2;
-            pctx.beginPath();
-            for (let x = 130; x < 200; x += 5) {
-                const y = 190 + Math.sin(x * 0.15) * 10;
-                if (x === 130) pctx.moveTo(x, y);
-                else pctx.lineTo(x, y);
-            }
-            pctx.stroke();
+            drawER();
+
+            // Golgi
+            drawGolgi();
+
+            // Mitochondria
+            drawMitochondria();
+
+            // Chloroplasts (plant)
+            if (cellType === 'plant') drawChloroplasts();
+
+            // Lysosomes (animal)
+            if (cellType === 'animal') drawLysosome();
+
+            // Centrioles (animal)
+            if (cellType === 'animal') drawCentrioles();
+
+            // Ribosomes
+            drawRibosomes();
+
+            // Nucleus (on top)
+            drawNucleus(cx, cy);
         }
 
-        function showCell(type) {
-            currentCellType = type;
-            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.toggle-btn.${type}`).classList.add('active');
+        function drawNucleus(cx, cy) {
+            const pulse = 1 + Math.sin(animTime * 0.5) * 0.02;
+            const isActive = hoveredOrganelle === 'nucleus' || selectedOrganelle === 'nucleus';
 
-            animalCanvas.style.display = type === 'animal' ? 'block' : 'none';
-            plantCanvas.style.display = type === 'plant' ? 'block' : 'none';
+            // Glow
+            const glow = ctx.createRadialGradient(cx, cy, 30, cx, cy, 80);
+            glow.addColorStop(0, 'rgba(155, 89, 182, 0.4)');
+            glow.addColorStop(1, 'rgba(155, 89, 182, 0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 80 * pulse, 0, Math.PI * 2);
+            ctx.fill();
 
-            // Update legend for plant-specific organelles
-            const legend = document.getElementById('animalLegend');
-            if (type === 'plant') {
-                legend.innerHTML = `
-                    <h4>Organellen</h4>
-                    <div class="legend-item" onclick="selectOrganelle('nucleus')">
-                        <div class="legend-dot" style="background: #9b59b6;"></div>
-                        <span class="legend-name">Zellkern (Nucleus)</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('chloroplast')">
-                        <div class="legend-dot" style="background: #27ae60;"></div>
-                        <span class="legend-name">Chloroplasten</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('vacuole')">
-                        <div class="legend-dot" style="background: #3498db;"></div>
-                        <span class="legend-name">Vakuole</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('cellwall')">
-                        <div class="legend-dot" style="background: #2ecc71;"></div>
-                        <span class="legend-name">Zellwand</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('mitochondria')">
-                        <div class="legend-dot" style="background: #e74c3c;"></div>
-                        <span class="legend-name">Mitochondrien</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('membrane')">
-                        <div class="legend-dot" style="background: #1abc9c;"></div>
-                        <span class="legend-name">Zellmembran</span>
-                    </div>
-                `;
+            // Body
+            ctx.beginPath();
+            ctx.arc(cx, cy, 55 * pulse, 0, Math.PI * 2);
+            const nucGrad = ctx.createRadialGradient(cx - 15, cy - 15, 10, cx, cy, 55);
+            nucGrad.addColorStop(0, '#c39bd3');
+            nucGrad.addColorStop(0.5, '#9b59b6');
+            nucGrad.addColorStop(1, '#6c3483');
+            ctx.fillStyle = nucGrad;
+            ctx.fill();
+
+            if (isActive) {
+                ctx.strokeStyle = '#64ffda';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Nucleolus
+            ctx.beginPath();
+            ctx.arc(cx + 8, cy + 8, 15, 0, Math.PI * 2);
+            ctx.fillStyle = '#5b2c6f';
+            ctx.fill();
+
+            // Chromatin
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                const a = i * Math.PI / 2.5;
+                ctx.moveTo(cx + Math.cos(a) * 15, cy + Math.sin(a) * 15);
+                ctx.bezierCurveTo(
+                    cx + Math.cos(a + 0.5) * 35, cy + Math.sin(a + 0.5) * 35,
+                    cx + Math.cos(a + 1) * 25, cy + Math.sin(a + 1) * 25,
+                    cx + Math.cos(a + 1.5) * 40, cy + Math.sin(a + 1.5) * 40
+                );
+                ctx.stroke();
+            }
+
+            // Highlight
+            ctx.beginPath();
+            ctx.ellipse(cx - 20, cy - 20, 12, 8, -0.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.25)';
+            ctx.fill();
+
+            ctx.font = 'bold 11px Inter';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.fillText('Zellkern', cx, cy + 80);
+        }
+
+        function drawMitochondria() {
+            const positions = organelles.mitochondria.positions;
+            const isActive = hoveredOrganelle === 'mitochondria' || selectedOrganelle === 'mitochondria';
+
+            positions.forEach((pos, i) => {
+                const wobble = Math.sin(animTime + i) * 2;
+                ctx.save();
+                ctx.translate(pos.x, pos.y + wobble);
+                ctx.rotate(i * 0.6);
+
+                // Glow
+                const glow = ctx.createRadialGradient(0, 0, 10, 0, 0, 35);
+                glow.addColorStop(0, 'rgba(231, 76, 60, 0.4)');
+                glow.addColorStop(1, 'rgba(231, 76, 60, 0)');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 35, 20, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Body
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 25, 12, 0, 0, Math.PI * 2);
+                const mitoGrad = ctx.createLinearGradient(-25, -12, 25, 12);
+                mitoGrad.addColorStop(0, '#e74c3c');
+                mitoGrad.addColorStop(1, '#922b21');
+                ctx.fillStyle = mitoGrad;
+                ctx.fill();
+
+                if (isActive) {
+                    ctx.strokeStyle = '#64ffda';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+
+                // Cristae
+                ctx.strokeStyle = 'rgba(255,200,200,0.35)';
+                ctx.lineWidth = 2;
+                for (let j = -2; j <= 2; j++) {
+                    ctx.beginPath();
+                    ctx.moveTo(j * 7, -8);
+                    ctx.lineTo(j * 7, 8);
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            });
+        }
+
+        function drawER() {
+            ctx.strokeStyle = 'rgba(243, 156, 18, 0.5)';
+            ctx.lineWidth = 7;
+            ctx.lineCap = 'round';
+
+            const pts = [
+                { x: 300, y: 230 }, { x: 260, y: 280 }, { x: 280, y: 350 },
+                { x: 320, y: 400 }, { x: 400, y: 420 }, { x: 480, y: 380 },
+                { x: 500, y: 300 }, { x: 480, y: 240 }, { x: 430, y: 210 }
+            ];
+
+            ctx.beginPath();
+            ctx.moveTo(pts[0].x, pts[0].y);
+            for (let i = 1; i < pts.length; i++) {
+                const xc = (pts[i].x + pts[i-1].x) / 2;
+                const yc = (pts[i].y + pts[i-1].y) / 2;
+                ctx.quadraticCurveTo(pts[i-1].x, pts[i-1].y, xc, yc);
+            }
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(243, 156, 18, 0.25)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function drawGolgi() {
+            const gx = 260, gy = 220;
+            const isActive = hoveredOrganelle === 'golgi' || selectedOrganelle === 'golgi';
+
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.ellipse(gx, gy + i * 10, 45 - i * 4, 7, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(26, 188, 156, ${0.75 - i * 0.1})`;
+                ctx.fill();
+                if (isActive && i === 0) {
+                    ctx.strokeStyle = '#64ffda';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+
+            // Vesicles
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.arc(gx + 55 + i * 12, gy + 15 + i * 8, 6, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(26, 188, 156, 0.6)';
+                ctx.fill();
+            }
+
+            ctx.font = '10px Inter';
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.textAlign = 'center';
+            ctx.fillText('Golgi', gx, gy + 70);
+        }
+
+        function drawRibosomes() {
+            const riboPos = [
+                { x: 275, y: 260 }, { x: 295, y: 300 }, { x: 310, y: 340 },
+                { x: 275, y: 370 }, { x: 320, y: 410 }, { x: 400, y: 440 },
+                { x: 460, y: 400 }, { x: 490, y: 340 }, { x: 470, y: 270 },
+                { x: 440, y: 225 }, { x: 335, y: 220 }
+            ];
+
+            riboPos.forEach((pos, i) => {
+                const pulse = 0.8 + Math.sin(animTime * 2 + i) * 0.2;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 3.5 * pulse, 0, Math.PI * 2);
+                ctx.fillStyle = '#95a5a6';
+                ctx.fill();
+            });
+        }
+
+        function drawLysosome() {
+            const lx = 500, ly = 420;
+            const isActive = hoveredOrganelle === 'lysosome' || selectedOrganelle === 'lysosome';
+
+            const glow = ctx.createRadialGradient(lx, ly, 8, lx, ly, 30);
+            glow.addColorStop(0, 'rgba(230, 126, 34, 0.5)');
+            glow.addColorStop(1, 'rgba(230, 126, 34, 0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(lx, ly, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(lx, ly, 18, 0, Math.PI * 2);
+            const lysoGrad = ctx.createRadialGradient(lx - 4, ly - 4, 4, lx, ly, 18);
+            lysoGrad.addColorStop(0, '#f39c12');
+            lysoGrad.addColorStop(1, '#d35400');
+            ctx.fillStyle = lysoGrad;
+            ctx.fill();
+
+            if (isActive) {
+                ctx.strokeStyle = '#64ffda';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Enzymes
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            for (let i = 0; i < 4; i++) {
+                const a = i * Math.PI / 2;
+                ctx.beginPath();
+                ctx.arc(lx + Math.cos(a) * 8, ly + Math.sin(a) * 8, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.font = '10px Inter';
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.textAlign = 'center';
+            ctx.fillText('Lysosom', lx, ly + 35);
+        }
+
+        function drawCentrioles() {
+            const cx = 440, cy = 180;
+            const isActive = hoveredOrganelle === 'centrioles' || selectedOrganelle === 'centrioles';
+
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            ctx.fillStyle = isActive ? '#64ffda' : '#8e44ad';
+            ctx.fillRect(-12, -3, 24, 6);
+            ctx.rotate(Math.PI / 2);
+            ctx.fillRect(-12, 6, 24, 6);
+
+            ctx.restore();
+
+            ctx.font = '10px Inter';
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.textAlign = 'center';
+            ctx.fillText('Zentriolen', cx, cy + 30);
+        }
+
+        function drawChloroplasts() {
+            const positions = organelles.chloroplast.positions;
+            const isActive = hoveredOrganelle === 'chloroplast' || selectedOrganelle === 'chloroplast';
+
+            positions.forEach((pos, i) => {
+                const wobble = Math.sin(animTime * 0.7 + i * 2) * 2;
+                ctx.save();
+                ctx.translate(pos.x, pos.y + wobble);
+                ctx.rotate(i * 0.4);
+
+                // Glow
+                const glow = ctx.createRadialGradient(0, 0, 12, 0, 0, 45);
+                glow.addColorStop(0, 'rgba(39, 174, 96, 0.4)');
+                glow.addColorStop(1, 'rgba(39, 174, 96, 0)');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 45, 25, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Body
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 30, 16, 0, 0, Math.PI * 2);
+                const chloroGrad = ctx.createLinearGradient(-30, -16, 30, 16);
+                chloroGrad.addColorStop(0, '#2ecc71');
+                chloroGrad.addColorStop(1, '#1e8449');
+                ctx.fillStyle = chloroGrad;
+                ctx.fill();
+
+                if (isActive) {
+                    ctx.strokeStyle = '#64ffda';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+
+                // Grana (thylakoids)
+                ctx.fillStyle = 'rgba(30, 132, 73, 0.7)';
+                for (let j = -2; j <= 2; j++) {
+                    ctx.beginPath();
+                    ctx.ellipse(j * 8, 0, 5, 10, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            });
+        }
+
+        function drawVacuole(cx, cy) {
+            const pulse = 1 + Math.sin(animTime * 0.3) * 0.015;
+            const isActive = hoveredOrganelle === 'vacuole' || selectedOrganelle === 'vacuole';
+
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 130 * pulse, 110 * pulse, 0, 0, Math.PI * 2);
+            const vacGrad = ctx.createRadialGradient(cx, cy, 40, cx, cy, 130);
+            vacGrad.addColorStop(0, 'rgba(0, 188, 212, 0.15)');
+            vacGrad.addColorStop(1, 'rgba(0, 188, 212, 0.35)');
+            ctx.fillStyle = vacGrad;
+            ctx.fill();
+
+            ctx.strokeStyle = isActive ? '#64ffda' : 'rgba(0, 188, 212, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function getOrganelleAt(x, y) {
+            // Nucleus
+            if (Math.sqrt((x - 375) ** 2 + (y - 300) ** 2) < 55) return 'nucleus';
+
+            // Mitochondria
+            for (const pos of organelles.mitochondria.positions) {
+                if (Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2) < 25) return 'mitochondria';
+            }
+
+            // Chloroplasts (plant)
+            if (cellType === 'plant') {
+                for (const pos of organelles.chloroplast.positions) {
+                    if (Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2) < 30) return 'chloroplast';
+                }
+                if (Math.sqrt((x - 375) ** 2 / 16900 + (y - 300) ** 2 / 12100) < 1) return 'vacuole';
+            }
+
+            // Golgi
+            if (Math.sqrt((x - 260) ** 2 + (y - 245) ** 2) < 45) return 'golgi';
+
+            // Lysosome (animal)
+            if (cellType === 'animal') {
+                if (Math.sqrt((x - 500) ** 2 + (y - 420) ** 2) < 20) return 'lysosome';
+                if (Math.sqrt((x - 440) ** 2 + (y - 180) ** 2) < 20) return 'centrioles';
+            }
+
+            return null;
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            const org = getOrganelleAt(x, y);
+            hoveredOrganelle = org;
+
+            const label = document.getElementById('hoverLabel');
+            if (org && organelles[org]) {
+                label.textContent = organelles[org].name;
+                label.style.left = (e.clientX - rect.left) + 'px';
+                label.style.top = (e.clientY - rect.top - 40) + 'px';
+                label.classList.add('visible');
+                canvas.style.cursor = 'pointer';
             } else {
-                legend.innerHTML = `
-                    <h4>Organellen</h4>
-                    <div class="legend-item" onclick="selectOrganelle('nucleus')">
-                        <div class="legend-dot" style="background: #9b59b6;"></div>
-                        <span class="legend-name">Zellkern (Nucleus)</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('mitochondria')">
-                        <div class="legend-dot" style="background: #e74c3c;"></div>
-                        <span class="legend-name">Mitochondrien</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('er')">
-                        <div class="legend-dot" style="background: #3498db;"></div>
-                        <span class="legend-name">Endoplasmatisches Retikulum</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('golgi')">
-                        <div class="legend-dot" style="background: #f1c40f;"></div>
-                        <span class="legend-name">Golgi-Apparat</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('centriole')">
-                        <div class="legend-dot" style="background: #7f8c8d;"></div>
-                        <span class="legend-name">Zentriolen</span>
-                    </div>
-                    <div class="legend-item" onclick="selectOrganelle('membrane')">
-                        <div class="legend-dot" style="background: #1abc9c;"></div>
-                        <span class="legend-name">Zellmembran</span>
-                    </div>
-                `;
+                label.classList.remove('visible');
+                canvas.style.cursor = 'default';
             }
+        });
 
-            selectedOrganelle = null;
-            draw();
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            const org = getOrganelleAt(x, y);
+            if (org) selectOrganelle(org);
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            animTime += 0.02;
+            drawCell();
+            requestAnimationFrame(animate);
         }
 
-        function selectOrganelle(name) {
-            selectedOrganelle = name;
-            const data = organelleData[name];
-
-            document.getElementById('organelleTitle').textContent = data.title;
-            document.getElementById('organelleDesc').textContent = data.desc;
-            document.getElementById('functionBox').style.display = 'block';
-            document.getElementById('functionText').textContent = data.function;
-
-            document.querySelectorAll('.legend-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.legend-item').classList.add('active');
-
-            draw();
-        }
-
-        function draw() {
-            if (currentCellType === 'animal') {
-                drawAnimalCell();
-            } else {
-                drawPlantCell();
+        function createMolecules() {
+            const container = document.getElementById('molecules');
+            for (let i = 0; i < 35; i++) {
+                const mol = document.createElement('div');
+                mol.className = 'molecule';
+                mol.style.left = Math.random() * 100 + '%';
+                mol.style.top = Math.random() * 100 + '%';
+                mol.style.animationDelay = Math.random() * 20 + 's';
+                mol.style.animationDuration = (18 + Math.random() * 12) + 's';
+                container.appendChild(mol);
             }
         }
 
-        draw();
+        createMolecules();
+        renderOrganelleList();
+        animate();
     </script>
 </body>
 </html>
