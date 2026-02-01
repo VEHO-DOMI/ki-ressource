@@ -8010,6 +8010,14 @@ INHALT:
                             <div class="sub-collapsible-content">
                                 <p><strong>Schulstufe:</strong> 2. Klasse | <strong>Thema:</strong> Pflanzen – Blütenbau</p>
                                 <p>Interaktive Blütendiagramm-Visualisierung mit allen wichtigen Teilen (Kelchblätter, Kronblätter, Staubblätter, Fruchtblatt). Klicke auf die Teile für detaillierte Informationen und teste dein Wissen im Quiz-Modus.</p>
+                                                        <div class="version-toggle">
+                                                                                        <button class="version-btn active" onclick="switchVersion('bluetenanatomie', 'standard', this)">
+                                                                                                                            Standard 2D
+                                                                                            </button>button>
+                                                                                        <button class="version-btn" onclick="switchVersion('bluetenanatomie', '3d', this)">
+                                                                                                                            3D Ansicht
+                                                                                            </button>button>
+                                                        </div>
                                 <div class="simulation-container" style="margin-top: 1rem;">
                                     <iframe src="materials/biologie-simulationen/02_Blueten_Anatomie.html"
                                             style="width: 100%; height: 850px; border: 2px solid var(--cyber-green); border-radius: 8px;"
@@ -8265,7 +8273,11 @@ INHALT:
                 'zellexplorer': {
                     'standard': 'materials/biologie-simulationen/05_Zell_Explorer.html',
                     '3d': 'materials/biologie-simulationen/05_Zell_Explorer_3D.html'
-                }
+                },
+                    'bluetenanatomie': {
+                        'standard': 'materials/biologie-simulationen/02_Blueten_Anatomie.html',
+                                        '3d': 'materials/biologie-simulationen/02_Blueten_Anatomie_3D.html'
+        }
             };
 
             const frame = document.getElementById(simulation + '-frame');
