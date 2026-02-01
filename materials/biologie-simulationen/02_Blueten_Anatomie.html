@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blüten-Anatomie</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at center, #1b4a1b 0%, #0d2a0d 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+            max-width: 100%;
+            height: auto;
+            cursor: pointer;
+        }
+        .info-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .part-title {
+            font-size: 1.4em;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4fc3f7;
+        }
+        .part-description {
+            line-height: 1.7;
+            color: #b0bec5;
+            margin-bottom: 15px;
+        }
+        .part-function {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 3px solid #2ecc71;
+            padding: 10px 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 15px;
+        }
+        .part-function h4 { color: #2ecc71; margin-bottom: 5px; }
+        .legend {
+            margin-top: 20px;
+        }
+        .legend h4 { color: #4fc3f7; margin-bottom: 10px; }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .legend-item:hover { background: rgba(255,255,255,0.1); }
+        .legend-item.active { background: rgba(79, 195, 247, 0.2); border: 1px solid #4fc3f7; }
+        .legend-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .legend-name { font-size: 0.9em; }
+        .mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #4fc3f7;
+            background: transparent;
+            color: #4fc3f7;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .mode-btn.active, .mode-btn:hover {
+            background: #4fc3f7;
+            color: #1a1a2e;
+        }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+        .quiz-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(155, 89, 182, 0.1);
+            border-radius: 10px;
+            display: none;
+        }
+        .quiz-section.active { display: block; }
+        .quiz-question { margin-bottom: 10px; font-weight: bold; }
+        .quiz-options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .quiz-options button:hover { background: rgba(255,255,255,0.2); }
+        .quiz-options button.correct { background: rgba(46, 204, 113, 0.3); border-color: #2ecc71; }
+        .quiz-options button.incorrect { background: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 Blüten-Anatomie</h1>
+        <p class="subtitle">2. Klasse Biologie – Erkunde den Aufbau einer Blüte</p>
+
+        <div class="simulation-area">
+            <div class="main-grid">
+                <div class="canvas-area">
+                    <canvas id="flowerCanvas" width="550" height="500"></canvas>
+                </div>
+                <div class="info-panel">
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" onclick="setMode('explore')">🔍 Erkunden</button>
+                        <button class="mode-btn" onclick="setMode('quiz')">❓ Quiz</button>
+                    </div>
+
+                    <div id="exploreMode">
+                        <div class="part-title" id="partTitle">Klicke auf einen Blütenteil!</div>
+                        <div class="part-description" id="partDesc">
+                            Bewege die Maus über die Blüte und klicke auf die verschiedenen Teile, um mehr zu erfahren.
+                        </div>
+                        <div class="part-function" id="partFunction" style="display: none;">
+                            <h4>🎯 Funktion</h4>
+                            <p id="functionText"></p>
+                        </div>
+
+                        <div class="legend">
+                            <h4>Blütenteile</h4>
+                            <div class="legend-item" onclick="selectPart('petals')" data-part="petals">
+                                <div class="legend-dot" style="background: #e91e63;"></div>
+                                <span class="legend-name">Kronblätter (Petalen)</span>
+                            </div>
+                            <div class="legend-item" onclick="selectPart('sepals')" data-part="sepals">
+                                <div class="legend-dot" style="background: #4caf50;"></div>
+                                <span class="legend-name">Kelchblätter (Sepalen)</span>
+                            </div>
+                            <div class="legend-item" onclick="selectPart('stamen')" data-part="stamen">
+                                <div class="legend-dot" style="background: #ffc107;"></div>
+                                <span class="legend-name">Staubblätter (Stamen)</span>
+                            </div>
+                            <div class="legend-item" onclick="selectPart('pistil')" data-part="pistil">
+                                <div class="legend-dot" style="background: #9c27b0;"></div>
+                                <span class="legend-name">Stempel (Pistill)</span>
+                            </div>
+                            <div class="legend-item" onclick="selectPart('receptacle')" data-part="receptacle">
+                                <div class="legend-dot" style="background: #8bc34a;"></div>
+                                <span class="legend-name">Blütenboden</span>
+                            </div>
+                            <div class="legend-item" onclick="selectPart('stem')" data-part="stem">
+                                <div class="legend-dot" style="background: #689f38;"></div>
+                                <span class="legend-name">Blütenstiel</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-section" id="quizMode">
+                        <div class="quiz-question" id="quizQuestion">Frage wird geladen...</div>
+                        <div class="quiz-options" id="quizOptions"></div>
+                        <p id="quizScore" style="margin-top: 15px; text-align: center;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Der Aufbau einer Blüte</h3>
+            <p>Die Blüte ist das Fortpflanzungsorgan der Blütenpflanzen. Sie besteht aus <strong>Kelchblättern</strong> (Schutz),
+            <strong>Kronblättern</strong> (Anlockung von Bestäubern), <strong>Staubblättern</strong> (männlich, produzieren Pollen)
+            und dem <strong>Stempel</strong> (weiblich, enthält die Samenanlage). Bei der Bestäubung gelangt Pollen auf die Narbe
+            des Stempels.</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('flowerCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const partData = {
+            petals: {
+                title: '🌺 Kronblätter (Petalen)',
+                desc: 'Die bunten, auffälligen Blätter der Blüte. Sie sind oft farbenprächtig und duften angenehm.',
+                function: 'Locken Bestäuber (Bienen, Schmetterlinge) an durch Farbe, Duft und Nektar.'
+            },
+            sepals: {
+                title: '🌿 Kelchblätter (Sepalen)',
+                desc: 'Die grünen, äußeren Blätter, die die Blütenknospe schützen bevor sie sich öffnet.',
+                function: 'Schutz der empfindlichen Blütenteile in der Knospe vor Austrocknung und Fraß.'
+            },
+            stamen: {
+                title: '🌾 Staubblätter (Stamen)',
+                desc: 'Das männliche Fortpflanzungsorgan. Besteht aus dem Staubfaden und dem Staubbeutel mit Pollen.',
+                function: 'Produktion von Pollen (männliche Keimzellen) zur Befruchtung.'
+            },
+            pistil: {
+                title: '💜 Stempel (Pistill)',
+                desc: 'Das weibliche Fortpflanzungsorgan. Besteht aus Narbe, Griffel und Fruchtknoten mit Samenanlagen.',
+                function: 'Aufnahme des Pollens (Narbe), Befruchtung und Samenbildung im Fruchtknoten.'
+            },
+            receptacle: {
+                title: '🟢 Blütenboden',
+                desc: 'Die verdickte Basis der Blüte, auf der alle Blütenorgane sitzen.',
+                function: 'Trägt und verbindet alle Blütenteile miteinander.'
+            },
+            stem: {
+                title: '🌱 Blütenstiel',
+                desc: 'Verbindet die Blüte mit dem Hauptstängel der Pflanze.',
+                function: 'Transport von Wasser und Nährstoffen zur Blüte, hält die Blüte in Position.'
+            }
+        };
+
+        let selectedPart = null;
+        let hoveredPart = null;
+        let mode = 'explore';
+        let quizScore = 0;
+        let quizTotal = 0;
+
+        const quizQuestions = [
+            { question: 'Welcher Teil lockt Bienen an?', answer: 'petals', options: ['petals', 'sepals', 'stem', 'receptacle'] },
+            { question: 'Wo wird der Pollen produziert?', answer: 'stamen', options: ['pistil', 'stamen', 'sepals', 'petals'] },
+            { question: 'Welcher Teil schützt die Knospe?', answer: 'sepals', options: ['petals', 'stamen', 'sepals', 'pistil'] },
+            { question: 'Wo findet die Befruchtung statt?', answer: 'pistil', options: ['stamen', 'petals', 'sepals', 'pistil'] },
+            { question: 'Welcher Teil ist das weibliche Organ?', answer: 'pistil', options: ['stamen', 'pistil', 'petals', 'receptacle'] }
+        ];
+        let currentQuestion = 0;
+
+        function drawFlower() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Stem
+            drawPart('stem', () => {
+                ctx.fillStyle = hoveredPart === 'stem' || selectedPart === 'stem' ? '#8bc34a' : '#689f38';
+                ctx.beginPath();
+                ctx.moveTo(265, 350);
+                ctx.lineTo(285, 350);
+                ctx.lineTo(285, 500);
+                ctx.lineTo(265, 500);
+                ctx.fill();
+            });
+
+            // Receptacle (Blütenboden)
+            drawPart('receptacle', () => {
+                ctx.fillStyle = hoveredPart === 'receptacle' || selectedPart === 'receptacle' ? '#a5d6a7' : '#8bc34a';
+                ctx.beginPath();
+                ctx.ellipse(275, 350, 40, 20, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Sepals
+            drawPart('sepals', () => {
+                const sepalColor = hoveredPart === 'sepals' || selectedPart === 'sepals' ? '#66bb6a' : '#4caf50';
+                ctx.fillStyle = sepalColor;
+                for (let i = 0; i < 5; i++) {
+                    ctx.save();
+                    ctx.translate(275, 340);
+                    ctx.rotate((i * Math.PI * 2) / 5 + Math.PI / 10);
+                    ctx.beginPath();
+                    ctx.ellipse(0, 60, 15, 40, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            });
+
+            // Petals
+            drawPart('petals', () => {
+                const petalColor = hoveredPart === 'petals' || selectedPart === 'petals' ? '#f48fb1' : '#e91e63';
+                ctx.fillStyle = petalColor;
+                for (let i = 0; i < 5; i++) {
+                    ctx.save();
+                    ctx.translate(275, 280);
+                    ctx.rotate((i * Math.PI * 2) / 5);
+                    ctx.beginPath();
+                    ctx.ellipse(0, -80, 45, 80, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Petal veins
+                    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -20);
+                    ctx.lineTo(0, -140);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            });
+
+            // Stamen
+            drawPart('stamen', () => {
+                const stamenColor = hoveredPart === 'stamen' || selectedPart === 'stamen' ? '#ffeb3b' : '#ffc107';
+                for (let i = 0; i < 6; i++) {
+                    ctx.save();
+                    ctx.translate(275, 280);
+                    ctx.rotate((i * Math.PI * 2) / 6);
+
+                    // Filament
+                    ctx.strokeStyle = '#fff59d';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(0, -50);
+                    ctx.stroke();
+
+                    // Anther
+                    ctx.fillStyle = stamenColor;
+                    ctx.beginPath();
+                    ctx.ellipse(0, -55, 8, 12, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            });
+
+            // Pistil
+            drawPart('pistil', () => {
+                const pistilColor = hoveredPart === 'pistil' || selectedPart === 'pistil' ? '#ba68c8' : '#9c27b0';
+
+                // Ovary
+                ctx.fillStyle = pistilColor;
+                ctx.beginPath();
+                ctx.ellipse(275, 290, 20, 25, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Style
+                ctx.strokeStyle = pistilColor;
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.moveTo(275, 265);
+                ctx.lineTo(275, 220);
+                ctx.stroke();
+
+                // Stigma
+                ctx.fillStyle = pistilColor;
+                ctx.beginPath();
+                ctx.arc(275, 215, 12, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Stigma details
+                ctx.strokeStyle = '#ce93d8';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 5; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(275, 215);
+                    ctx.lineTo(275 + Math.cos(i * Math.PI * 2 / 5) * 15, 215 + Math.sin(i * Math.PI * 2 / 5) * 15);
+                    ctx.stroke();
+                }
+            });
+
+            // Labels if something is selected
+            if (selectedPart) {
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(10, 10, 200, 30);
+                ctx.fillStyle = '#4fc3f7';
+                ctx.font = 'bold 14px Segoe UI';
+                ctx.fillText('Klicke für Details →', 20, 30);
+            }
+        }
+
+        function drawPart(partName, drawFn) {
+            ctx.save();
+            if (selectedPart === partName) {
+                ctx.shadowColor = '#4fc3f7';
+                ctx.shadowBlur = 20;
+            }
+            drawFn();
+            ctx.restore();
+        }
+
+        function getPartAtPosition(x, y) {
+            // Check pistil (center)
+            if (Math.sqrt((x-275)**2 + (y-250)**2) < 40) return 'pistil';
+
+            // Check stamen (around center)
+            if (Math.sqrt((x-275)**2 + (y-250)**2) < 70 && Math.sqrt((x-275)**2 + (y-250)**2) > 30) return 'stamen';
+
+            // Check petals
+            if (Math.sqrt((x-275)**2 + (y-280)**2) < 160 && y < 350) return 'petals';
+
+            // Check sepals
+            if (y > 320 && y < 400 && Math.abs(x - 275) < 80) return 'sepals';
+
+            // Check receptacle
+            if (Math.sqrt(((x-275)/40)**2 + ((y-350)/20)**2) < 1) return 'receptacle';
+
+            // Check stem
+            if (x > 260 && x < 290 && y > 350) return 'stem';
+
+            return null;
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            hoveredPart = getPartAtPosition(x, y);
+            canvas.style.cursor = hoveredPart ? 'pointer' : 'default';
+            drawFlower();
+        });
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            const part = getPartAtPosition(x, y);
+            if (part) selectPart(part);
+        });
+
+        function selectPart(part) {
+            selectedPart = part;
+
+            document.querySelectorAll('.legend-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.part === part);
+            });
+
+            const data = partData[part];
+            document.getElementById('partTitle').textContent = data.title;
+            document.getElementById('partDesc').textContent = data.desc;
+            document.getElementById('partFunction').style.display = 'block';
+            document.getElementById('functionText').textContent = data.function;
+
+            drawFlower();
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('exploreMode').style.display = mode === 'explore' ? 'block' : 'none';
+            document.getElementById('quizMode').classList.toggle('active', mode === 'quiz');
+
+            if (mode === 'quiz') {
+                quizScore = 0;
+                quizTotal = 0;
+                currentQuestion = 0;
+                showQuestion();
+            }
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= quizQuestions.length) {
+                document.getElementById('quizQuestion').textContent = `Quiz beendet! ${quizScore}/${quizTotal} richtig`;
+                document.getElementById('quizOptions').innerHTML = '<button onclick="setMode(\'quiz\')">Nochmal spielen</button>';
+                return;
+            }
+
+            const q = quizQuestions[currentQuestion];
+            document.getElementById('quizQuestion').textContent = q.question;
+
+            const optionsDiv = document.getElementById('quizOptions');
+            optionsDiv.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = partData[opt].title.replace(/[🌺🌿🌾💜🟢🌱]/g, '').trim();
+                btn.onclick = () => checkAnswer(opt, q.answer, btn);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('quizScore').textContent = `Punkte: ${quizScore}/${quizTotal}`;
+
+            // Highlight the part on canvas
+            selectedPart = null;
+            drawFlower();
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            quizTotal++;
+            if (selected === correct) {
+                quizScore++;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('incorrect');
+                document.querySelectorAll('#quizOptions button').forEach(b => {
+                    if (b.textContent.includes(partData[correct].title.split(' ')[1])) {
+                        b.classList.add('correct');
+                    }
+                });
+            }
+
+            selectedPart = correct;
+            drawFlower();
+
+            setTimeout(() => {
+                currentQuestion++;
+                showQuestion();
+            }, 1500);
+        }
+
+        drawFlower();
+    </script>
+</body>
+</html>

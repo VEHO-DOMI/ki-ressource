@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meiose - Reduktionsteilung</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at center, #1a2a3a 0%, #0a1520 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+            max-width: 100%;
+            height: auto;
+        }
+        .division-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .division-tab {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #4fc3f7;
+            border-radius: 25px;
+            color: #4fc3f7;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .division-tab.active {
+            background: #4fc3f7;
+            color: #1a1a2e;
+        }
+        .phase-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .phase-dot {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .phase-dot.active { background: linear-gradient(135deg, #9b59b6, #e74c3c); font-weight: bold; }
+        .phase-dot.completed { background: rgba(46, 204, 113, 0.3); }
+        .phase-info {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            margin: 15px 0;
+        }
+        .phase-title { font-size: 1.4em; color: #4fc3f7; margin-bottom: 10px; }
+        .phase-desc { color: #b0bec5; line-height: 1.6; max-width: 700px; margin: 0 auto; }
+        .chromosome-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .chrom-box {
+            padding: 12px 20px;
+            background: rgba(155, 89, 182, 0.2);
+            border: 2px solid #9b59b6;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .chrom-value { font-size: 1.5em; font-weight: bold; color: #9b59b6; }
+        .chrom-label { font-size: 0.8em; color: #90a4ae; }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .control-btn:hover { transform: translateY(-2px); }
+        .control-btn.play { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .control-btn.pause { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .control-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .control-btn.step { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+        }
+        @media (max-width: 600px) {
+            .comparison-box { grid-template-columns: 1fr; }
+        }
+        .compare-item {
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .compare-item.mitose { background: rgba(52, 152, 219, 0.2); border: 1px solid #3498db; }
+        .compare-item.meiose { background: rgba(155, 89, 182, 0.2); border: 1px solid #9b59b6; }
+        .compare-item h4 { margin-bottom: 10px; }
+        .compare-item ul { list-style: none; font-size: 0.9em; color: #b0bec5; }
+        .compare-item li { padding: 3px 0; }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 Meiose – Reduktionsteilung</h1>
+        <p class="subtitle">6. Klasse Biologie – Bildung von Keimzellen (Gameten)</p>
+
+        <div class="simulation-area">
+            <div class="division-tabs">
+                <button class="division-tab active" onclick="setDivision(1)">Meiose I</button>
+                <button class="division-tab" onclick="setDivision(2)">Meiose II</button>
+            </div>
+
+            <canvas id="meiosisCanvas" width="850" height="380"></canvas>
+
+            <div class="phase-indicator" id="phaseIndicator"></div>
+
+            <div class="chromosome-info">
+                <div class="chrom-box">
+                    <div class="chrom-value" id="chromCount">2n = 4</div>
+                    <div class="chrom-label">Chromosomensatz</div>
+                </div>
+                <div class="chrom-box">
+                    <div class="chrom-value" id="dnaContent">4n</div>
+                    <div class="chrom-label">DNA-Gehalt</div>
+                </div>
+                <div class="chrom-box">
+                    <div class="chrom-value" id="cellCount">1</div>
+                    <div class="chrom-label">Zellen</div>
+                </div>
+            </div>
+
+            <div class="phase-info">
+                <div class="phase-title" id="phaseTitle">Prophase I</div>
+                <div class="phase-desc" id="phaseDesc">
+                    Homologe Chromosomen paaren sich (Bivalente). Crossing-over findet statt:
+                    Austausch von Chromosomenstücken zwischen homologen Chromosomen.
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn step" onclick="previousPhase()">◀ Zurück</button>
+                <button class="control-btn play" id="playBtn" onclick="togglePlay()">▶ Abspielen</button>
+                <button class="control-btn step" onclick="nextPhase()">Weiter ▶</button>
+                <button class="control-btn reset" onclick="resetSimulation()">↺ Reset</button>
+            </div>
+
+            <div class="comparison-box">
+                <div class="compare-item mitose">
+                    <h4 style="color: #3498db;">🔵 Mitose</h4>
+                    <ul>
+                        <li>• 1 Teilung</li>
+                        <li>• 2 identische Tochterzellen</li>
+                        <li>• Diploid (2n) → Diploid (2n)</li>
+                        <li>• Körperzellen</li>
+                        <li>• Wachstum, Regeneration</li>
+                    </ul>
+                </div>
+                <div class="compare-item meiose">
+                    <h4 style="color: #9b59b6;">🟣 Meiose</h4>
+                    <ul>
+                        <li>• 2 Teilungen</li>
+                        <li>• 4 verschiedene Tochterzellen</li>
+                        <li>• Diploid (2n) → Haploid (n)</li>
+                        <li>• Keimzellen (Gameten)</li>
+                        <li>• Fortpflanzung</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Die Meiose</h3>
+            <p>Die Meiose ist eine spezielle Zellteilung zur Bildung von <strong>Keimzellen</strong> (Eizellen, Spermien).
+            Der Chromosomensatz wird <strong>halbiert</strong> (Reduktion von 2n auf n). Durch <strong>Crossing-over</strong>
+            in der Prophase I entstehen neue Genkombinationen – wichtig für die genetische Vielfalt!</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('meiosisCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let currentDivision = 1;
+        let currentPhase = 0;
+        let isPlaying = false;
+
+        const meiosis1Phases = [
+            { name: 'Prophase I', desc: 'Homologe Chromosomen paaren sich zu Bivalenten. Crossing-over findet statt: Austausch genetischen Materials zwischen homologen Chromosomen. Die Kernhülle löst sich auf.', chrom: '2n = 4', dna: '4n', cells: 1 },
+            { name: 'Metaphase I', desc: 'Die Bivalente ordnen sich zufällig in der Äquatorialebene an. Die zufällige Verteilung führt zu genetischer Vielfalt.', chrom: '2n = 4', dna: '4n', cells: 1 },
+            { name: 'Anaphase I', desc: 'Homologe Chromosomen werden getrennt und zu entgegengesetzten Polen gezogen. Die Schwesterchromatiden bleiben verbunden!', chrom: '2n → n', dna: '4n → 2n', cells: 1 },
+            { name: 'Telophase I', desc: 'An beiden Polen liegt nun ein haploider Chromosomensatz. Die Zelle teilt sich in zwei Tochterzellen.', chrom: 'n = 2', dna: '2n', cells: 2 }
+        ];
+
+        const meiosis2Phases = [
+            { name: 'Prophase II', desc: 'Kurze Phase ohne DNA-Replikation. Die Chromosomen kondensieren erneut. Die Kernhülle löst sich auf.', chrom: 'n = 2', dna: '2n', cells: 2 },
+            { name: 'Metaphase II', desc: 'Die Chromosomen ordnen sich in der Äquatorialebene beider Zellen an. Spindelfasern heften an die Zentromere.', chrom: 'n = 2', dna: '2n', cells: 2 },
+            { name: 'Anaphase II', desc: 'Die Schwesterchromatiden werden getrennt und zu den Polen gezogen – wie bei der Mitose.', chrom: 'n', dna: '2n → n', cells: 2 },
+            { name: 'Telophase II', desc: 'Vier haploide Tochterzellen entstehen. Jede hat einen einfachen Chromosomensatz (n) – bereit zur Befruchtung!', chrom: 'n = 2', dna: 'n', cells: 4 }
+        ];
+
+        function getPhases() {
+            return currentDivision === 1 ? meiosis1Phases : meiosis2Phases;
+        }
+
+        function updatePhaseIndicator() {
+            const phases = getPhases();
+            const container = document.getElementById('phaseIndicator');
+            container.innerHTML = phases.map((p, i) => `
+                <div class="phase-dot ${i === currentPhase ? 'active' : i < currentPhase ? 'completed' : ''}"
+                     onclick="goToPhase(${i})">${p.name}</div>
+            `).join('');
+        }
+
+        function setDivision(div) {
+            currentDivision = div;
+            currentPhase = 0;
+            document.querySelectorAll('.division-tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i + 1 === div);
+            });
+            updatePhaseIndicator();
+            updateDisplay();
+            draw();
+        }
+
+        function goToPhase(phase) {
+            currentPhase = phase;
+            updateDisplay();
+            draw();
+        }
+
+        function drawChromosome(x, y, size, color1, color2, crossed = false) {
+            ctx.lineWidth = 6;
+
+            // First chromatid
+            ctx.strokeStyle = color1;
+            ctx.beginPath();
+            ctx.moveTo(x - size/2, y - size/2);
+            ctx.lineTo(x, y);
+            ctx.lineTo(x - size/2, y + size/2);
+            ctx.stroke();
+
+            // Second chromatid
+            ctx.strokeStyle = color2 || color1;
+            ctx.beginPath();
+            ctx.moveTo(x + size/2, y - size/2);
+            ctx.lineTo(x, y);
+            ctx.lineTo(x + size/2, y + size/2);
+            ctx.stroke();
+
+            // Centromere
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Crossing-over mark
+            if (crossed) {
+                ctx.strokeStyle = color2;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(x - size/3, y - size/3);
+                ctx.lineTo(x - size/4, y);
+                ctx.stroke();
+            }
+        }
+
+        function drawChromatid(x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.ellipse(x, y, 5, size/2, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawCell(x, y, radius, phase, division) {
+            // Cell membrane
+            ctx.beginPath();
+            ctx.ellipse(x, y, radius, radius * 0.8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(200, 220, 255, 0.1)';
+            ctx.fill();
+            ctx.strokeStyle = '#4fc3f7';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            const phases = getPhases();
+
+            if (division === 1) {
+                if (phase === 0) { // Prophase I - Bivalents with crossing over
+                    // Bivalent 1 (red/blue pair)
+                    drawChromosome(x - 30, y - 20, 35, '#e74c3c', '#e74c3c', true);
+                    drawChromosome(x - 20, y - 15, 35, '#3498db', '#3498db', true);
+
+                    // Bivalent 2 (green/yellow pair)
+                    drawChromosome(x + 30, y + 20, 35, '#2ecc71', '#2ecc71');
+                    drawChromosome(x + 20, y + 25, 35, '#f1c40f', '#f1c40f');
+
+                    ctx.fillStyle = '#90a4ae';
+                    ctx.font = '10px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Crossing-over', x, y + 70);
+                }
+                else if (phase === 1) { // Metaphase I
+                    // Bivalents at equator
+                    drawChromosome(x - 30, y, 35, '#e74c3c', '#e74c3c');
+                    drawChromosome(x - 20, y, 35, '#3498db', '#3498db');
+                    drawChromosome(x + 20, y, 35, '#2ecc71', '#2ecc71');
+                    drawChromosome(x + 30, y, 35, '#f1c40f', '#f1c40f');
+
+                    // Spindle fibers
+                    ctx.strokeStyle = 'rgba(46, 204, 113, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x - radius * 0.8, y);
+                    ctx.lineTo(x - 25, y);
+                    ctx.moveTo(x + radius * 0.8, y);
+                    ctx.lineTo(x + 25, y);
+                    ctx.stroke();
+                }
+                else if (phase === 2) { // Anaphase I
+                    // Homologs separating
+                    drawChromosome(x - 60, y, 35, '#e74c3c', '#e74c3c');
+                    drawChromosome(x - 50, y + 20, 35, '#2ecc71', '#2ecc71');
+                    drawChromosome(x + 60, y, 35, '#3498db', '#3498db');
+                    drawChromosome(x + 50, y + 20, 35, '#f1c40f', '#f1c40f');
+                }
+                else if (phase === 3) { // Telophase I
+                    // Two cells forming
+                    ctx.strokeStyle = '#4fc3f7';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - radius * 0.7);
+                    ctx.lineTo(x, y + radius * 0.7);
+                    ctx.stroke();
+                }
+            }
+            else { // Meiosis II
+                if (phase === 0 || phase === 1) {
+                    // Chromosomes in each cell
+                    drawChromosome(x, y, 30, '#e74c3c', '#e74c3c');
+                }
+                else if (phase === 2) {
+                    // Chromatids separating
+                    drawChromatid(x - 30, y, 25, '#e74c3c');
+                    drawChromatid(x + 30, y, 25, '#e74c3c');
+                }
+                else if (phase === 3) {
+                    // Single chromatids
+                    drawChromatid(x, y, 20, '#e74c3c');
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const phases = getPhases();
+            const phase = phases[currentPhase];
+
+            if (currentDivision === 1) {
+                if (currentPhase < 3) {
+                    drawCell(canvas.width / 2, canvas.height / 2, 150, currentPhase, 1);
+                } else {
+                    // Two cells
+                    drawCell(canvas.width / 2 - 120, canvas.height / 2, 100, currentPhase, 1);
+                    drawCell(canvas.width / 2 + 120, canvas.height / 2, 100, currentPhase, 1);
+
+                    // Draw chromosomes in each
+                    drawChromosome(canvas.width / 2 - 130, canvas.height / 2 - 15, 30, '#e74c3c', '#e74c3c');
+                    drawChromosome(canvas.width / 2 - 110, canvas.height / 2 + 15, 30, '#2ecc71', '#2ecc71');
+                    drawChromosome(canvas.width / 2 + 110, canvas.height / 2 - 15, 30, '#3498db', '#3498db');
+                    drawChromosome(canvas.width / 2 + 130, canvas.height / 2 + 15, 30, '#f1c40f', '#f1c40f');
+
+                    ctx.fillStyle = '#4fc3f7';
+                    ctx.font = '11px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('n = 2', canvas.width / 2 - 120, canvas.height / 2 + 130);
+                    ctx.fillText('n = 2', canvas.width / 2 + 120, canvas.height / 2 + 130);
+                }
+            } else {
+                if (currentPhase < 3) {
+                    // Two cells at start of Meiosis II
+                    drawCell(canvas.width / 2 - 150, canvas.height / 2, 100, currentPhase, 2);
+                    drawCell(canvas.width / 2 + 150, canvas.height / 2, 100, currentPhase, 2);
+
+                    if (currentPhase === 0 || currentPhase === 1) {
+                        drawChromosome(canvas.width / 2 - 160, canvas.height / 2 - 10, 30, '#e74c3c', '#e74c3c');
+                        drawChromosome(canvas.width / 2 - 140, canvas.height / 2 + 15, 30, '#2ecc71', '#2ecc71');
+                        drawChromosome(canvas.width / 2 + 140, canvas.height / 2 - 10, 30, '#3498db', '#3498db');
+                        drawChromosome(canvas.width / 2 + 160, canvas.height / 2 + 15, 30, '#f1c40f', '#f1c40f');
+                    } else {
+                        // Anaphase II - chromatids separating
+                        drawChromatid(canvas.width / 2 - 180, canvas.height / 2, 20, '#e74c3c');
+                        drawChromatid(canvas.width / 2 - 120, canvas.height / 2, 20, '#e74c3c');
+                        drawChromatid(canvas.width / 2 - 170, canvas.height / 2 + 25, 20, '#2ecc71');
+                        drawChromatid(canvas.width / 2 - 130, canvas.height / 2 + 25, 20, '#2ecc71');
+
+                        drawChromatid(canvas.width / 2 + 120, canvas.height / 2, 20, '#3498db');
+                        drawChromatid(canvas.width / 2 + 180, canvas.height / 2, 20, '#3498db');
+                        drawChromatid(canvas.width / 2 + 130, canvas.height / 2 + 25, 20, '#f1c40f');
+                        drawChromatid(canvas.width / 2 + 170, canvas.height / 2 + 25, 20, '#f1c40f');
+                    }
+                } else {
+                    // Four cells at end
+                    const positions = [
+                        { x: canvas.width / 2 - 250, color1: '#e74c3c', color2: '#2ecc71' },
+                        { x: canvas.width / 2 - 85, color1: '#e74c3c', color2: '#2ecc71' },
+                        { x: canvas.width / 2 + 85, color1: '#3498db', color2: '#f1c40f' },
+                        { x: canvas.width / 2 + 250, color1: '#3498db', color2: '#f1c40f' }
+                    ];
+
+                    positions.forEach((pos, i) => {
+                        ctx.beginPath();
+                        ctx.arc(pos.x, canvas.height / 2, 70, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(200, 220, 255, 0.1)';
+                        ctx.fill();
+                        ctx.strokeStyle = '#4fc3f7';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+
+                        drawChromatid(pos.x - 15, canvas.height / 2, 20, pos.color1);
+                        drawChromatid(pos.x + 15, canvas.height / 2, 20, pos.color2);
+
+                        ctx.fillStyle = '#2ecc71';
+                        ctx.font = 'bold 11px Segoe UI';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('n = 2', pos.x, canvas.height / 2 + 95);
+                        ctx.fillStyle = '#90a4ae';
+                        ctx.font = '10px Segoe UI';
+                        ctx.fillText(i < 2 ? '♀ oder ♂' : 'Gamet', pos.x, canvas.height / 2 + 110);
+                    });
+                }
+            }
+
+            // Division label
+            ctx.fillStyle = '#4fc3f7';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText(currentDivision === 1 ? 'MEIOSE I (Reduktionsteilung)' : 'MEIOSE II (Äquationsteilung)', 20, 30);
+        }
+
+        function updateDisplay() {
+            const phases = getPhases();
+            const phase = phases[currentPhase];
+
+            document.getElementById('phaseTitle').textContent = phase.name;
+            document.getElementById('phaseDesc').textContent = phase.desc;
+            document.getElementById('chromCount').textContent = phase.chrom;
+            document.getElementById('dnaContent').textContent = phase.dna;
+            document.getElementById('cellCount').textContent = phase.cells;
+
+            updatePhaseIndicator();
+        }
+
+        function nextPhase() {
+            const phases = getPhases();
+            if (currentPhase < phases.length - 1) {
+                currentPhase++;
+                updateDisplay();
+                draw();
+            } else if (currentDivision === 1) {
+                setDivision(2);
+            }
+        }
+
+        function previousPhase() {
+            if (currentPhase > 0) {
+                currentPhase--;
+                updateDisplay();
+                draw();
+            } else if (currentDivision === 2) {
+                setDivision(1);
+                currentPhase = meiosis1Phases.length - 1;
+                updateDisplay();
+                draw();
+            }
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+            btn.textContent = isPlaying ? '⏸ Pause' : '▶ Abspielen';
+            btn.className = 'control-btn ' + (isPlaying ? 'pause' : 'play');
+            if (isPlaying) autoPlay();
+        }
+
+        function autoPlay() {
+            if (!isPlaying) return;
+            const phases = getPhases();
+
+            setTimeout(() => {
+                if (currentPhase < phases.length - 1) {
+                    nextPhase();
+                    autoPlay();
+                } else if (currentDivision === 1) {
+                    setDivision(2);
+                    autoPlay();
+                } else {
+                    isPlaying = false;
+                    document.getElementById('playBtn').textContent = '✓ Fertig';
+                }
+            }, 2000);
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            currentDivision = 1;
+            currentPhase = 0;
+            document.getElementById('playBtn').textContent = '▶ Abspielen';
+            document.getElementById('playBtn').className = 'control-btn play';
+            document.querySelectorAll('.division-tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === 0);
+            });
+            updatePhaseIndicator();
+            updateDisplay();
+            draw();
+        }
+
+        updatePhaseIndicator();
+        updateDisplay();
+        draw();
+    </script>
+</body>
+</html>

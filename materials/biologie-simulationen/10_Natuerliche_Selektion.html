@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natürliche Selektion</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        canvas {
+            display: block;
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+            max-width: 100%;
+            height: auto;
+        }
+        .control-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .panel-title {
+            color: #4fc3f7;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .environment-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .env-btn {
+            padding: 12px;
+            border: 2px solid;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .env-btn.forest { border-color: #27ae60; color: #27ae60; }
+        .env-btn.desert { border-color: #f39c12; color: #f39c12; }
+        .env-btn.snow { border-color: #ecf0f1; color: #ecf0f1; }
+        .env-btn.dark { border-color: #2c3e50; color: #95a5a6; }
+        .env-btn.active { color: #1a1a2e; }
+        .env-btn.active.forest { background: #27ae60; }
+        .env-btn.active.desert { background: #f39c12; }
+        .env-btn.active.snow { background: #ecf0f1; }
+        .env-btn.active.dark { background: #2c3e50; color: #fff; }
+        .generation-display {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .gen-value { font-size: 2em; font-weight: bold; color: #4fc3f7; }
+        .gen-label { font-size: 0.85em; color: #90a4ae; }
+        .population-stats {
+            margin: 15px 0;
+        }
+        .pop-bar {
+            display: flex;
+            height: 30px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .pop-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            transition: width 0.5s;
+        }
+        .color-legend {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75em;
+            color: #90a4ae;
+        }
+        .slider-group {
+            margin: 15px 0;
+        }
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .slider-group input {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            border-radius: 3px;
+        }
+        .slider-group input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .control-btn:hover { transform: translateY(-2px); }
+        .control-btn.play { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .control-btn.pause { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .control-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .fitness-indicator {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+        .fitness-indicator h4 { color: #4fc3f7; margin-bottom: 8px; }
+        .fit-item { display: flex; justify-content: space-between; padding: 3px 0; }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦋 Natürliche Selektion</h1>
+        <p class="subtitle">8. Klasse Biologie – Evolution in Aktion</p>
+
+        <div class="simulation-area">
+            <div class="main-grid">
+                <div>
+                    <canvas id="selectionCanvas" width="550" height="450"></canvas>
+                </div>
+
+                <div class="control-panel">
+                    <div class="panel-title">🌍 Umgebung wählen</div>
+                    <div class="environment-selector">
+                        <button class="env-btn forest active" onclick="setEnvironment('forest')">🌲 Wald</button>
+                        <button class="env-btn desert" onclick="setEnvironment('desert')">🏜️ Wüste</button>
+                        <button class="env-btn snow" onclick="setEnvironment('snow')">❄️ Schnee</button>
+                        <button class="env-btn dark" onclick="setEnvironment('dark')">🌑 Dunkel</button>
+                    </div>
+
+                    <div class="generation-display">
+                        <div class="gen-value" id="genCount">0</div>
+                        <div class="gen-label">Generation</div>
+                    </div>
+
+                    <div class="panel-title">📊 Populationsverteilung</div>
+                    <div class="population-stats">
+                        <div class="pop-bar" id="popBar"></div>
+                        <div class="color-legend">
+                            <span>🟢 Grün</span>
+                            <span>🟤 Braun</span>
+                            <span>⚪ Weiß</span>
+                            <span>⚫ Schwarz</span>
+                        </div>
+                    </div>
+
+                    <div class="slider-group">
+                        <label>
+                            <span>🦅 Raubdruck</span>
+                            <span id="predatorValue">50%</span>
+                        </label>
+                        <input type="range" id="predatorRate" min="10" max="90" value="50">
+                    </div>
+
+                    <div class="slider-group">
+                        <label>
+                            <span>🧬 Mutationsrate</span>
+                            <span id="mutationValue">5%</span>
+                        </label>
+                        <input type="range" id="mutationRate" min="0" max="20" value="5">
+                    </div>
+
+                    <div class="control-buttons">
+                        <button class="control-btn play" id="playBtn" onclick="togglePlay()">▶ Start</button>
+                        <button class="control-btn reset" onclick="resetSimulation()">↺ Reset</button>
+                    </div>
+
+                    <div class="fitness-indicator">
+                        <h4>🎯 Fitness (Tarnung)</h4>
+                        <div class="fit-item"><span>Beste Farbe:</span><span id="bestColor">-</span></div>
+                        <div class="fit-item"><span>Überlebensrate:</span><span id="survivalRate">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Natürliche Selektion</h3>
+            <p>Die natürliche Selektion ist ein Mechanismus der Evolution. Individuen mit vorteilhaften Merkmalen
+            (z.B. bessere <strong>Tarnung</strong>) überleben häufiger und pflanzen sich fort.
+            Über Generationen hinweg passt sich die Population an ihre Umgebung an.
+            Das berühmte Beispiel: Die <strong>Birkenspanner</strong> wurden während der Industrialisierung dunkler!</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('selectionCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const environments = {
+            forest: { bg: '#2d5a27', optimal: 'green', name: 'Wald' },
+            desert: { bg: '#c19a6b', optimal: 'brown', name: 'Wüste' },
+            snow: { bg: '#e8e8e8', optimal: 'white', name: 'Schnee' },
+            dark: { bg: '#1a1a1a', optimal: 'black', name: 'Dunkel' }
+        };
+
+        const colors = {
+            green: { hex: '#27ae60', rgb: [39, 174, 96] },
+            brown: { hex: '#8b4513', rgb: [139, 69, 19] },
+            white: { hex: '#ecf0f1', rgb: [236, 240, 241] },
+            black: { hex: '#2c3e50', rgb: [44, 62, 80] }
+        };
+
+        let currentEnv = 'forest';
+        let generation = 0;
+        let isPlaying = false;
+        let predatorRate = 50;
+        let mutationRate = 5;
+        let creatures = [];
+
+        const POPULATION = 40;
+
+        class Creature {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color || this.randomColor();
+                this.size = 12;
+                this.alive = true;
+            }
+
+            randomColor() {
+                const colorNames = Object.keys(colors);
+                return colorNames[Math.floor(Math.random() * colorNames.length)];
+            }
+
+            draw() {
+                if (!this.alive) return;
+
+                // Moth/butterfly shape
+                ctx.fillStyle = colors[this.color].hex;
+
+                // Body
+                ctx.beginPath();
+                ctx.ellipse(this.x, this.y, 4, this.size, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Wings
+                ctx.beginPath();
+                ctx.ellipse(this.x - 10, this.y, 10, 8, -0.3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(this.x + 10, this.y, 10, 8, 0.3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Wing pattern
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.beginPath();
+                ctx.arc(this.x - 10, this.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(this.x + 10, this.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Antennae
+                ctx.strokeStyle = colors[this.color].hex;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(this.x - 2, this.y - this.size);
+                ctx.lineTo(this.x - 5, this.y - this.size - 8);
+                ctx.moveTo(this.x + 2, this.y - this.size);
+                ctx.lineTo(this.x + 5, this.y - this.size - 8);
+                ctx.stroke();
+            }
+
+            getFitness() {
+                const optimalColor = environments[currentEnv].optimal;
+                const bgRgb = this.hexToRgb(environments[currentEnv].bg);
+                const creatureRgb = colors[this.color].rgb;
+
+                // Calculate color distance (lower = better camouflage)
+                const distance = Math.sqrt(
+                    Math.pow(bgRgb[0] - creatureRgb[0], 2) +
+                    Math.pow(bgRgb[1] - creatureRgb[1], 2) +
+                    Math.pow(bgRgb[2] - creatureRgb[2], 2)
+                );
+
+                // Convert to fitness (0-1, higher = better)
+                return Math.max(0, 1 - distance / 400);
+            }
+
+            hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? [
+                    parseInt(result[1], 16),
+                    parseInt(result[2], 16),
+                    parseInt(result[3], 16)
+                ] : [0, 0, 0];
+            }
+        }
+
+        function initPopulation() {
+            creatures = [];
+            for (let i = 0; i < POPULATION; i++) {
+                creatures.push(new Creature(
+                    30 + Math.random() * (canvas.width - 60),
+                    30 + Math.random() * (canvas.height - 60)
+                ));
+            }
+        }
+
+        function setEnvironment(env) {
+            currentEnv = env;
+            document.querySelectorAll('.env-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.env-btn.${env}`).classList.add('active');
+            draw();
+            updateFitnessDisplay();
+        }
+
+        function draw() {
+            // Background
+            ctx.fillStyle = environments[currentEnv].bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Add texture
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            for (let i = 0; i < 50; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 10 + 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw creatures
+            creatures.forEach(c => c.draw());
+
+            // Environment label
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText(`${environments[currentEnv].name}`, 15, 25);
+        }
+
+        function selection() {
+            // Sort by fitness
+            creatures.forEach(c => {
+                c.fitness = c.getFitness();
+            });
+
+            // Predation based on camouflage (poor camo = higher death chance)
+            const killCount = Math.floor(creatures.length * (predatorRate / 100));
+
+            // Sort by fitness (worst first)
+            creatures.sort((a, b) => a.fitness - b.fitness);
+
+            // Kill the least fit (with some randomness)
+            for (let i = 0; i < killCount; i++) {
+                const idx = Math.floor(Math.random() * Math.min(creatures.length * 0.6, creatures.length));
+                if (creatures[idx]) {
+                    creatures[idx].alive = false;
+                }
+            }
+
+            creatures = creatures.filter(c => c.alive);
+        }
+
+        function reproduce() {
+            const survivors = [...creatures];
+            const offspring = [];
+
+            while (creatures.length + offspring.length < POPULATION) {
+                // Select parent (fitness-weighted)
+                const parent = survivors[Math.floor(Math.random() * survivors.length)];
+
+                let childColor = parent.color;
+
+                // Mutation
+                if (Math.random() * 100 < mutationRate) {
+                    const colorNames = Object.keys(colors);
+                    childColor = colorNames[Math.floor(Math.random() * colorNames.length)];
+                }
+
+                offspring.push(new Creature(
+                    30 + Math.random() * (canvas.width - 60),
+                    30 + Math.random() * (canvas.height - 60),
+                    childColor
+                ));
+            }
+
+            creatures = [...survivors, ...offspring];
+
+            // Reposition all
+            creatures.forEach(c => {
+                c.x = 30 + Math.random() * (canvas.width - 60);
+                c.y = 30 + Math.random() * (canvas.height - 60);
+            });
+        }
+
+        function updateStats() {
+            const counts = { green: 0, brown: 0, white: 0, black: 0 };
+            creatures.forEach(c => counts[c.color]++);
+
+            const total = creatures.length;
+            const bar = document.getElementById('popBar');
+            bar.innerHTML = Object.entries(counts).map(([color, count]) => {
+                const pct = (count / total * 100).toFixed(0);
+                return `<div class="pop-segment" style="width: ${pct}%; background: ${colors[color].hex};">${pct}%</div>`;
+            }).join('');
+
+            document.getElementById('genCount').textContent = generation;
+        }
+
+        function updateFitnessDisplay() {
+            const optimalColor = environments[currentEnv].optimal;
+            const colorNames = { green: 'Grün 🟢', brown: 'Braun 🟤', white: 'Weiß ⚪', black: 'Schwarz ⚫' };
+
+            document.getElementById('bestColor').textContent = colorNames[optimalColor];
+
+            const optimalCount = creatures.filter(c => c.color === optimalColor).length;
+            const rate = (optimalCount / creatures.length * 100).toFixed(0);
+            document.getElementById('survivalRate').textContent = rate + '%';
+        }
+
+        function runGeneration() {
+            selection();
+            reproduce();
+            generation++;
+            updateStats();
+            updateFitnessDisplay();
+            draw();
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+            btn.textContent = isPlaying ? '⏸ Pause' : '▶ Start';
+            btn.className = 'control-btn ' + (isPlaying ? 'pause' : 'play');
+
+            if (isPlaying) autoRun();
+        }
+
+        function autoRun() {
+            if (!isPlaying) return;
+
+            runGeneration();
+
+            setTimeout(autoRun, 1000);
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            generation = 0;
+            document.getElementById('playBtn').textContent = '▶ Start';
+            document.getElementById('playBtn').className = 'control-btn play';
+            initPopulation();
+            updateStats();
+            updateFitnessDisplay();
+            draw();
+        }
+
+        // Slider listeners
+        document.getElementById('predatorRate').addEventListener('input', (e) => {
+            predatorRate = parseInt(e.target.value);
+            document.getElementById('predatorValue').textContent = predatorRate + '%';
+        });
+
+        document.getElementById('mutationRate').addEventListener('input', (e) => {
+            mutationRate = parseInt(e.target.value);
+            document.getElementById('mutationValue').textContent = mutationRate + '%';
+        });
+
+        // Initialize
+        initPopulation();
+        updateStats();
+        updateFitnessDisplay();
+        draw();
+    </script>
+</body>
+</html>

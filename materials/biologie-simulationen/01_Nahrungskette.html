@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nahrungsketten-Builder</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .chain-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 150px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .chain-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            min-width: 100px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .chain-item:hover { transform: scale(1.05); }
+        .chain-item .emoji { font-size: 3em; }
+        .chain-item .name { margin-top: 5px; font-weight: bold; }
+        .chain-item .role { font-size: 0.8em; color: #90a4ae; }
+        .chain-item .remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: #e74c3c;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+        }
+        .chain-item:hover .remove { display: block; }
+        .arrow {
+            font-size: 2em;
+            color: #4fc3f7;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .organism-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .palette-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .palette-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-3px);
+        }
+        .palette-item.producer { border-color: #27ae60; }
+        .palette-item.consumer1 { border-color: #3498db; }
+        .palette-item.consumer2 { border-color: #e74c3c; }
+        .palette-item.decomposer { border-color: #9b59b6; }
+        .palette-item .emoji { font-size: 2em; }
+        .palette-item .name { font-size: 0.75em; margin-top: 5px; }
+        .category-label {
+            text-align: center;
+            padding: 8px;
+            margin: 15px 0 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .category-label.producer { background: rgba(39, 174, 96, 0.3); color: #2ecc71; }
+        .category-label.consumer1 { background: rgba(52, 152, 219, 0.3); color: #3498db; }
+        .category-label.consumer2 { background: rgba(231, 76, 60, 0.3); color: #e74c3c; }
+        .category-label.decomposer { background: rgba(155, 89, 182, 0.3); color: #9b59b6; }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .control-btn {
+            padding: 12px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .control-btn:hover { transform: translateY(-2px); }
+        .control-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .control-btn.check { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 1.1em;
+            display: none;
+        }
+        .feedback.correct { background: rgba(46, 204, 113, 0.2); border: 2px solid #2ecc71; display: block; }
+        .feedback.incorrect { background: rgba(231, 76, 60, 0.2); border: 2px solid #e74c3c; display: block; }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+        .energy-flow {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(241, 196, 15, 0.1);
+            border-radius: 10px;
+        }
+        .energy-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #f1c40f, #e67e22, #e74c3c);
+            border-radius: 10px;
+            margin: 10px auto;
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Nahrungsketten-Builder</h1>
+        <p class="subtitle">1. Klasse Biologie – Baue eine vollständige Nahrungskette</p>
+
+        <div class="simulation-area">
+            <div class="chain-display" id="chainDisplay">
+                <p style="color: #90a4ae;">Klicke unten auf Organismen, um sie zur Nahrungskette hinzuzufügen...</p>
+            </div>
+
+            <div class="energy-flow">
+                <span>☀️ Sonnenenergie → Produzenten → Konsumenten → Destruenten</span>
+                <div class="energy-bar"></div>
+                <small style="color: #90a4ae;">Bei jedem Schritt geht ca. 90% der Energie verloren!</small>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="controls">
+                <button class="control-btn check" onclick="checkChain()">✓ Überprüfen</button>
+                <button class="control-btn reset" onclick="resetChain()">↺ Zurücksetzen</button>
+            </div>
+
+            <div class="category-label producer">🌱 Produzenten (Erzeuger)</div>
+            <div class="organism-palette" id="producers"></div>
+
+            <div class="category-label consumer1">🐰 Konsumenten 1. Ordnung (Pflanzenfresser)</div>
+            <div class="organism-palette" id="consumers1"></div>
+
+            <div class="category-label consumer2">🦊 Konsumenten 2./3. Ordnung (Fleischfresser)</div>
+            <div class="organism-palette" id="consumers2"></div>
+
+            <div class="category-label decomposer">🍄 Destruenten (Zersetzer)</div>
+            <div class="organism-palette" id="decomposers"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Was ist eine Nahrungskette?</h3>
+            <p>Eine Nahrungskette zeigt, wer wen frisst. Sie beginnt immer mit <strong>Produzenten</strong> (Pflanzen),
+            die Sonnenenergie in Nahrung umwandeln. <strong>Konsumenten</strong> fressen Pflanzen oder andere Tiere.
+            <strong>Destruenten</strong> (Pilze, Bakterien) zersetzen tote Organismen und schließen den Kreislauf.</p>
+        </div>
+    </div>
+
+    <script>
+        const organisms = {
+            producers: [
+                { emoji: '🌿', name: 'Gras', role: 'Produzent' },
+                { emoji: '🌻', name: 'Blume', role: 'Produzent' },
+                { emoji: '🌳', name: 'Baum', role: 'Produzent' },
+                { emoji: '🌾', name: 'Getreide', role: 'Produzent' },
+                { emoji: '🥬', name: 'Salat', role: 'Produzent' }
+            ],
+            consumers1: [
+                { emoji: '🐰', name: 'Hase', role: 'Konsument 1' },
+                { emoji: '🐭', name: 'Maus', role: 'Konsument 1' },
+                { emoji: '🦗', name: 'Grille', role: 'Konsument 1' },
+                { emoji: '🐛', name: 'Raupe', role: 'Konsument 1' },
+                { emoji: '🐿️', name: 'Eichhörnchen', role: 'Konsument 1' }
+            ],
+            consumers2: [
+                { emoji: '🦊', name: 'Fuchs', role: 'Konsument 2' },
+                { emoji: '🦅', name: 'Adler', role: 'Konsument 2' },
+                { emoji: '🐍', name: 'Schlange', role: 'Konsument 2' },
+                { emoji: '🦉', name: 'Eule', role: 'Konsument 2' },
+                { emoji: '🐺', name: 'Wolf', role: 'Konsument 3' }
+            ],
+            decomposers: [
+                { emoji: '🍄', name: 'Pilz', role: 'Destruent' },
+                { emoji: '🦠', name: 'Bakterien', role: 'Destruent' },
+                { emoji: '🪱', name: 'Regenwurm', role: 'Destruent' }
+            ]
+        };
+
+        let chain = [];
+
+        function initPalettes() {
+            ['producers', 'consumers1', 'consumers2', 'decomposers'].forEach(category => {
+                const container = document.getElementById(category);
+                const className = category === 'producers' ? 'producer' :
+                                  category === 'consumers1' ? 'consumer1' :
+                                  category === 'consumers2' ? 'consumer2' : 'decomposer';
+
+                organisms[category].forEach(org => {
+                    const div = document.createElement('div');
+                    div.className = `palette-item ${className}`;
+                    div.innerHTML = `<div class="emoji">${org.emoji}</div><div class="name">${org.name}</div>`;
+                    div.onclick = () => addToChain(org);
+                    container.appendChild(div);
+                });
+            });
+        }
+
+        function addToChain(organism) {
+            if (chain.length >= 5) {
+                showFeedback('Maximal 5 Glieder in der Kette!', false);
+                return;
+            }
+
+            chain.push(organism);
+            renderChain();
+            hideFeedback();
+        }
+
+        function removeFromChain(index) {
+            chain.splice(index, 1);
+            renderChain();
+            hideFeedback();
+        }
+
+        function renderChain() {
+            const display = document.getElementById('chainDisplay');
+
+            if (chain.length === 0) {
+                display.innerHTML = '<p style="color: #90a4ae;">Klicke unten auf Organismen, um sie zur Nahrungskette hinzuzufügen...</p>';
+                return;
+            }
+
+            display.innerHTML = '';
+            chain.forEach((org, index) => {
+                const item = document.createElement('div');
+                item.className = 'chain-item';
+                item.innerHTML = `
+                    <button class="remove" onclick="removeFromChain(${index})">×</button>
+                    <div class="emoji">${org.emoji}</div>
+                    <div class="name">${org.name}</div>
+                    <div class="role">${org.role}</div>
+                `;
+                display.appendChild(item);
+
+                if (index < chain.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    display.appendChild(arrow);
+                }
+            });
+        }
+
+        function checkChain() {
+            if (chain.length < 3) {
+                showFeedback('❌ Eine Nahrungskette braucht mindestens 3 Glieder!', false);
+                return;
+            }
+
+            // Check if it starts with a producer
+            if (chain[0].role !== 'Produzent') {
+                showFeedback('❌ Eine Nahrungskette muss mit einem Produzenten (Pflanze) beginnen!', false);
+                return;
+            }
+
+            // Check logical order
+            let valid = true;
+            let lastRole = 'Produzent';
+
+            for (let i = 1; i < chain.length; i++) {
+                const role = chain[i].role;
+
+                if (lastRole === 'Produzent' && role !== 'Konsument 1') {
+                    if (role === 'Konsument 2' || role === 'Konsument 3' || role === 'Destruent') {
+                        // Konsument 2/3 can't directly eat producers in this simplified model
+                        // But destruent at end is okay
+                        if (role !== 'Destruent') {
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ((lastRole === 'Konsument 1' || lastRole === 'Konsument 2') && role === 'Produzent') {
+                    valid = false;
+                    break;
+                }
+
+                lastRole = role;
+            }
+
+            if (valid) {
+                showFeedback('✅ Richtig! Das ist eine gültige Nahrungskette! Die Energie fließt von den Produzenten zu den Konsumenten.', true);
+            } else {
+                showFeedback('❌ Die Reihenfolge stimmt nicht. Denke daran: Pflanze → Pflanzenfresser → Fleischfresser', false);
+            }
+        }
+
+        function showFeedback(message, correct) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.className = 'feedback ' + (correct ? 'correct' : 'incorrect');
+        }
+
+        function hideFeedback() {
+            document.getElementById('feedback').className = 'feedback';
+        }
+
+        function resetChain() {
+            chain = [];
+            renderChain();
+            hideFeedback();
+        }
+
+        initPalettes();
+    </script>
+</body>
+</html>

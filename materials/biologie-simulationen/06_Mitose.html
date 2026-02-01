@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitose - Zellteilung</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at center, #1a2a3a 0%, #0a1520 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+            max-width: 100%;
+            height: auto;
+        }
+        .phase-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .phase-dot {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .phase-dot:hover { background: rgba(255,255,255,0.2); }
+        .phase-dot.active {
+            background: linear-gradient(135deg, #4fc3f7, #9b59b6);
+            font-weight: bold;
+        }
+        .phase-dot.completed { background: rgba(46, 204, 113, 0.3); }
+        .phase-info {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            margin: 15px 0;
+        }
+        .phase-title {
+            font-size: 1.5em;
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+        .phase-desc {
+            color: #b0bec5;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .chromosome-count {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 15px 0;
+        }
+        .count-box {
+            padding: 15px 25px;
+            background: rgba(155, 89, 182, 0.2);
+            border: 2px solid #9b59b6;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .count-value { font-size: 2em; font-weight: bold; color: #9b59b6; }
+        .count-label { font-size: 0.85em; color: #90a4ae; }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .control-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+        .control-btn:hover { transform: translateY(-2px); }
+        .control-btn.play { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .control-btn.pause { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .control-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .control-btn.step { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .speed-slider {
+            width: 150px;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #27ae60, #e74c3c);
+            border-radius: 3px;
+        }
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 Mitose – Zellteilung</h1>
+        <p class="subtitle">5. Klasse Biologie – Die Teilung einer Körperzelle</p>
+
+        <div class="simulation-area">
+            <canvas id="mitosisCanvas" width="800" height="400"></canvas>
+
+            <div class="phase-indicator">
+                <div class="phase-dot active" data-phase="0">Interphase</div>
+                <div class="phase-dot" data-phase="1">Prophase</div>
+                <div class="phase-dot" data-phase="2">Metaphase</div>
+                <div class="phase-dot" data-phase="3">Anaphase</div>
+                <div class="phase-dot" data-phase="4">Telophase</div>
+                <div class="phase-dot" data-phase="5">Zytokinese</div>
+            </div>
+
+            <div class="phase-info">
+                <div class="phase-title" id="phaseTitle">Interphase</div>
+                <div class="phase-desc" id="phaseDesc">
+                    Die Zelle wächst und bereitet sich auf die Teilung vor. Die DNA wird verdoppelt (Replikation).
+                    Die Chromosomen sind als loses Chromatin im Kern verteilt.
+                </div>
+            </div>
+
+            <div class="chromosome-count">
+                <div class="count-box">
+                    <div class="count-value" id="chromosomeCount">4</div>
+                    <div class="count-label">Chromosomen (2n)</div>
+                </div>
+                <div class="count-box">
+                    <div class="count-value" id="dnaCount">2n→4n→2n</div>
+                    <div class="count-label">DNA-Gehalt</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn step" onclick="previousPhase()">◀ Zurück</button>
+                <button class="control-btn play" id="playBtn" onclick="togglePlay()">▶ Abspielen</button>
+                <button class="control-btn step" onclick="nextPhase()">Weiter ▶</button>
+                <button class="control-btn reset" onclick="resetSimulation()">↺ Reset</button>
+            </div>
+
+            <div class="speed-control">
+                <span>🐢 Langsam</span>
+                <input type="range" class="speed-slider" id="speedSlider" min="1" max="5" value="2">
+                <span>🐇 Schnell</span>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Die Mitose</h3>
+            <p>Die Mitose ist die Teilung des Zellkerns bei Körperzellen. Aus einer Mutterzelle entstehen
+            zwei genetisch <strong>identische Tochterzellen</strong> mit dem gleichen Chromosomensatz (diploid, 2n).
+            Die Mitose dient dem <strong>Wachstum</strong> und der <strong>Regeneration</strong> des Körpers.</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mitosisCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const phases = [
+            { name: 'Interphase', desc: 'Die Zelle wächst und verdoppelt ihre DNA. Die Chromosomen liegen als entspanntes Chromatin vor. Die Zentriolen werden verdoppelt.' },
+            { name: 'Prophase', desc: 'Die Chromosomen kondensieren und werden sichtbar. Jedes besteht aus zwei Schwesterchromatiden. Die Kernhülle beginnt sich aufzulösen.' },
+            { name: 'Metaphase', desc: 'Die Chromosomen ordnen sich in der Mitte der Zelle an (Äquatorialebene). Die Spindelfasern heften sich an die Zentromere.' },
+            { name: 'Anaphase', desc: 'Die Schwesterchromatiden werden getrennt und zu entgegengesetzten Polen gezogen. Die Zelle beginnt sich zu strecken.' },
+            { name: 'Telophase', desc: 'An beiden Polen bilden sich neue Kernhüllen. Die Chromosomen entspiralisieren sich wieder. Zwei Zellkerne sind entstanden.' },
+            { name: 'Zytokinese', desc: 'Das Zytoplasma teilt sich (Zellteilung). Eine Einschnürung formt zwei separate Tochterzellen mit identischem Erbgut.' }
+        ];
+
+        let currentPhase = 0;
+        let isPlaying = false;
+        let animationProgress = 0;
+        let speed = 2;
+
+        function drawCell(x, y, radius, phase, progress) {
+            // Cell membrane
+            ctx.beginPath();
+            ctx.ellipse(x, y, radius, radius * 0.8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(200, 220, 255, 0.15)';
+            ctx.fill();
+            ctx.strokeStyle = '#4fc3f7';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Draw phase-specific content
+            if (phase === 0) { // Interphase
+                // Nucleus
+                ctx.beginPath();
+                ctx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(155, 89, 182, 0.5)';
+                ctx.fill();
+                ctx.strokeStyle = '#9b59b6';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Chromatin (loose DNA)
+                ctx.strokeStyle = 'rgba(231, 76, 60, 0.6)';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 8; i++) {
+                    ctx.beginPath();
+                    const angle = (i / 8) * Math.PI * 2;
+                    const r = radius * 0.25;
+                    ctx.moveTo(x + Math.cos(angle) * r * 0.3, y + Math.sin(angle) * r * 0.3);
+                    ctx.quadraticCurveTo(
+                        x + Math.cos(angle + 0.5) * r,
+                        y + Math.sin(angle + 0.5) * r,
+                        x + Math.cos(angle + 1) * r * 0.5,
+                        y + Math.sin(angle + 1) * r * 0.5
+                    );
+                    ctx.stroke();
+                }
+
+                // Centrioles
+                drawCentrioles(x + radius * 0.5, y - radius * 0.3);
+            }
+            else if (phase === 1) { // Prophase
+                // Dissolving nucleus
+                ctx.beginPath();
+                ctx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = 'rgba(155, 89, 182, 0.4)';
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Condensed chromosomes (X-shaped)
+                drawChromosomes(x, y, radius * 0.3, 4, false);
+
+                // Centrioles moving apart
+                drawCentrioles(x - radius * 0.4, y);
+                drawCentrioles(x + radius * 0.4, y);
+            }
+            else if (phase === 2) { // Metaphase
+                // Chromosomes at equator
+                const positions = [
+                    { dx: -30, dy: -20 },
+                    { dx: 30, dy: -20 },
+                    { dx: -30, dy: 20 },
+                    { dx: 30, dy: 20 }
+                ];
+
+                // Spindle fibers
+                ctx.strokeStyle = 'rgba(46, 204, 113, 0.5)';
+                ctx.lineWidth = 1;
+                positions.forEach(pos => {
+                    ctx.beginPath();
+                    ctx.moveTo(x - radius * 0.7, y);
+                    ctx.lineTo(x + pos.dx, y + pos.dy);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x + radius * 0.7, y);
+                    ctx.lineTo(x + pos.dx, y + pos.dy);
+                    ctx.stroke();
+                });
+
+                // Chromosomes lined up
+                positions.forEach(pos => {
+                    drawChromosome(x + pos.dx, y + pos.dy, 20, '#e74c3c');
+                });
+
+                // Centrioles at poles
+                drawCentrioles(x - radius * 0.7, y);
+                drawCentrioles(x + radius * 0.7, y);
+            }
+            else if (phase === 3) { // Anaphase
+                const separation = progress * radius * 0.5;
+
+                // Chromatids moving apart
+                ctx.strokeStyle = 'rgba(46, 204, 113, 0.5)';
+                ctx.lineWidth = 1;
+
+                for (let i = 0; i < 4; i++) {
+                    const yOffset = (i - 1.5) * 30;
+
+                    // Left chromatid
+                    ctx.beginPath();
+                    ctx.moveTo(x - radius * 0.7, y);
+                    ctx.lineTo(x - separation - 20, y + yOffset);
+                    ctx.stroke();
+                    drawChromatid(x - separation - 20, y + yOffset, '#e74c3c');
+
+                    // Right chromatid
+                    ctx.beginPath();
+                    ctx.moveTo(x + radius * 0.7, y);
+                    ctx.lineTo(x + separation + 20, y + yOffset);
+                    ctx.stroke();
+                    drawChromatid(x + separation + 20, y + yOffset, '#3498db');
+                }
+
+                drawCentrioles(x - radius * 0.7, y);
+                drawCentrioles(x + radius * 0.7, y);
+            }
+            else if (phase === 4) { // Telophase
+                // Two nuclei forming
+                ctx.beginPath();
+                ctx.arc(x - radius * 0.4, y, radius * 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(155, 89, 182, 0.4)';
+                ctx.fill();
+                ctx.strokeStyle = '#9b59b6';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(x + radius * 0.4, y, radius * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Chromosomes in each nucleus
+                for (let i = 0; i < 4; i++) {
+                    const angle = (i / 4) * Math.PI * 2;
+                    drawChromatid(x - radius * 0.4 + Math.cos(angle) * 15, y + Math.sin(angle) * 15, '#e74c3c');
+                    drawChromatid(x + radius * 0.4 + Math.cos(angle) * 15, y + Math.sin(angle) * 15, '#3498db');
+                }
+
+                // Cleavage furrow starting
+                ctx.strokeStyle = '#4fc3f7';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x, y - radius * 0.3);
+                ctx.lineTo(x, y + radius * 0.3);
+                ctx.stroke();
+            }
+            else if (phase === 5) { // Cytokinesis
+                const separation = radius * 0.6;
+
+                // Two daughter cells
+                ctx.beginPath();
+                ctx.ellipse(x - separation, y, radius * 0.6, radius * 0.7, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(200, 220, 255, 0.15)';
+                ctx.fill();
+                ctx.strokeStyle = '#4fc3f7';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(x + separation, y, radius * 0.6, radius * 0.7, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Nuclei
+                ctx.beginPath();
+                ctx.arc(x - separation, y, radius * 0.25, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(155, 89, 182, 0.5)';
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(x + separation, y, radius * 0.25, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Labels
+                ctx.fillStyle = '#4fc3f7';
+                ctx.font = '12px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Tochterzelle 1', x - separation, y + radius * 0.9);
+                ctx.fillText('Tochterzelle 2', x + separation, y + radius * 0.9);
+            }
+        }
+
+        function drawChromosome(x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+
+            // X-shape (two chromatids joined at centromere)
+            ctx.beginPath();
+            ctx.moveTo(x - size/2, y - size/2);
+            ctx.lineTo(x + size/2, y + size/2);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(x + size/2, y - size/2);
+            ctx.lineTo(x - size/2, y + size/2);
+            ctx.stroke();
+
+            // Centromere
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawChromatid(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.ellipse(x, y, 4, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawChromosomes(x, y, radius, count, separated) {
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2;
+                const px = x + Math.cos(angle) * radius * 0.6;
+                const py = y + Math.sin(angle) * radius * 0.6;
+                drawChromosome(px, py, 20, '#e74c3c');
+            }
+        }
+
+        function drawCentrioles(x, y) {
+            ctx.fillStyle = '#f1c40f';
+            ctx.fillRect(x - 8, y - 3, 16, 6);
+            ctx.fillRect(x - 3, y - 8, 6, 16);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Title
+            ctx.fillStyle = '#90a4ae';
+            ctx.font = '14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Phase ${currentPhase + 1}/6`, canvas.width / 2, 30);
+
+            // Draw main cell
+            drawCell(canvas.width / 2, canvas.height / 2, 150, currentPhase, animationProgress);
+        }
+
+        function updatePhaseDisplay() {
+            document.querySelectorAll('.phase-dot').forEach((dot, i) => {
+                dot.classList.remove('active', 'completed');
+                if (i < currentPhase) dot.classList.add('completed');
+                if (i === currentPhase) dot.classList.add('active');
+            });
+
+            document.getElementById('phaseTitle').textContent = phases[currentPhase].name;
+            document.getElementById('phaseDesc').textContent = phases[currentPhase].desc;
+
+            // Update chromosome count display
+            const dnaLabels = ['2n→4n', '4n', '4n', '4n→2n', '2n', '2n'];
+            document.getElementById('dnaCount').textContent = dnaLabels[currentPhase];
+        }
+
+        function nextPhase() {
+            if (currentPhase < 5) {
+                currentPhase++;
+                animationProgress = 0;
+                updatePhaseDisplay();
+                draw();
+            }
+        }
+
+        function previousPhase() {
+            if (currentPhase > 0) {
+                currentPhase--;
+                animationProgress = 0;
+                updatePhaseDisplay();
+                draw();
+            }
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+            btn.textContent = isPlaying ? '⏸ Pause' : '▶ Abspielen';
+            btn.className = 'control-btn ' + (isPlaying ? 'pause' : 'play');
+
+            if (isPlaying) animate();
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            currentPhase = 0;
+            animationProgress = 0;
+            document.getElementById('playBtn').textContent = '▶ Abspielen';
+            document.getElementById('playBtn').className = 'control-btn play';
+            updatePhaseDisplay();
+            draw();
+        }
+
+        function animate() {
+            if (!isPlaying) return;
+
+            animationProgress += 0.01 * speed;
+
+            if (animationProgress >= 1) {
+                animationProgress = 0;
+                if (currentPhase < 5) {
+                    currentPhase++;
+                    updatePhaseDisplay();
+                } else {
+                    isPlaying = false;
+                    document.getElementById('playBtn').textContent = '✓ Fertig';
+                }
+            }
+
+            draw();
+            if (isPlaying) requestAnimationFrame(animate);
+        }
+
+        document.querySelectorAll('.phase-dot').forEach((dot, i) => {
+            dot.addEventListener('click', () => {
+                currentPhase = i;
+                animationProgress = 0;
+                updatePhaseDisplay();
+                draw();
+            });
+        });
+
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            speed = parseInt(e.target.value);
+        });
+
+        draw();
+    </script>
+</body>
+</html>

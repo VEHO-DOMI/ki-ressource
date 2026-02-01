@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verdauungstrakt-Simulation</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at center, #2a1a1a 0%, #1a0a0a 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+            max-width: 100%;
+            height: auto;
+        }
+        .info-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .organ-title {
+            font-size: 1.3em;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4fc3f7;
+        }
+        .organ-desc {
+            line-height: 1.6;
+            color: #b0bec5;
+            margin-bottom: 15px;
+        }
+        .enzyme-box {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid #2ecc71;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .enzyme-box h4 { color: #2ecc71; margin-bottom: 8px; }
+        .enzyme-box p { font-size: 0.9em; color: #a0a0a0; }
+        .time-display {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .time-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        .time-label { color: #90a4ae; font-size: 0.9em; }
+        .food-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .food-btn {
+            padding: 10px 15px;
+            border: 2px solid #4fc3f7;
+            background: transparent;
+            color: #4fc3f7;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+        .food-btn:hover, .food-btn.active {
+            background: #4fc3f7;
+            color: #1a1a2e;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .control-btn.play { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .control-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #f1c40f, #2ecc71);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ Verdauungstrakt-Simulation</h1>
+        <p class="subtitle">4. Klasse Biologie – Verfolge den Weg der Nahrung</p>
+
+        <div class="simulation-area">
+            <div class="main-grid">
+                <div>
+                    <canvas id="digestCanvas" width="450" height="600"></canvas>
+                </div>
+                <div class="info-panel">
+                    <div class="food-selector">
+                        <button class="food-btn active" onclick="selectFood('apple')">🍎 Apfel</button>
+                        <button class="food-btn" onclick="selectFood('bread')">🍞 Brot</button>
+                        <button class="food-btn" onclick="selectFood('meat')">🥩 Fleisch</button>
+                    </div>
+
+                    <div class="time-display">
+                        <div class="time-value" id="timeValue">0:00</div>
+                        <div class="time-label">Verdauungszeit</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="organ-title" id="organTitle">🍽️ Bereit zum Start</div>
+                    <div class="organ-desc" id="organDesc">
+                        Wähle eine Nahrung und klicke auf Start, um die Verdauung zu beobachten.
+                    </div>
+
+                    <div class="enzyme-box" id="enzymeBox" style="display: none;">
+                        <h4>🧪 Aktives Enzym</h4>
+                        <p id="enzymeInfo"></p>
+                    </div>
+
+                    <div class="controls">
+                        <button class="control-btn play" id="playBtn" onclick="togglePlay()">▶ Start</button>
+                        <button class="control-btn reset" onclick="resetSimulation()">↺ Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Die Verdauung</h3>
+            <p>Die Verdauung zerlegt Nahrung in kleinste Bausteine: <strong>Kohlenhydrate</strong> zu Zucker,
+            <strong>Proteine</strong> zu Aminosäuren, <strong>Fette</strong> zu Fettsäuren. Der gesamte Prozess
+            dauert 24-72 Stunden. Die wichtigsten Organe sind Mund, Speiseröhre, Magen, Dünndarm und Dickdarm.</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('digestCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const organs = {
+            mouth: { y: 50, height: 60, color: '#e91e63', name: '👄 Mund', time: '1 Min',
+                desc: 'Mechanische Zerkleinerung durch Zähne. Speichel befeuchtet die Nahrung.',
+                enzyme: 'Amylase spaltet Stärke zu Zucker' },
+            esophagus: { y: 110, height: 70, color: '#9c27b0', name: '🔽 Speiseröhre', time: '10 Sek',
+                desc: 'Transport durch wellenförmige Muskelbewegung (Peristaltik).',
+                enzyme: 'Keine Enzyme - nur Transport' },
+            stomach: { y: 180, height: 120, color: '#f44336', name: '🫃 Magen', time: '2-4 Std',
+                desc: 'Starke Magensäure (pH 1-2) tötet Bakterien. Proteinverdauung beginnt.',
+                enzyme: 'Pepsin spaltet Proteine' },
+            smallIntestine: { y: 300, height: 150, color: '#ff9800', name: '〰️ Dünndarm', time: '4-6 Std',
+                desc: 'Hauptort der Verdauung! Nährstoffe werden ins Blut aufgenommen.',
+                enzyme: 'Viele Enzyme: Lipase (Fette), Proteasen (Proteine), Amylase (Kohlenhydrate)' },
+            largeIntestine: { y: 450, height: 100, color: '#795548', name: '🔄 Dickdarm', time: '12-36 Std',
+                desc: 'Wasserrückgewinnung. Bakterien produzieren Vitamine.',
+                enzyme: 'Darmbakterien fermentieren Ballaststoffe' },
+            rectum: { y: 550, height: 40, color: '#5d4037', name: '🚽 Enddarm', time: 'Variabel',
+                desc: 'Speicherung und Ausscheidung der unverdaulichen Reste.',
+                enzyme: 'Keine Enzyme' }
+        };
+
+        const foods = {
+            apple: { emoji: '🍎', color: '#e74c3c', nutrients: 'Kohlenhydrate, Ballaststoffe, Vitamine' },
+            bread: { emoji: '🍞', color: '#f1c40f', nutrients: 'Kohlenhydrate (Stärke), wenig Protein' },
+            meat: { emoji: '🥩', color: '#c0392b', nutrients: 'Proteine, Fette, Eisen' }
+        };
+
+        let selectedFood = 'apple';
+        let isPlaying = false;
+        let foodY = 30;
+        let currentOrgan = null;
+        let elapsedTime = 0;
+        let animationId = null;
+        let foodSize = 25;
+        let particles = [];
+
+        function selectFood(food) {
+            selectedFood = food;
+            document.querySelectorAll('.food-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            resetSimulation();
+        }
+
+        function drawDigestiveSystem() {
+            const centerX = 225;
+
+            // Draw esophagus
+            ctx.fillStyle = organs.esophagus.color;
+            ctx.beginPath();
+            ctx.moveTo(centerX - 20, 80);
+            ctx.lineTo(centerX + 20, 80);
+            ctx.lineTo(centerX + 25, 180);
+            ctx.lineTo(centerX - 25, 180);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw stomach
+            ctx.fillStyle = organs.stomach.color;
+            ctx.beginPath();
+            ctx.moveTo(centerX - 25, 180);
+            ctx.bezierCurveTo(centerX - 80, 200, centerX - 90, 280, centerX - 30, 300);
+            ctx.lineTo(centerX + 30, 300);
+            ctx.bezierCurveTo(centerX + 50, 280, centerX + 40, 200, centerX + 25, 180);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw small intestine (simplified coils)
+            ctx.strokeStyle = organs.smallIntestine.color;
+            ctx.lineWidth = 25;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(centerX, 300);
+            for (let i = 0; i < 5; i++) {
+                const y = 320 + i * 30;
+                ctx.bezierCurveTo(centerX + 80, y, centerX + 80, y + 15, centerX, y + 15);
+                ctx.bezierCurveTo(centerX - 80, y + 15, centerX - 80, y + 30, centerX, y + 30);
+            }
+            ctx.stroke();
+
+            // Draw large intestine
+            ctx.strokeStyle = organs.largeIntestine.color;
+            ctx.lineWidth = 30;
+            ctx.beginPath();
+            ctx.moveTo(centerX + 60, 470);
+            ctx.lineTo(centerX + 100, 470);
+            ctx.lineTo(centerX + 100, 380);
+            ctx.lineTo(centerX - 100, 380);
+            ctx.lineTo(centerX - 100, 530);
+            ctx.lineTo(centerX, 530);
+            ctx.stroke();
+
+            // Rectum
+            ctx.fillStyle = organs.rectum.color;
+            ctx.beginPath();
+            ctx.ellipse(centerX, 560, 30, 25, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Mouth
+            ctx.fillStyle = organs.mouth.color;
+            ctx.beginPath();
+            ctx.ellipse(centerX, 50, 50, 30, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Teeth
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI + Math.PI;
+                ctx.beginPath();
+                ctx.arc(centerX + Math.cos(angle) * 35, 50 + Math.sin(angle) * 20, 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Organ labels (right side)
+            ctx.fillStyle = '#90a4ae';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText('Mund', 290, 55);
+            ctx.fillText('Speiseröhre', 290, 130);
+            ctx.fillText('Magen', 290, 240);
+            ctx.fillText('Dünndarm (6-7m)', 290, 380);
+            ctx.fillText('Dickdarm (1.5m)', 290, 450);
+        }
+
+        function drawFood() {
+            const food = foods[selectedFood];
+            const centerX = 225;
+
+            // Calculate x position based on organ
+            let x = centerX;
+
+            ctx.font = `${foodSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Draw food particles for breakdown effect
+            particles.forEach((p, idx) => {
+                ctx.globalAlpha = p.alpha;
+                ctx.font = `${p.size}px Arial`;
+                ctx.fillText(food.emoji, p.x, p.y);
+            });
+            ctx.globalAlpha = 1;
+
+            // Draw main food
+            if (foodSize > 5) {
+                ctx.font = `${foodSize}px Arial`;
+                ctx.fillText(food.emoji, x, foodY);
+            }
+
+            // Draw glow around current organ
+            if (currentOrgan) {
+                const org = organs[currentOrgan];
+                ctx.strokeStyle = '#4fc3f7';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.strokeRect(120, org.y, 210, org.height);
+                ctx.setLineDash([]);
+            }
+        }
+
+        function updateInfo() {
+            if (!currentOrgan) return;
+
+            const org = organs[currentOrgan];
+            document.getElementById('organTitle').textContent = org.name;
+            document.getElementById('organDesc').textContent = org.desc;
+            document.getElementById('enzymeBox').style.display = 'block';
+            document.getElementById('enzymeInfo').textContent = org.enzyme;
+
+            // Update time
+            const mins = Math.floor(elapsedTime / 60);
+            const secs = Math.floor(elapsedTime % 60);
+            document.getElementById('timeValue').textContent =
+                `${mins}:${secs.toString().padStart(2, '0')}`;
+
+            // Update progress (based on y position)
+            const progress = Math.min(100, ((foodY - 30) / 530) * 100);
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function determineOrgan() {
+            for (let [name, org] of Object.entries(organs)) {
+                if (foodY >= org.y && foodY < org.y + org.height) {
+                    return name;
+                }
+            }
+            return null;
+        }
+
+        function animate() {
+            if (!isPlaying) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawDigestiveSystem();
+
+            // Move food down
+            const speed = currentOrgan === 'esophagus' ? 2 :
+                          currentOrgan === 'stomach' ? 0.3 :
+                          currentOrgan === 'smallIntestine' ? 0.5 : 0.2;
+
+            foodY += speed;
+            elapsedTime += 0.05;
+
+            // Determine current organ
+            const newOrgan = determineOrgan();
+            if (newOrgan !== currentOrgan) {
+                currentOrgan = newOrgan;
+                updateInfo();
+
+                // Break down food
+                if (currentOrgan === 'stomach' && foodSize > 15) {
+                    for (let i = 0; i < 3; i++) {
+                        particles.push({
+                            x: 225 + (Math.random() - 0.5) * 40,
+                            y: foodY,
+                            vx: (Math.random() - 0.5) * 2,
+                            vy: Math.random() * 2,
+                            size: 10,
+                            alpha: 1
+                        });
+                    }
+                    foodSize = 15;
+                }
+                if (currentOrgan === 'smallIntestine' && foodSize > 8) {
+                    foodSize = 8;
+                }
+                if (currentOrgan === 'largeIntestine') {
+                    foodSize = 5;
+                }
+            }
+
+            // Update particles
+            particles.forEach(p => {
+                p.y += p.vy;
+                p.x += p.vx;
+                p.alpha -= 0.01;
+                p.size *= 0.99;
+            });
+            particles = particles.filter(p => p.alpha > 0);
+
+            drawFood();
+
+            // Check if complete
+            if (foodY > 580) {
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '✓ Fertig!';
+                document.getElementById('organTitle').textContent = '✅ Verdauung abgeschlossen!';
+                document.getElementById('organDesc').textContent =
+                    `Die ${foods[selectedFood].nutrients} wurden aufgenommen. Unverdauliche Reste werden ausgeschieden.`;
+            } else {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+
+            if (isPlaying) {
+                btn.textContent = '⏸ Pause';
+                animate();
+            } else {
+                btn.textContent = '▶ Weiter';
+                if (animationId) cancelAnimationFrame(animationId);
+            }
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            foodY = 30;
+            foodSize = 25;
+            currentOrgan = null;
+            elapsedTime = 0;
+            particles = [];
+
+            if (animationId) cancelAnimationFrame(animationId);
+
+            document.getElementById('playBtn').textContent = '▶ Start';
+            document.getElementById('organTitle').textContent = '🍽️ Bereit zum Start';
+            document.getElementById('organDesc').textContent = 'Wähle eine Nahrung und klicke auf Start.';
+            document.getElementById('enzymeBox').style.display = 'none';
+            document.getElementById('timeValue').textContent = '0:00';
+            document.getElementById('progressFill').style.width = '0%';
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawDigestiveSystem();
+            drawFood();
+        }
+
+        // Initial draw
+        drawDigestiveSystem();
+        drawFood();
+    </script>
+</body>
+</html>

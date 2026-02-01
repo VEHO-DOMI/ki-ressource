@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epidemie-Simulation</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        canvas {
+            display: block;
+            background: #0a0a15;
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+            max-width: 100%;
+            height: auto;
+        }
+        .control-panel {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .panel-title {
+            color: #4fc3f7;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-box.healthy { background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; }
+        .stat-box.infected { background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; }
+        .stat-box.recovered { background: rgba(52, 152, 219, 0.2); border: 1px solid #3498db; }
+        .stat-box.dead { background: rgba(127, 140, 141, 0.2); border: 1px solid #7f8c8d; }
+        .stat-value { font-size: 1.5em; font-weight: bold; }
+        .stat-label { font-size: 0.75em; color: #90a4ae; }
+        .slider-group {
+            margin: 15px 0;
+        }
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .slider-group input {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            border-radius: 3px;
+        }
+        .slider-group input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #infectionRate { background: linear-gradient(90deg, #2ecc71, #e74c3c); }
+        #recoveryRate { background: linear-gradient(90deg, #e74c3c, #3498db); }
+        #mortalityRate { background: linear-gradient(90deg, #3498db, #7f8c8d); }
+        #socialDistance { background: linear-gradient(90deg, #e74c3c, #2ecc71); }
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .control-btn:hover { transform: translateY(-2px); }
+        .control-btn.play { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .control-btn.pause { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .control-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85em; }
+        .legend-dot { width: 14px; height: 14px; border-radius: 50%; }
+        .graph-container {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .graph-container h4 { color: #4fc3f7; margin-bottom: 10px; font-size: 0.9em; }
+        #graphCanvas { width: 100%; height: 100px; }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+        .day-counter {
+            text-align: center;
+            font-size: 1.2em;
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦠 Epidemie-Simulation</h1>
+        <p class="subtitle">7. Klasse Biologie – Wie sich Krankheiten ausbreiten</p>
+
+        <div class="simulation-area">
+            <div class="main-grid">
+                <div>
+                    <canvas id="simCanvas" width="550" height="450"></canvas>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-dot" style="background: #2ecc71;"></div> Gesund</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #e74c3c;"></div> Infiziert</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #3498db;"></div> Genesen</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #7f8c8d;"></div> Verstorben</div>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <div class="day-counter">Tag: <span id="dayCount">0</span></div>
+
+                    <div class="panel-title">📊 Statistik</div>
+                    <div class="stat-grid">
+                        <div class="stat-box healthy">
+                            <div class="stat-value" id="healthyCount" style="color: #2ecc71;">99</div>
+                            <div class="stat-label">Gesund</div>
+                        </div>
+                        <div class="stat-box infected">
+                            <div class="stat-value" id="infectedCount" style="color: #e74c3c;">1</div>
+                            <div class="stat-label">Infiziert</div>
+                        </div>
+                        <div class="stat-box recovered">
+                            <div class="stat-value" id="recoveredCount" style="color: #3498db;">0</div>
+                            <div class="stat-label">Genesen</div>
+                        </div>
+                        <div class="stat-box dead">
+                            <div class="stat-value" id="deadCount" style="color: #7f8c8d;">0</div>
+                            <div class="stat-label">Verstorben</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-title">⚙️ Parameter</div>
+
+                    <div class="slider-group">
+                        <label>
+                            <span>🦠 Infektionsrate</span>
+                            <span id="infectionValue">50%</span>
+                        </label>
+                        <input type="range" id="infectionRate" min="10" max="100" value="50">
+                    </div>
+
+                    <div class="slider-group">
+                        <label>
+                            <span>💊 Genesungszeit (Tage)</span>
+                            <span id="recoveryValue">14</span>
+                        </label>
+                        <input type="range" id="recoveryRate" min="5" max="30" value="14">
+                    </div>
+
+                    <div class="slider-group">
+                        <label>
+                            <span>💀 Sterblichkeit</span>
+                            <span id="mortalityValue">2%</span>
+                        </label>
+                        <input type="range" id="mortalityRate" min="0" max="20" value="2">
+                    </div>
+
+                    <div class="slider-group">
+                        <label>
+                            <span>↔️ Social Distancing</span>
+                            <span id="distanceValue">0%</span>
+                        </label>
+                        <input type="range" id="socialDistance" min="0" max="80" value="0">
+                    </div>
+
+                    <div class="control-buttons">
+                        <button class="control-btn play" id="playBtn" onclick="togglePlay()">▶ Start</button>
+                        <button class="control-btn reset" onclick="resetSimulation()">↺ Reset</button>
+                    </div>
+
+                    <div class="graph-container">
+                        <h4>📈 Verlauf</h4>
+                        <canvas id="graphCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Epidemiologie</h3>
+            <p>Eine <strong>Epidemie</strong> ist die schnelle Ausbreitung einer Krankheit in einer Population.
+            Wichtige Faktoren sind die <strong>Infektionsrate</strong> (R₀-Wert), die <strong>Genesungszeit</strong>
+            und <strong>Schutzmaßnahmen</strong> wie Social Distancing. Wenn genug Menschen immun sind (durch Genesung
+            oder Impfung), entsteht <strong>Herdenimmunität</strong>.</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const gctx = graphCanvas.getContext('2d');
+
+        let isPlaying = false;
+        let day = 0;
+        let frameCount = 0;
+        const framesPerDay = 30;
+
+        let infectionRate = 50;
+        let recoveryDays = 14;
+        let mortalityRate = 2;
+        let socialDistance = 0;
+
+        let people = [];
+        let history = { healthy: [], infected: [], recovered: [], dead: [] };
+
+        const POPULATION = 100;
+        const RADIUS = 6;
+        const INFECTION_RADIUS = 20;
+
+        class Person {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.status = 'healthy'; // healthy, infected, recovered, dead
+                this.infectionDay = 0;
+            }
+
+            update() {
+                if (this.status === 'dead') return;
+
+                // Apply social distancing
+                const speed = 1 - (socialDistance / 100) * 0.8;
+
+                this.x += this.vx * speed;
+                this.y += this.vy * speed;
+
+                // Bounce off walls
+                if (this.x < RADIUS || this.x > canvas.width - RADIUS) {
+                    this.vx *= -1;
+                    this.x = Math.max(RADIUS, Math.min(canvas.width - RADIUS, this.x));
+                }
+                if (this.y < RADIUS || this.y > canvas.height - RADIUS) {
+                    this.vy *= -1;
+                    this.y = Math.max(RADIUS, Math.min(canvas.height - RADIUS, this.y));
+                }
+
+                // Random direction changes
+                if (Math.random() < 0.02) {
+                    this.vx += (Math.random() - 0.5) * 0.5;
+                    this.vy += (Math.random() - 0.5) * 0.5;
+                    const maxSpeed = 2;
+                    const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                    if (currentSpeed > maxSpeed) {
+                        this.vx = (this.vx / currentSpeed) * maxSpeed;
+                        this.vy = (this.vy / currentSpeed) * maxSpeed;
+                    }
+                }
+            }
+
+            draw() {
+                const colors = {
+                    healthy: '#2ecc71',
+                    infected: '#e74c3c',
+                    recovered: '#3498db',
+                    dead: '#7f8c8d'
+                };
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, RADIUS, 0, Math.PI * 2);
+                ctx.fillStyle = colors[this.status];
+                ctx.fill();
+
+                if (this.status === 'infected') {
+                    // Infection radius indicator
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, INFECTION_RADIUS, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(231, 76, 60, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+
+                if (this.status === 'dead') {
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x - 4, this.y - 4);
+                    ctx.lineTo(this.x + 4, this.y + 4);
+                    ctx.moveTo(this.x + 4, this.y - 4);
+                    ctx.lineTo(this.x - 4, this.y + 4);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function initSimulation() {
+            people = [];
+            for (let i = 0; i < POPULATION; i++) {
+                people.push(new Person(
+                    RADIUS + Math.random() * (canvas.width - RADIUS * 2),
+                    RADIUS + Math.random() * (canvas.height - RADIUS * 2)
+                ));
+            }
+            // Patient zero
+            people[0].status = 'infected';
+            people[0].infectionDay = 0;
+
+            history = { healthy: [], infected: [], recovered: [], dead: [] };
+            day = 0;
+            frameCount = 0;
+        }
+
+        function checkInfections() {
+            const infected = people.filter(p => p.status === 'infected');
+            const healthy = people.filter(p => p.status === 'healthy');
+
+            infected.forEach(inf => {
+                healthy.forEach(heal => {
+                    const dx = inf.x - heal.x;
+                    const dy = inf.y - heal.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < INFECTION_RADIUS) {
+                        if (Math.random() * 100 < infectionRate / 10) {
+                            heal.status = 'infected';
+                            heal.infectionDay = day;
+                        }
+                    }
+                });
+            });
+        }
+
+        function checkRecovery() {
+            people.forEach(p => {
+                if (p.status === 'infected' && day - p.infectionDay >= recoveryDays) {
+                    if (Math.random() * 100 < mortalityRate) {
+                        p.status = 'dead';
+                    } else {
+                        p.status = 'recovered';
+                    }
+                }
+            });
+        }
+
+        function updateStats() {
+            const stats = {
+                healthy: people.filter(p => p.status === 'healthy').length,
+                infected: people.filter(p => p.status === 'infected').length,
+                recovered: people.filter(p => p.status === 'recovered').length,
+                dead: people.filter(p => p.status === 'dead').length
+            };
+
+            document.getElementById('healthyCount').textContent = stats.healthy;
+            document.getElementById('infectedCount').textContent = stats.infected;
+            document.getElementById('recoveredCount').textContent = stats.recovered;
+            document.getElementById('deadCount').textContent = stats.dead;
+            document.getElementById('dayCount').textContent = day;
+
+            return stats;
+        }
+
+        function drawGraph() {
+            gctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+            if (history.healthy.length < 2) return;
+
+            const maxLen = 100;
+            const h = graphCanvas.height;
+            const w = graphCanvas.width;
+
+            const drawLine = (data, color) => {
+                gctx.strokeStyle = color;
+                gctx.lineWidth = 2;
+                gctx.beginPath();
+
+                const startIdx = Math.max(0, data.length - maxLen);
+                for (let i = startIdx; i < data.length; i++) {
+                    const x = ((i - startIdx) / maxLen) * w;
+                    const y = h - (data[i] / POPULATION) * h;
+                    if (i === startIdx) gctx.moveTo(x, y);
+                    else gctx.lineTo(x, y);
+                }
+                gctx.stroke();
+            };
+
+            drawLine(history.healthy, '#2ecc71');
+            drawLine(history.infected, '#e74c3c');
+            drawLine(history.recovered, '#3498db');
+        }
+
+        function animate() {
+            if (!isPlaying) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update
+            people.forEach(p => p.update());
+            checkInfections();
+
+            frameCount++;
+            if (frameCount >= framesPerDay) {
+                frameCount = 0;
+                day++;
+                checkRecovery();
+
+                const stats = updateStats();
+                history.healthy.push(stats.healthy);
+                history.infected.push(stats.infected);
+                history.recovered.push(stats.recovered);
+                history.dead.push(stats.dead);
+
+                drawGraph();
+
+                // End condition
+                if (stats.infected === 0) {
+                    isPlaying = false;
+                    document.getElementById('playBtn').textContent = '✓ Ende';
+                }
+            } else {
+                updateStats();
+            }
+
+            // Draw
+            people.forEach(p => p.draw());
+
+            requestAnimationFrame(animate);
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+            btn.textContent = isPlaying ? '⏸ Pause' : '▶ Start';
+            btn.className = 'control-btn ' + (isPlaying ? 'pause' : 'play');
+            if (isPlaying) animate();
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            document.getElementById('playBtn').textContent = '▶ Start';
+            document.getElementById('playBtn').className = 'control-btn play';
+            initSimulation();
+            updateStats();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            people.forEach(p => p.draw());
+            drawGraph();
+        }
+
+        // Slider event listeners
+        document.getElementById('infectionRate').addEventListener('input', (e) => {
+            infectionRate = parseInt(e.target.value);
+            document.getElementById('infectionValue').textContent = infectionRate + '%';
+        });
+
+        document.getElementById('recoveryRate').addEventListener('input', (e) => {
+            recoveryDays = parseInt(e.target.value);
+            document.getElementById('recoveryValue').textContent = recoveryDays;
+        });
+
+        document.getElementById('mortalityRate').addEventListener('input', (e) => {
+            mortalityRate = parseInt(e.target.value);
+            document.getElementById('mortalityValue').textContent = mortalityRate + '%';
+        });
+
+        document.getElementById('socialDistance').addEventListener('input', (e) => {
+            socialDistance = parseInt(e.target.value);
+            document.getElementById('distanceValue').textContent = socialDistance + '%';
+        });
+
+        // Initialize
+        graphCanvas.width = graphCanvas.offsetWidth;
+        graphCanvas.height = 80;
+        initSimulation();
+        updateStats();
+        people.forEach(p => p.draw());
+    </script>
+</body>
+</html>
