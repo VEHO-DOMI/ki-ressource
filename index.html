@@ -8062,8 +8062,18 @@ INHALT:
                             <div class="sub-collapsible-content">
                                 <p><strong>Schulstufe:</strong> 4. Klasse | <strong>Thema:</strong> Mensch & Gesundheit – Verdauungssystem</p>
                                 <p>Animierte Reise durch den Verdauungstrakt von Mund bis Dickdarm. Zeigt die Enzyme und chemischen Prozesse in jedem Abschnitt (Speichel, Magensaft, Galle, Pankreassaft).</p>
+
+                                <div class="version-toggle">
+                                    <button class="version-btn active" onclick="switchVersion('verdauung', 'standard', this)">
+                                        🎨 2D Interaktiv
+                                    </button>
+                                    <button class="version-btn" onclick="switchVersion('verdauung', '3d', this)">
+                                        🌐 3D mit Three.js <span class="badge">NEU</span>
+                                    </button>
+                                </div>
+
                                 <div class="simulation-container" style="margin-top: 1rem;">
-                                    <iframe src="materials/biologie-simulationen/04_Verdauungstrakt.html"
+                                    <iframe id="verdauung-frame" src="materials/biologie-simulationen/04_Verdauungstrakt.html"
                                             style="width: 100%; height: 850px; border: 2px solid var(--cyber-green); border-radius: 8px;"
                                             loading="lazy"></iframe>
                                 </div>
@@ -8269,6 +8279,10 @@ INHALT:
                 'blutkreislauf': {
                     'standard': 'materials/biologie-simulationen/03_Blutkreislauf.html',
                     '3d': 'materials/biologie-simulationen/03_Blutkreislauf_3D.html'
+                },
+                'verdauung': {
+                    'standard': 'materials/biologie-simulationen/04_Verdauungstrakt.html',
+                    '3d': 'materials/biologie-simulationen/04_Verdauungstrakt_3D.html'
                 },
                 'zellexplorer': {
                     'standard': 'materials/biologie-simulationen/05_Zell_Explorer.html',

@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verdauungstrakt - 3D Simulation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #0a0a1a;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 18px 22px;
+            background: linear-gradient(180deg, rgba(10,10,26,0.95) 0%, transparent 100%);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: 1.7em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8em;
+            margin-top: 4px;
+        }
+
+        .control-panel {
+            position: fixed;
+            top: 85px;
+            right: 15px;
+            width: 290px;
+            background: rgba(10, 10, 30, 0.92);
+            backdrop-filter: blur(20px);
+            border-radius: 18px;
+            border: 1px solid rgba(79, 195, 247, 0.2);
+            padding: 18px;
+            z-index: 100;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .panel-section {
+            margin-bottom: 18px;
+        }
+
+        .panel-title {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 12px;
+        }
+
+        .food-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .food-btn {
+            flex: 1;
+            min-width: 75px;
+            padding: 10px 8px;
+            border: 2px solid rgba(79, 195, 247, 0.3);
+            background: rgba(79, 195, 247, 0.1);
+            color: #4fc3f7;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-family: inherit;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .food-btn:hover {
+            background: rgba(79, 195, 247, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .food-btn.active {
+            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            border-color: transparent;
+            color: #0a0a1a;
+            font-weight: 600;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8em;
+        }
+
+        .stat-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #4fc3f7;
+        }
+
+        .stat-value.time { color: #f1c40f; }
+        .stat-value.green { color: #2ecc71; }
+
+        .progress-container {
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #f1c40f, #2ecc71);
+            border-radius: 4px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.65em;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .ctrl-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .ctrl-btn.play {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .ctrl-btn.pause {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .ctrl-btn.reset {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .ctrl-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .view-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .view-btn {
+            flex: 1;
+            min-width: 60px;
+            padding: 8px 6px;
+            border: 1px solid rgba(79, 195, 247, 0.25);
+            background: rgba(79, 195, 247, 0.08);
+            color: rgba(79, 195, 247, 0.8);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.7em;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .view-btn:hover, .view-btn.active {
+            background: rgba(79, 195, 247, 0.2);
+            color: #4fc3f7;
+        }
+
+        .organ-info {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .organ-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 8px;
+        }
+
+        .organ-desc {
+            font-size: 0.8em;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .enzyme-box {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .enzyme-title {
+            font-size: 0.75em;
+            color: #2ecc71;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .enzyme-text {
+            font-size: 0.75em;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .legend {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            font-size: 0.75em;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .speed-control {
+            margin-top: 12px;
+        }
+
+        .speed-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75em;
+            margin-bottom: 6px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 5px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #4fc3f7, #2ecc71);
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .transparency-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4fc3f7;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        .toggle-label {
+            font-size: 0.8em;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(10, 10, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.7em;
+            color: rgba(255,255,255,0.5);
+            z-index: 100;
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 200;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(79, 195, 247, 0.2);
+            border-top-color: #4fc3f7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 700px) {
+            .control-panel {
+                top: auto;
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+                max-height: 50vh;
+            }
+            .instructions { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div style="color: rgba(255,255,255,0.7);">3D-Modell wird geladen...</div>
+    </div>
+
+    <div class="header">
+        <h1>🍽️ Verdauungstrakt - 3D</h1>
+        <p class="subtitle">Interaktive 3D-Reise durch das Verdauungssystem</p>
+    </div>
+
+    <div class="control-panel">
+        <div class="panel-section">
+            <div class="panel-title">🍎 Nahrungsauswahl</div>
+            <div class="food-selector">
+                <button class="food-btn active" data-food="apple">🍎 Apfel</button>
+                <button class="food-btn" data-food="bread">🍞 Brot</button>
+                <button class="food-btn" data-food="meat">🥩 Fleisch</button>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-title">⏱️ Verdauungsfortschritt</div>
+            <div class="stat-row">
+                <span class="stat-label">Zeit</span>
+                <span class="stat-value time" id="timeValue">0:00</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Phase</span>
+                <span class="stat-value green" id="phaseValue">Bereit</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>Mund</span>
+                    <span>Magen</span>
+                    <span>Darm</span>
+                    <span>Ende</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-buttons">
+            <button class="ctrl-btn play" id="playBtn">
+                <span id="playIcon">▶</span>
+                <span id="playText">Start</span>
+            </button>
+            <button class="ctrl-btn reset" id="resetBtn">↺ Reset</button>
+        </div>
+
+        <div class="speed-control">
+            <div class="speed-label">
+                <span>Geschwindigkeit</span>
+                <span id="speedValue">1x</span>
+            </div>
+            <input type="range" id="speedSlider" min="0.5" max="3" step="0.5" value="1">
+        </div>
+
+        <div class="transparency-toggle" id="transparencyToggle">
+            <div class="toggle-switch" id="toggleSwitch"></div>
+            <span class="toggle-label">Transparenz-Modus</span>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-title">👁️ Ansicht</div>
+            <div class="view-buttons">
+                <button class="view-btn active" data-view="overview">Übersicht</button>
+                <button class="view-btn" data-view="mouth">Mund</button>
+                <button class="view-btn" data-view="stomach">Magen</button>
+                <button class="view-btn" data-view="intestine">Darm</button>
+            </div>
+        </div>
+
+        <div class="organ-info" id="organInfo">
+            <div class="organ-name" id="organName">🍽️ Bereit zum Start</div>
+            <div class="organ-desc" id="organDesc">
+                Wähle eine Nahrung und klicke auf Start, um die Verdauung zu beobachten. Klicke auf Organe für Details.
+            </div>
+            <div class="enzyme-box" id="enzymeBox" style="display: none;">
+                <div class="enzyme-title">🧪 Aktives Enzym</div>
+                <div class="enzyme-text" id="enzymeText"></div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #e74c3c; color: #e74c3c;"></div>
+                <span>Nahrungsbrei</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #2ecc71; color: #2ecc71;"></div>
+                <span>Enzyme</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #f1c40f; color: #f1c40f;"></div>
+                <span>Nährstoff-Absorption</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        🖱️ Ziehen zum Drehen • Scrollen zum Zoomen • Klick für Organ-Info
+    </div>
+
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // Scene Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a1a);
+        scene.fog = new THREE.FogExp2(0x0a0a1a, 0.03);
+
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(8, 4, 12);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 5;
+        controls.maxDistance = 25;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404060, 0.5);
+        scene.add(ambientLight);
+
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        mainLight.position.set(5, 10, 7);
+        mainLight.castShadow = true;
+        scene.add(mainLight);
+
+        const fillLight = new THREE.DirectionalLight(0x4fc3f7, 0.4);
+        fillLight.position.set(-5, 3, -5);
+        scene.add(fillLight);
+
+        const rimLight = new THREE.PointLight(0x2ecc71, 0.5, 20);
+        rimLight.position.set(0, -5, 5);
+        scene.add(rimLight);
+
+        // State
+        let isPlaying = false;
+        let time = 0;
+        let simulationTime = 0;
+        let speed = 1;
+        let transparency = false;
+        let currentOrgan = null;
+        let selectedFood = 'apple';
+
+        const organs = {};
+        const foodParticles = [];
+        const enzymeParticles = [];
+        const absorptionParticles = [];
+
+        // Organ Data
+        const organData = {
+            mouth: {
+                name: '👄 Mundhöhle',
+                desc: 'Hier beginnt die Verdauung! Die Zähne zerkleinern die Nahrung mechanisch, während die Zunge sie mit Speichel vermischt.',
+                enzyme: 'Speichel-Amylase beginnt, Stärke in Zucker zu spalten.',
+                duration: 60, // seconds in simulation
+                color: 0xe91e63
+            },
+            esophagus: {
+                name: '🔽 Speiseröhre',
+                desc: 'Ein 25cm langer Muskelschlauch transportiert die Nahrung durch wellenförmige Bewegungen (Peristaltik) zum Magen.',
+                enzyme: 'Keine Enzyme - nur Transport durch Muskelkontraktionen.',
+                duration: 10,
+                color: 0x9c27b0
+            },
+            stomach: {
+                name: '🫃 Magen',
+                desc: 'Der Magen fasst 1-1.5 Liter und durchmischt die Nahrung mit Magensaft. Die starke Säure (pH 1-2) tötet Bakterien ab.',
+                enzyme: 'Pepsin spaltet Proteine. Salzsäure aktiviert Enzyme und tötet Keime.',
+                duration: 180,
+                color: 0xf44336
+            },
+            smallIntestine: {
+                name: '〰️ Dünndarm',
+                desc: 'Mit 6-7 Metern Länge ist er der Hauptort der Verdauung! Millionen von Zotten vergrößern die Oberfläche auf 200m².',
+                enzyme: 'Lipase (Fette), Proteasen (Eiweiß), Amylase (Kohlenhydrate). Galle emulgiert Fette.',
+                duration: 300,
+                color: 0xff9800
+            },
+            largeIntestine: {
+                name: '🔄 Dickdarm',
+                desc: 'Im 1.5m langen Dickdarm wird Wasser zurückgewonnen. Billionen von Bakterien produzieren Vitamine (B, K).',
+                enzyme: 'Darmbakterien fermentieren Ballaststoffe und produzieren kurzkettige Fettsäuren.',
+                duration: 600,
+                color: 0x795548
+            }
+        };
+
+        // Food types
+        const foodTypes = {
+            apple: { emoji: '🍎', color: 0xe74c3c, name: 'Apfel', nutrients: 'Kohlenhydrate, Ballaststoffe' },
+            bread: { emoji: '🍞', color: 0xf1c40f, name: 'Brot', nutrients: 'Stärke, etwas Protein' },
+            meat: { emoji: '🥩', color: 0xc0392b, name: 'Fleisch', nutrients: 'Proteine, Fette' }
+        };
+
+        // Materials
+        function createOrganMaterial(color, transparent = false) {
+            return new THREE.MeshPhysicalMaterial({
+                color: color,
+                roughness: 0.6,
+                metalness: 0.1,
+                transparent: transparent,
+                opacity: transparent ? 0.6 : 1,
+                side: THREE.DoubleSide
+            });
+        }
+
+        // Create Mouth
+        function createMouth() {
+            const group = new THREE.Group();
+
+            // Jaw base
+            const jawGeometry = new THREE.SphereGeometry(1.2, 32, 32);
+            jawGeometry.scale(1.2, 0.8, 1);
+            const jawMaterial = createOrganMaterial(organData.mouth.color, transparency);
+            const jaw = new THREE.Mesh(jawGeometry, jawMaterial);
+            jaw.userData = { type: 'mouth' };
+            jaw.castShadow = true;
+            group.add(jaw);
+
+            // Teeth (upper)
+            const teethMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI + Math.PI * 0.1;
+                const tooth = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.12, 0.2, 0.1),
+                    teethMaterial
+                );
+                tooth.position.set(
+                    Math.cos(angle) * 0.9,
+                    0.15,
+                    Math.sin(angle) * 0.6 - 0.3
+                );
+                tooth.rotation.y = -angle;
+                group.add(tooth);
+            }
+
+            // Tongue
+            const tongueGeometry = new THREE.SphereGeometry(0.6, 16, 16);
+            tongueGeometry.scale(1.2, 0.4, 1.5);
+            const tongueMaterial = new THREE.MeshStandardMaterial({ color: 0xff6b6b, roughness: 0.8 });
+            const tongue = new THREE.Mesh(tongueGeometry, tongueMaterial);
+            tongue.position.set(0, -0.2, 0.2);
+            group.add(tongue);
+
+            group.position.set(0, 6, 0);
+            organs.mouth = group;
+            scene.add(group);
+        }
+
+        // Create Esophagus
+        function createEsophagus() {
+            const curve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, 5.2, 0),
+                new THREE.Vector3(0, 4.5, 0.2),
+                new THREE.Vector3(0.1, 3.5, 0.3),
+                new THREE.Vector3(0, 2.5, 0.2),
+                new THREE.Vector3(-0.1, 1.8, 0)
+            ]);
+
+            const geometry = new THREE.TubeGeometry(curve, 32, 0.25, 16, false);
+            const material = createOrganMaterial(organData.esophagus.color, transparency);
+            const esophagus = new THREE.Mesh(geometry, material);
+            esophagus.userData = { type: 'esophagus' };
+            esophagus.castShadow = true;
+
+            organs.esophagus = esophagus;
+            scene.add(esophagus);
+        }
+
+        // Create Stomach
+        function createStomach() {
+            const group = new THREE.Group();
+
+            // Main stomach body - bean shape
+            const stomachShape = new THREE.Shape();
+            stomachShape.moveTo(0, 0);
+            stomachShape.bezierCurveTo(-1.5, 0.5, -2, 2, -1, 3);
+            stomachShape.bezierCurveTo(0, 3.5, 1, 3, 1.2, 2);
+            stomachShape.bezierCurveTo(1.3, 1, 0.8, 0.3, 0, 0);
+
+            const extrudeSettings = {
+                depth: 1.5,
+                bevelEnabled: true,
+                bevelSegments: 8,
+                bevelSize: 0.2,
+                bevelThickness: 0.2
+            };
+
+            const stomachGeometry = new THREE.ExtrudeGeometry(stomachShape, extrudeSettings);
+            stomachGeometry.center();
+            stomachGeometry.rotateX(Math.PI / 2);
+            stomachGeometry.rotateZ(-Math.PI / 6);
+
+            const stomachMaterial = createOrganMaterial(organData.stomach.color, transparency);
+            const stomach = new THREE.Mesh(stomachGeometry, stomachMaterial);
+            stomach.userData = { type: 'stomach' };
+            stomach.castShadow = true;
+            stomach.receiveShadow = true;
+            group.add(stomach);
+
+            // Stomach folds (rugae)
+            const foldMaterial = new THREE.MeshBasicMaterial({
+                color: 0xcc2222,
+                transparent: true,
+                opacity: 0.3
+            });
+
+            for (let i = 0; i < 5; i++) {
+                const foldGeometry = new THREE.TorusGeometry(0.8 + i * 0.1, 0.05, 8, 32, Math.PI);
+                const fold = new THREE.Mesh(foldGeometry, foldMaterial);
+                fold.position.set(-0.2, -0.8 + i * 0.35, 0.5);
+                fold.rotation.x = Math.PI / 2;
+                fold.rotation.z = 0.3;
+                group.add(fold);
+            }
+
+            group.position.set(-0.5, 0.5, 0);
+            organs.stomach = group;
+            scene.add(group);
+        }
+
+        // Create Small Intestine
+        function createSmallIntestine() {
+            const group = new THREE.Group();
+
+            // Create coiled intestine path
+            const points = [];
+            const coils = 8;
+            const radius = 1.5;
+
+            for (let i = 0; i <= coils * 20; i++) {
+                const t = i / (coils * 20);
+                const angle = t * coils * Math.PI * 2;
+                const y = -t * 4;
+                const r = radius * (1 - t * 0.3) * Math.sin(t * Math.PI);
+                const wobble = Math.sin(angle * 3) * 0.2;
+
+                points.push(new THREE.Vector3(
+                    Math.cos(angle) * (r + wobble),
+                    y,
+                    Math.sin(angle) * (r + wobble) + 1
+                ));
+            }
+
+            const curve = new THREE.CatmullRomCurve3(points);
+            const geometry = new THREE.TubeGeometry(curve, 200, 0.18, 12, false);
+            const material = createOrganMaterial(organData.smallIntestine.color, transparency);
+            const intestine = new THREE.Mesh(geometry, material);
+            intestine.userData = { type: 'smallIntestine' };
+            intestine.castShadow = true;
+
+            group.add(intestine);
+
+            // Villi visualization (small bumps)
+            const villiMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffcc00,
+                transparent: true,
+                opacity: 0.4
+            });
+
+            for (let i = 0; i < 50; i++) {
+                const t = Math.random();
+                const point = curve.getPoint(t);
+                const villi = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.08, 8, 8),
+                    villiMaterial
+                );
+                villi.position.copy(point);
+                villi.position.x += (Math.random() - 0.5) * 0.3;
+                villi.position.z += (Math.random() - 0.5) * 0.3;
+                group.add(villi);
+            }
+
+            group.position.set(0, -2, 0);
+            organs.smallIntestine = group;
+            scene.add(group);
+        }
+
+        // Create Large Intestine
+        function createLargeIntestine() {
+            const group = new THREE.Group();
+
+            // Create U-shaped colon
+            const colonPoints = [
+                new THREE.Vector3(2, 0, 1),      // Ascending
+                new THREE.Vector3(2, 1.5, 1),
+                new THREE.Vector3(1.5, 2, 1),
+                new THREE.Vector3(0, 2.2, 1),    // Transverse
+                new THREE.Vector3(-1.5, 2, 1),
+                new THREE.Vector3(-2, 1.5, 1),
+                new THREE.Vector3(-2, 0, 1),     // Descending
+                new THREE.Vector3(-2, -1, 1),
+                new THREE.Vector3(-1.5, -1.5, 1), // Sigmoid
+                new THREE.Vector3(-0.5, -1.8, 1),
+                new THREE.Vector3(0, -2, 1)      // Rectum
+            ];
+
+            const colonCurve = new THREE.CatmullRomCurve3(colonPoints);
+            const colonGeometry = new THREE.TubeGeometry(colonCurve, 64, 0.35, 16, false);
+            const colonMaterial = createOrganMaterial(organData.largeIntestine.color, transparency);
+            const colon = new THREE.Mesh(colonGeometry, colonMaterial);
+            colon.userData = { type: 'largeIntestine' };
+            colon.castShadow = true;
+
+            group.add(colon);
+
+            // Haustra (bulges)
+            const haustraMaterial = new THREE.MeshBasicMaterial({
+                color: 0x5d4037,
+                transparent: true,
+                opacity: 0.3
+            });
+
+            for (let i = 0; i < 15; i++) {
+                const t = i / 15;
+                const point = colonCurve.getPoint(t);
+                const haustra = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.12, 8, 8),
+                    haustraMaterial
+                );
+                haustra.position.copy(point);
+                group.add(haustra);
+            }
+
+            group.position.set(0, -5.5, 0);
+            organs.largeIntestine = group;
+            scene.add(group);
+        }
+
+        // Create supporting organs (liver, pancreas)
+        function createSupportingOrgans() {
+            // Liver
+            const liverGeometry = new THREE.SphereGeometry(1.2, 32, 32);
+            liverGeometry.scale(1.5, 0.8, 1);
+            const liverMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x8b4513,
+                roughness: 0.7,
+                transparent: true,
+                opacity: 0.7
+            });
+            const liver = new THREE.Mesh(liverGeometry, liverMaterial);
+            liver.position.set(2, 1.5, -0.5);
+            liver.rotation.z = -0.3;
+            scene.add(liver);
+
+            // Gallbladder
+            const gallbladderGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+            gallbladderGeometry.scale(1, 1.5, 1);
+            const gallbladderMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x2e8b57,
+                roughness: 0.5
+            });
+            const gallbladder = new THREE.Mesh(gallbladderGeometry, gallbladderMaterial);
+            gallbladder.position.set(1.2, 0.8, 0.3);
+            scene.add(gallbladder);
+
+            // Pancreas
+            const pancreasGeometry = new THREE.CapsuleGeometry(0.2, 1.5, 8, 16);
+            const pancreasMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0xffd700,
+                roughness: 0.6,
+                transparent: true,
+                opacity: 0.8
+            });
+            const pancreas = new THREE.Mesh(pancreasGeometry, pancreasMaterial);
+            pancreas.position.set(0, -0.5, -0.8);
+            pancreas.rotation.z = Math.PI / 2;
+            scene.add(pancreas);
+
+            // Labels
+            const labelMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
+        }
+
+        // Food particle class
+        class FoodParticle {
+            constructor(progress = 0) {
+                this.progress = progress;
+                this.baseSpeed = 0.0005;
+
+                const food = foodTypes[selectedFood];
+                const geometry = new THREE.SphereGeometry(0.15, 12, 12);
+                const material = new THREE.MeshPhysicalMaterial({
+                    color: food.color,
+                    roughness: 0.4,
+                    emissive: food.color,
+                    emissiveIntensity: 0.2
+                });
+
+                this.mesh = new THREE.Mesh(geometry, material);
+                this.mesh.castShadow = true;
+
+                // Glow
+                const glowGeometry = new THREE.SphereGeometry(0.25, 8, 8);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: food.color,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                this.glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                this.mesh.add(this.glow);
+
+                scene.add(this.mesh);
+            }
+
+            getPath() {
+                // Complete digestive path
+                const fullPath = [
+                    // Mouth
+                    new THREE.Vector3(0, 6, 0),
+                    new THREE.Vector3(0, 5.5, 0.2),
+                    // Esophagus
+                    new THREE.Vector3(0, 5.2, 0),
+                    new THREE.Vector3(0, 4.5, 0.2),
+                    new THREE.Vector3(0.1, 3.5, 0.3),
+                    new THREE.Vector3(0, 2.5, 0.2),
+                    new THREE.Vector3(-0.1, 1.8, 0),
+                    // Stomach
+                    new THREE.Vector3(-0.5, 1.2, 0.3),
+                    new THREE.Vector3(-1, 0.5, 0.5),
+                    new THREE.Vector3(-0.8, 0, 0.3),
+                    new THREE.Vector3(-0.3, -0.3, 0.2),
+                    // To small intestine
+                    new THREE.Vector3(0, -1, 0.5),
+                    // Small intestine coils
+                    ...this.getSmallIntestinePath(),
+                    // Large intestine
+                    ...this.getLargeIntestinePath(),
+                    // Exit
+                    new THREE.Vector3(0, -7.5, 1)
+                ];
+
+                return new THREE.CatmullRomCurve3(fullPath);
+            }
+
+            getSmallIntestinePath() {
+                const points = [];
+                const coils = 4;
+                for (let i = 0; i <= coils * 10; i++) {
+                    const t = i / (coils * 10);
+                    const angle = t * coils * Math.PI * 2;
+                    const y = -2 - t * 3;
+                    const r = 1.2 * (1 - t * 0.3) * Math.sin(t * Math.PI);
+                    points.push(new THREE.Vector3(
+                        Math.cos(angle) * r,
+                        y,
+                        Math.sin(angle) * r + 1
+                    ));
+                }
+                return points;
+            }
+
+            getLargeIntestinePath() {
+                return [
+                    new THREE.Vector3(2, -5.5, 1),
+                    new THREE.Vector3(2, -4, 1),
+                    new THREE.Vector3(0, -3.3, 1),
+                    new THREE.Vector3(-2, -4, 1),
+                    new THREE.Vector3(-2, -5.5, 1),
+                    new THREE.Vector3(-1, -6.5, 1),
+                    new THREE.Vector3(0, -7, 1)
+                ];
+            }
+
+            update(deltaSpeed) {
+                this.progress += this.baseSpeed * deltaSpeed * speed;
+
+                if (this.progress >= 1) {
+                    this.progress = 1;
+                }
+
+                const path = this.getPath();
+                const point = path.getPoint(Math.min(this.progress, 0.999));
+                this.mesh.position.copy(point);
+
+                // Size decreases as food is digested
+                const scale = Math.max(0.3, 1 - this.progress * 0.7);
+                this.mesh.scale.setScalar(scale);
+
+                // Pulse effect
+                const pulse = 1 + Math.sin(time * 5) * 0.1;
+                this.glow.scale.setScalar(pulse);
+
+                // Determine current organ
+                this.updateCurrentOrgan();
+            }
+
+            updateCurrentOrgan() {
+                const y = this.mesh.position.y;
+
+                if (y > 5) currentOrgan = 'mouth';
+                else if (y > 1.5) currentOrgan = 'esophagus';
+                else if (y > -1) currentOrgan = 'stomach';
+                else if (y > -5) currentOrgan = 'smallIntestine';
+                else currentOrgan = 'largeIntestine';
+            }
+
+            dispose() {
+                scene.remove(this.mesh);
+                this.mesh.geometry.dispose();
+                this.mesh.material.dispose();
+            }
+        }
+
+        // Enzyme particle class
+        class EnzymeParticle {
+            constructor(position, organType) {
+                const geometry = new THREE.SphereGeometry(0.05, 8, 8);
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0x2ecc71,
+                    transparent: true,
+                    opacity: 0.8
+                });
+
+                this.mesh = new THREE.Mesh(geometry, material);
+                this.mesh.position.copy(position);
+
+                this.velocity = new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.05,
+                    (Math.random() - 0.5) * 0.05,
+                    (Math.random() - 0.5) * 0.05
+                );
+
+                this.life = 1;
+                this.organType = organType;
+
+                scene.add(this.mesh);
+            }
+
+            update() {
+                this.mesh.position.add(this.velocity);
+                this.life -= 0.01;
+                this.mesh.material.opacity = this.life * 0.8;
+
+                return this.life > 0;
+            }
+
+            dispose() {
+                scene.remove(this.mesh);
+                this.mesh.geometry.dispose();
+                this.mesh.material.dispose();
+            }
+        }
+
+        // Initialize food particles
+        function initFoodParticles() {
+            // Clear existing
+            foodParticles.forEach(p => p.dispose());
+            foodParticles.length = 0;
+
+            // Create main food bolus
+            for (let i = 0; i < 5; i++) {
+                const particle = new FoodParticle(i * 0.02);
+                foodParticles.push(particle);
+            }
+        }
+
+        // Spawn enzyme particles
+        function spawnEnzymes() {
+            if (!isPlaying || foodParticles.length === 0) return;
+
+            const mainFood = foodParticles[0];
+            if (!mainFood) return;
+
+            const pos = mainFood.mesh.position.clone();
+
+            // Add random offset
+            pos.x += (Math.random() - 0.5) * 0.5;
+            pos.y += (Math.random() - 0.5) * 0.3;
+            pos.z += (Math.random() - 0.5) * 0.5;
+
+            const enzyme = new EnzymeParticle(pos, currentOrgan);
+            enzymeParticles.push(enzyme);
+        }
+
+        // Update UI
+        function updateUI() {
+            // Time display
+            const mins = Math.floor(simulationTime / 60);
+            const secs = Math.floor(simulationTime % 60);
+            document.getElementById('timeValue').textContent =
+                `${mins}:${secs.toString().padStart(2, '0')}`;
+
+            // Progress
+            const progress = foodParticles.length > 0 ?
+                Math.min(100, foodParticles[0].progress * 100) : 0;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Organ info
+            if (currentOrgan && organData[currentOrgan]) {
+                const data = organData[currentOrgan];
+                document.getElementById('organName').textContent = data.name;
+                document.getElementById('organDesc').textContent = data.desc;
+                document.getElementById('phaseValue').textContent = data.name.split(' ')[1] || data.name;
+                document.getElementById('enzymeBox').style.display = 'block';
+                document.getElementById('enzymeText').textContent = data.enzyme;
+            }
+
+            // Check completion
+            if (foodParticles.length > 0 && foodParticles[0].progress >= 1) {
+                isPlaying = false;
+                document.getElementById('playBtn').classList.remove('pause');
+                document.getElementById('playBtn').classList.add('play');
+                document.getElementById('playIcon').textContent = '✓';
+                document.getElementById('playText').textContent = 'Fertig!';
+                document.getElementById('organName').textContent = '✅ Verdauung abgeschlossen!';
+                document.getElementById('organDesc').textContent =
+                    `Die Nährstoffe (${foodTypes[selectedFood].nutrients}) wurden aufgenommen. Unverdauliche Reste werden ausgeschieden.`;
+            }
+        }
+
+        // View presets
+        const viewPresets = {
+            overview: { pos: new THREE.Vector3(8, 4, 12), target: new THREE.Vector3(0, 0, 0) },
+            mouth: { pos: new THREE.Vector3(3, 7, 4), target: new THREE.Vector3(0, 6, 0) },
+            stomach: { pos: new THREE.Vector3(4, 2, 5), target: new THREE.Vector3(-0.5, 0.5, 0) },
+            intestine: { pos: new THREE.Vector3(5, -3, 8), target: new THREE.Vector3(0, -4, 0) }
+        };
+
+        let targetCameraPos = viewPresets.overview.pos.clone();
+        let targetControlsTarget = viewPresets.overview.target.clone();
+
+        // Event listeners
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const view = btn.dataset.view;
+                targetCameraPos = viewPresets[view].pos.clone();
+                targetControlsTarget = viewPresets[view].target.clone();
+            });
+        });
+
+        document.querySelectorAll('.food-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.food-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedFood = btn.dataset.food;
+                resetSimulation();
+            });
+        });
+
+        document.getElementById('playBtn').addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+
+            if (isPlaying) {
+                btn.classList.remove('play');
+                btn.classList.add('pause');
+                document.getElementById('playIcon').textContent = '⏸';
+                document.getElementById('playText').textContent = 'Pause';
+
+                if (foodParticles.length === 0) {
+                    initFoodParticles();
+                }
+            } else {
+                btn.classList.remove('pause');
+                btn.classList.add('play');
+                document.getElementById('playIcon').textContent = '▶';
+                document.getElementById('playText').textContent = 'Weiter';
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            speed = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = speed + 'x';
+        });
+
+        document.getElementById('transparencyToggle').addEventListener('click', () => {
+            transparency = !transparency;
+            document.getElementById('toggleSwitch').classList.toggle('active', transparency);
+            updateTransparency();
+        });
+
+        function updateTransparency() {
+            Object.values(organs).forEach(organ => {
+                organ.traverse(child => {
+                    if (child.isMesh && child.material) {
+                        child.material.transparent = transparency;
+                        child.material.opacity = transparency ? 0.5 : 1;
+                        child.material.needsUpdate = true;
+                    }
+                });
+            });
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            simulationTime = 0;
+            currentOrgan = null;
+
+            foodParticles.forEach(p => p.dispose());
+            foodParticles.length = 0;
+
+            enzymeParticles.forEach(p => p.dispose());
+            enzymeParticles.length = 0;
+
+            const btn = document.getElementById('playBtn');
+            btn.classList.remove('pause');
+            btn.classList.add('play');
+            document.getElementById('playIcon').textContent = '▶';
+            document.getElementById('playText').textContent = 'Start';
+            document.getElementById('timeValue').textContent = '0:00';
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('phaseValue').textContent = 'Bereit';
+            document.getElementById('organName').textContent = '🍽️ Bereit zum Start';
+            document.getElementById('organDesc').textContent =
+                'Wähle eine Nahrung und klicke auf Start, um die Verdauung zu beobachten.';
+            document.getElementById('enzymeBox').style.display = 'none';
+        }
+
+        // Raycaster for interaction
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function onMouseClick(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+
+            const meshes = [];
+            Object.values(organs).forEach(organ => {
+                organ.traverse(child => {
+                    if (child.isMesh && child.userData.type) {
+                        meshes.push(child);
+                    }
+                });
+            });
+
+            const intersects = raycaster.intersectObjects(meshes);
+
+            if (intersects.length > 0) {
+                const type = intersects[0].object.userData.type;
+                if (type && organData[type]) {
+                    const data = organData[type];
+                    document.getElementById('organName').textContent = data.name;
+                    document.getElementById('organDesc').textContent = data.desc;
+                    document.getElementById('enzymeBox').style.display = 'block';
+                    document.getElementById('enzymeText').textContent = data.enzyme;
+                }
+            }
+        }
+
+        renderer.domElement.addEventListener('click', onMouseClick);
+
+        // Resize handler
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.addEventListener('resize', onResize);
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            time += 0.016;
+
+            if (isPlaying) {
+                simulationTime += 0.016 * speed * 10; // Accelerated time
+
+                // Update food particles
+                foodParticles.forEach(particle => {
+                    particle.update(1);
+                });
+
+                // Spawn enzymes occasionally
+                if (Math.random() < 0.1) {
+                    spawnEnzymes();
+                }
+
+                // Peristalsis animation for esophagus
+                if (organs.esophagus) {
+                    const peristalsis = Math.sin(time * 3) * 0.03;
+                    organs.esophagus.scale.x = 1 + peristalsis;
+                }
+
+                // Stomach churning
+                if (organs.stomach) {
+                    organs.stomach.rotation.z = Math.sin(time * 2) * 0.05;
+                }
+
+                updateUI();
+            }
+
+            // Update enzyme particles
+            for (let i = enzymeParticles.length - 1; i >= 0; i--) {
+                if (!enzymeParticles[i].update()) {
+                    enzymeParticles[i].dispose();
+                    enzymeParticles.splice(i, 1);
+                }
+            }
+
+            // Smooth camera transition
+            camera.position.lerp(targetCameraPos, 0.02);
+            controls.target.lerp(targetControlsTarget, 0.02);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Initialize
+        function init() {
+            createMouth();
+            createEsophagus();
+            createStomach();
+            createSmallIntestine();
+            createLargeIntestine();
+            createSupportingOrgans();
+
+            document.getElementById('loading').style.display = 'none';
+            animate();
+        }
+
+        init();
+    </script>
+</body>
+</html>
