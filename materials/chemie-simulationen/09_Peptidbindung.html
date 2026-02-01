@@ -177,7 +177,7 @@
 
     <div class="main-layout">
         <div class="simulation-area">
-            <canvas id="peptideCanvas" width="600" height="400"></canvas>
+            <canvas id="peptideCanvas" width="750" height="400"></canvas>
         </div>
 
         <div class="control-panel">
@@ -366,27 +366,27 @@
             ctx.fillStyle = '#4fc3f7';
             ctx.font = '14px Segoe UI';
             ctx.textAlign = 'center';
-            ctx.fillText('Aminosäure 1', 220, 50);
-            ctx.fillText('Aminosäure 2', 630, 50);
+            ctx.fillText('Aminosäure 1', 200, 50);
+            ctx.fillText('Aminosäure 2', 550, 50);
 
-            drawAminoAcid(220, 190, 'Gly', true, true, false);
-            drawAminoAcid(630, 190, selectedAmino, true, false, true);
+            drawAminoAcid(200, 190, 'Gly', true, true, false);
+            drawAminoAcid(550, 190, selectedAmino, true, false, true);
 
             // Arrow
             ctx.fillStyle = 'rgba(79, 195, 247, 0.3)';
             ctx.beginPath();
-            ctx.moveTo(380, 190);
-            ctx.lineTo(420, 170);
-            ctx.lineTo(420, 210);
+            ctx.moveTo(340, 190);
+            ctx.lineTo(380, 170);
+            ctx.lineTo(380, 210);
             ctx.closePath();
             ctx.fill();
         }
 
         function drawStep2() {
-            const offset = animProgress * 80;
+            const offset = animProgress * 70;
 
-            drawAminoAcid(220 + offset, 190, 'Gly', false, true, false);
-            drawAminoAcid(630 - offset, 190, selectedAmino, false, false, true);
+            drawAminoAcid(200 + offset, 190, 'Gly', false, true, false);
+            drawAminoAcid(550 - offset, 190, selectedAmino, false, false, true);
 
             // Highlight reactive groups
             ctx.strokeStyle = '#2ecc71';
@@ -395,23 +395,23 @@
 
             // Circle around COOH
             ctx.beginPath();
-            ctx.arc(300 + offset, 190, 50, 0, Math.PI * 2);
+            ctx.arc(280 + offset, 190, 50, 0, Math.PI * 2);
             ctx.stroke();
 
             // Circle around NH2
             ctx.beginPath();
-            ctx.arc(560 - offset, 190, 50, 0, Math.PI * 2);
+            ctx.arc(480 - offset, 190, 50, 0, Math.PI * 2);
             ctx.stroke();
 
             ctx.setLineDash([]);
 
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 14px Segoe UI';
-            ctx.fillText('Reaktive Gruppen nähern sich', 425, 310);
+            ctx.fillText('Reaktive Gruppen nähern sich', 375, 310);
         }
 
         function drawStep3() {
-            const cx = 425, cy = 190;
+            const cx = 375, cy = 190;
 
             // Water molecule being released
             const waterX = cx + animProgress * 100;
@@ -443,7 +443,7 @@
         }
 
         function drawStep4() {
-            const cx = 425, cy = 190;
+            const cx = 375, cy = 190;
 
             // Dipeptide
             // First amino acid (Gly)
