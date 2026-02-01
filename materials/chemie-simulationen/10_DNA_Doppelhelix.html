@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA-Doppelhelix - 3D Modell</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at center, #0d1b2a 0%, #000 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+        }
+        .control-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .panel-section {
+            margin-bottom: 20px;
+        }
+        .panel-section h4 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        .slider-control {
+            margin: 15px 0;
+        }
+        .slider-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .slider-control input {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #4fc3f7, #e91e63);
+            border-radius: 4px;
+        }
+        .slider-control input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .toggle-btn {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #4fc3f7;
+            border-radius: 8px;
+            background: transparent;
+            color: #4fc3f7;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .toggle-btn.active, .toggle-btn:hover {
+            background: #4fc3f7;
+            color: #1a1a2e;
+        }
+        .base-pair-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .base-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+        .base-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .structure-info {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        .structure-info strong { color: #4fc3f7; }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; font-size: 0.95em; }
+        .sequence-display {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.8em;
+            overflow-x: auto;
+        }
+        .sequence-display .strand1 { color: #3498db; }
+        .sequence-display .strand2 { color: #e74c3c; }
+        .pairing-rules {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+        .pairing-rules strong { color: #2ecc71; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 DNA-Doppelhelix</h1>
+        <p class="subtitle">8. Klasse Chemie – Die Struktur der Erbinformation</p>
+
+        <div class="main-grid">
+            <div class="simulation-area">
+                <canvas id="dnaCanvas" width="600" height="550"></canvas>
+
+                <div class="sequence-display">
+                    <div><span class="strand1">5'-</span><span id="seq1">ATGCGATCGA</span><span class="strand1">-3'</span></div>
+                    <div style="color: #90a4ae;">   ││││││││││</div>
+                    <div><span class="strand2">3'-</span><span id="seq2">TACGCTAGCT</span><span class="strand2">-5'</span></div>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="panel-section">
+                    <h4>🎮 Steuerung</h4>
+                    <div class="slider-control">
+                        <label>Rotation: <span id="rotValue">Auto</span></label>
+                        <input type="range" id="rotSpeed" min="0" max="100" value="50">
+                    </div>
+                    <div class="slider-control">
+                        <label>Zoom: <span id="zoomValue">100%</span></label>
+                        <input type="range" id="zoom" min="50" max="150" value="100">
+                    </div>
+                    <div class="slider-control">
+                        <label>Neigung: <span id="tiltValue">30°</span></label>
+                        <input type="range" id="tilt" min="0" max="60" value="30">
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h4>👁️ Ansicht</h4>
+                    <button class="toggle-btn active" id="showBackbone" onclick="toggleView('backbone')">Zucker-Phosphat-Rückgrat</button>
+                    <button class="toggle-btn active" id="showBases" onclick="toggleView('bases')">Basenpaare</button>
+                    <button class="toggle-btn" id="showLabels" onclick="toggleView('labels')">Beschriftungen</button>
+                </div>
+
+                <div class="panel-section">
+                    <h4>🔬 Basenpaare</h4>
+                    <div class="base-pair-legend">
+                        <div class="base-item"><div class="base-dot" style="background: #e74c3c;"></div>Adenin (A)</div>
+                        <div class="base-item"><div class="base-dot" style="background: #2ecc71;"></div>Thymin (T)</div>
+                        <div class="base-item"><div class="base-dot" style="background: #3498db;"></div>Guanin (G)</div>
+                        <div class="base-item"><div class="base-dot" style="background: #f39c12;"></div>Cytosin (C)</div>
+                    </div>
+                    <div class="pairing-rules">
+                        <strong>Basenpaarung:</strong><br>
+                        A ═══ T (2 H-Brücken)<br>
+                        G ≡≡≡ C (3 H-Brücken)
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h4>📊 Strukturdaten</h4>
+                    <div class="structure-info">
+                        <strong>Durchmesser:</strong> 2 nm<br>
+                        <strong>Windung:</strong> 3.4 nm (10 bp)<br>
+                        <strong>Steigung:</strong> 0.34 nm/bp<br>
+                        <strong>Drehsinn:</strong> rechtsgängig
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Die DNA-Struktur</h3>
+            <p>Die DNA (Desoxyribonukleinsäure) besteht aus zwei antiparallel verlaufenden Strängen, die eine
+            <strong>Doppelhelix</strong> bilden. Das <strong>Zucker-Phosphat-Rückgrat</strong> bildet die Außenseite,
+            während die <strong>Basen</strong> (Adenin, Thymin, Guanin, Cytosin) nach innen zeigen und über
+            <strong>Wasserstoffbrückenbindungen</strong> gepaart sind. Diese Struktur wurde 1953 von Watson & Crick entdeckt.</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('dnaCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        let rotation = 0;
+        let rotSpeed = 0.02;
+        let zoom = 1;
+        let tilt = 0.5;
+        let showBackbone = true;
+        let showBases = true;
+        let showLabels = false;
+
+        const baseColors = {
+            'A': '#e74c3c',
+            'T': '#2ecc71',
+            'G': '#3498db',
+            'C': '#f39c12'
+        };
+
+        const basePairs = {
+            'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G'
+        };
+
+        const sequence = 'ATGCGATCGA';
+        const complementary = sequence.split('').map(b => basePairs[b]).join('');
+
+        document.getElementById('seq1').textContent = sequence;
+        document.getElementById('seq2').textContent = complementary;
+
+        function project3D(x, y, z) {
+            const cosR = Math.cos(rotation);
+            const sinR = Math.sin(rotation);
+            const cosT = Math.cos(tilt);
+            const sinT = Math.sin(tilt);
+
+            const x1 = x * cosR - z * sinR;
+            const z1 = x * sinR + z * cosR;
+            const y1 = y * cosT - z1 * sinT;
+            const z2 = y * sinT + z1 * cosT;
+
+            const scale = 300 / (300 + z2);
+            return {
+                x: centerX + x1 * scale * zoom,
+                y: centerY + y1 * scale * zoom,
+                z: z2,
+                scale: scale * zoom
+            };
+        }
+
+        function drawSphere(x, y, radius, color) {
+            const gradient = ctx.createRadialGradient(x - radius/3, y - radius/3, 0, x, y, radius);
+            gradient.addColorStop(0, lightenColor(color, 40));
+            gradient.addColorStop(0.7, color);
+            gradient.addColorStop(1, darkenColor(color, 30));
+
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+        }
+
+        function lightenColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const R = Math.min(255, (num >> 16) + Math.round(2.55 * percent));
+            const G = Math.min(255, ((num >> 8) & 0xFF) + Math.round(2.55 * percent));
+            const B = Math.min(255, (num & 0xFF) + Math.round(2.55 * percent));
+            return `rgb(${R}, ${G}, ${B})`;
+        }
+
+        function darkenColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const R = Math.max(0, (num >> 16) - Math.round(2.55 * percent));
+            const G = Math.max(0, ((num >> 8) & 0xFF) - Math.round(2.55 * percent));
+            const B = Math.max(0, (num & 0xFF) - Math.round(2.55 * percent));
+            return `rgb(${R}, ${G}, ${B})`;
+        }
+
+        function drawDNA() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const elements = [];
+            const numBases = sequence.length;
+            const helixRadius = 60;
+            const verticalSpacing = 35;
+            const startY = -((numBases - 1) * verticalSpacing) / 2;
+
+            // Generate all elements with 3D positions
+            for (let i = 0; i < numBases; i++) {
+                const y = startY + i * verticalSpacing;
+                const angle = (i * Math.PI / 5) + rotation;
+
+                // Strand 1 backbone
+                const x1 = Math.cos(angle) * helixRadius;
+                const z1 = Math.sin(angle) * helixRadius;
+
+                // Strand 2 backbone (opposite side, antiparallel)
+                const x2 = Math.cos(angle + Math.PI) * helixRadius;
+                const z2 = Math.sin(angle + Math.PI) * helixRadius;
+
+                // Project positions
+                const p1 = project3D(x1, y, z1);
+                const p2 = project3D(x2, y, z2);
+
+                // Backbone phosphates
+                if (showBackbone) {
+                    elements.push({
+                        type: 'backbone',
+                        x: p1.x, y: p1.y, z: p1.z,
+                        radius: 8 * p1.scale,
+                        color: '#9b59b6'
+                    });
+                    elements.push({
+                        type: 'backbone',
+                        x: p2.x, y: p2.y, z: p2.z,
+                        radius: 8 * p2.scale,
+                        color: '#8e44ad'
+                    });
+                }
+
+                // Bases
+                if (showBases) {
+                    const base1 = sequence[i];
+                    const base2 = complementary[i];
+
+                    // Base 1 (closer to strand 1)
+                    const bx1 = Math.cos(angle) * (helixRadius * 0.4);
+                    const bz1 = Math.sin(angle) * (helixRadius * 0.4);
+                    const bp1 = project3D(bx1, y, bz1);
+
+                    // Base 2 (closer to strand 2)
+                    const bx2 = Math.cos(angle + Math.PI) * (helixRadius * 0.4);
+                    const bz2 = Math.sin(angle + Math.PI) * (helixRadius * 0.4);
+                    const bp2 = project3D(bx2, y, bz2);
+
+                    elements.push({
+                        type: 'base',
+                        x: bp1.x, y: bp1.y, z: bp1.z,
+                        radius: 12 * bp1.scale,
+                        color: baseColors[base1],
+                        label: base1
+                    });
+                    elements.push({
+                        type: 'base',
+                        x: bp2.x, y: bp2.y, z: bp2.z,
+                        radius: 12 * bp2.scale,
+                        color: baseColors[base2],
+                        label: base2
+                    });
+
+                    // Hydrogen bonds between bases
+                    elements.push({
+                        type: 'hbond',
+                        x1: bp1.x, y1: bp1.y,
+                        x2: bp2.x, y2: bp2.y,
+                        z: (bp1.z + bp2.z) / 2
+                    });
+                }
+
+                // Backbone connections
+                if (showBackbone && i > 0) {
+                    const prevAngle = ((i-1) * Math.PI / 5) + rotation;
+                    const prevY = startY + (i-1) * verticalSpacing;
+
+                    const prevX1 = Math.cos(prevAngle) * helixRadius;
+                    const prevZ1 = Math.sin(prevAngle) * helixRadius;
+                    const prevP1 = project3D(prevX1, prevY, prevZ1);
+
+                    const prevX2 = Math.cos(prevAngle + Math.PI) * helixRadius;
+                    const prevZ2 = Math.sin(prevAngle + Math.PI) * helixRadius;
+                    const prevP2 = project3D(prevX2, prevY, prevZ2);
+
+                    elements.push({
+                        type: 'connection',
+                        x1: prevP1.x, y1: prevP1.y,
+                        x2: p1.x, y2: p1.y,
+                        z: (prevP1.z + p1.z) / 2,
+                        color: '#9b59b6'
+                    });
+                    elements.push({
+                        type: 'connection',
+                        x1: prevP2.x, y1: prevP2.y,
+                        x2: p2.x, y2: p2.y,
+                        z: (prevP2.z + p2.z) / 2,
+                        color: '#8e44ad'
+                    });
+                }
+            }
+
+            // Sort by z-depth
+            elements.sort((a, b) => a.z - b.z);
+
+            // Draw all elements
+            elements.forEach(el => {
+                if (el.type === 'connection') {
+                    ctx.beginPath();
+                    ctx.moveTo(el.x1, el.y1);
+                    ctx.lineTo(el.x2, el.y2);
+                    ctx.strokeStyle = el.color;
+                    ctx.lineWidth = 4;
+                    ctx.stroke();
+                } else if (el.type === 'hbond') {
+                    ctx.beginPath();
+                    ctx.moveTo(el.x1, el.y1);
+                    ctx.lineTo(el.x2, el.y2);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([4, 4]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                } else if (el.type === 'backbone') {
+                    drawSphere(el.x, el.y, el.radius, el.color);
+                } else if (el.type === 'base') {
+                    drawSphere(el.x, el.y, el.radius, el.color);
+                    if (showLabels) {
+                        ctx.fillStyle = '#fff';
+                        ctx.font = `bold ${el.radius * 0.8}px Segoe UI`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(el.label, el.x, el.y);
+                    }
+                }
+            });
+
+            // Direction labels
+            ctx.fillStyle = '#4fc3f7';
+            ctx.font = '14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText("5'", centerX - 100, 30);
+            ctx.fillText("3'", centerX + 100, 30);
+            ctx.fillText("3'", centerX - 100, canvas.height - 20);
+            ctx.fillText("5'", centerX + 100, canvas.height - 20);
+
+            // Animate
+            if (rotSpeed > 0) {
+                rotation += rotSpeed;
+            }
+
+            requestAnimationFrame(drawDNA);
+        }
+
+        function toggleView(view) {
+            const btn = document.getElementById('show' + view.charAt(0).toUpperCase() + view.slice(1));
+            if (view === 'backbone') {
+                showBackbone = !showBackbone;
+                btn.classList.toggle('active', showBackbone);
+            } else if (view === 'bases') {
+                showBases = !showBases;
+                btn.classList.toggle('active', showBases);
+            } else if (view === 'labels') {
+                showLabels = !showLabels;
+                btn.classList.toggle('active', showLabels);
+            }
+        }
+
+        document.getElementById('rotSpeed').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            rotSpeed = val / 2500;
+            document.getElementById('rotValue').textContent = val === 0 ? 'Stopp' : 'Auto';
+        });
+
+        document.getElementById('zoom').addEventListener('input', (e) => {
+            zoom = parseInt(e.target.value) / 100;
+            document.getElementById('zoomValue').textContent = e.target.value + '%';
+        });
+
+        document.getElementById('tilt').addEventListener('input', (e) => {
+            tilt = parseInt(e.target.value) * Math.PI / 180;
+            document.getElementById('tiltValue').textContent = e.target.value + '°';
+        });
+
+        drawDNA();
+    </script>
+</body>
+</html>

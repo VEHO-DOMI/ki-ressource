@@ -7674,20 +7674,225 @@ INHALT:
                 </div>
             </div>
 
-        </section>
+            <!-- 4.2 CHEMIE -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>4.2 Chemie – Interaktive Simulationen</h3>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
-                        <p><strong>Schulstufe:</strong> 2. Klasse | <strong>Thema:</strong> Wärmelehre</p>
-                        <p>Visualisiert das Verhalten von Teilchen in den drei Aggregatzuständen (fest, flüssig, gasförmig). Die Temperatur kann stufenlos angepasst werden, wobei die Simulation automatisch zwischen den Zuständen wechselt.</p>
-                        <div class="simulation-container" style="margin-top: 1rem;">
-                            <iframe src="materials/physik-simulationen/01_Aggregatzustaende_Teilchenmodell.html"
-                                    style="width: 100%; height: 650px; border: 2px solid var(--cyber-blue); border-radius: 8px;"
-                                    loading="lazy"></iframe>
+                        <p>Diese Sammlung enthält <strong>10 interaktive Chemie-Simulationen</strong>, die vollständig mit KI (Claude) erstellt wurden. Sie decken verschiedene Themen des österreichischen AHS-Chemielehrplans ab (3.-8. Klasse).</p>
+
+                        <div class="info-box" style="margin: 1rem 0;">
+                            <strong>💡 Verwendung im Unterricht:</strong>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                <li>Jede Simulation kann direkt im Browser verwendet werden</li>
+                                <li>Interaktive Parameter ermöglichen eigenständiges Experimentieren</li>
+                                <li>Ideal für Demonstrationen am Beamer oder Tablet-Einsatz</li>
+                                <li>Alle Simulationen sind offline-fähig und benötigen keine Installation</li>
+                            </ul>
                         </div>
+
+                        <table class="comparison-table" style="margin: 1rem 0;">
+                            <thead>
+                                <tr>
+                                    <th>Nr.</th>
+                                    <th>Simulation</th>
+                                    <th>Klasse</th>
+                                    <th>Themenbereich</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>Dichte – Schwimmen & Sinken</td><td>3. Kl.</td><td>Stoffeigenschaften</td></tr>
+                                <tr><td>2</td><td>Atombau – Interaktiver Baukasten</td><td>4. Kl.</td><td>Atombau</td></tr>
+                                <tr><td>3</td><td>Periodensystem – Explorer</td><td>4. Kl.</td><td>PSE</td></tr>
+                                <tr><td>4</td><td>Ionenbindung – NaCl Entstehung</td><td>4. Kl.</td><td>Chemische Bindung</td></tr>
+                                <tr><td>5</td><td>pH-Wert & Indikatoren</td><td>4. Kl.</td><td>Säuren & Basen</td></tr>
+                                <tr><td>6</td><td>Chemisches Gleichgewicht (Le Chatelier)</td><td>5. Kl.</td><td>Gleichgewichte</td></tr>
+                                <tr><td>7</td><td>Alkan-Molekülbauer</td><td>6. Kl.</td><td>Organische Chemie</td></tr>
+                                <tr><td>8</td><td>Elektrophile Addition</td><td>6. Kl.</td><td>Reaktionsmechanismen</td></tr>
+                                <tr><td>9</td><td>Peptidbindung – Proteinbildung</td><td>7. Kl.</td><td>Biochemie</td></tr>
+                                <tr><td>10</td><td>DNA-Doppelhelix 3D</td><td>8. Kl.</td><td>Nukleinsäuren</td></tr>
+                            </tbody>
+                        </table>
+
+                        <!-- 1. Dichte -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>Dichte – Schwimmen & Sinken</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 3. Klasse | <strong>Thema:</strong> Stoffeigenschaften</p>
+                                <p>Visualisiert warum manche Stoffe schwimmen und andere sinken. Verschiedene Materialien (Holz, Eis, Eisen, Kork) können in Flüssigkeiten verschiedener Dichte getestet werden.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/01_Dichte_Schwimmen_Sinken.html"
+                                            style="width: 100%; height: 700px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Atombau -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>Atombau – Interaktiver Baukasten</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 4. Klasse | <strong>Thema:</strong> Atombau</p>
+                                <p>Baue dein eigenes Atom! Protonen, Neutronen und Elektronen können hinzugefügt/entfernt werden. Die Simulation zeigt automatisch das entsprechende Element, die Elektronenkonfiguration und die Ladung an.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/02_Atombau_Baukasten.html"
+                                            style="width: 100%; height: 750px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Periodensystem -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>Periodensystem – Explorer</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 4. Klasse | <strong>Thema:</strong> Periodensystem der Elemente</p>
+                                <p>Interaktives Periodensystem mit Elementdetails (Masse, Schmelz-/Siedepunkt, Elektronegativität, Elektronenkonfiguration). Trend-Visualisierungen für Atomradius, EN und Ionisierungsenergie.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/03_Periodensystem_Explorer.html"
+                                            style="width: 100%; height: 800px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Ionenbindung -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>Ionenbindung – NaCl Entstehung</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 4. Klasse | <strong>Thema:</strong> Chemische Bindung</p>
+                                <p>Schritt-für-Schritt-Animation der Elektronenübertragung von Natrium auf Chlor. Zeigt die Entstehung von Kation und Anion sowie die elektrostatische Anziehung.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/04_Ionenbindung_NaCl.html"
+                                            style="width: 100%; height: 700px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. pH-Wert -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>pH-Wert & Indikatoren</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 4. Klasse | <strong>Thema:</strong> Säuren und Basen</p>
+                                <p>Interaktive pH-Skala mit Alltagsbeispielen. Drei verschiedene Indikatoren (Lackmus, Phenolphthalein, Bromthymolblau) zeigen ihre charakteristischen Farbumschläge.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/05_pH_Skala_Indikatoren.html"
+                                            style="width: 100%; height: 750px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. Chemisches Gleichgewicht -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>Chemisches Gleichgewicht (Le Chatelier)</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 5. Klasse | <strong>Thema:</strong> Chemisches Gleichgewicht</p>
+                                <p>Visualisiert das Prinzip von Le Chatelier am Beispiel des Haber-Bosch-Prozesses. Änderungen von Temperatur, Druck und Konzentration verschieben das Gleichgewicht.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/06_Chemisches_Gleichgewicht.html"
+                                            style="width: 100%; height: 750px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. Alkan-Molekülbauer -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>Alkan-Molekülbauer</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 6. Klasse | <strong>Thema:</strong> Organische Chemie</p>
+                                <p>3D-Molekülbauer für Alkane (Methan bis Decan). Zeigt Strukturformeln, Siedepunkte, Schmelzpunkte und molare Massen. Wechsel zwischen 3D-Ansicht und Strukturformel.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/07_Alkan_Molekuelbauer.html"
+                                            style="width: 100%; height: 750px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 8. Elektrophile Addition -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>Elektrophile Addition</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 6. Klasse | <strong>Thema:</strong> Reaktionsmechanismen</p>
+                                <p>Schritt-für-Schritt-Animation der elektrophilen Addition von Brom an Ethen. Zeigt die Bildung des Bromonium-Ions und die anti-Addition.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/08_Elektrophile_Addition.html"
+                                            style="width: 100%; height: 700px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 9. Peptidbindung -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>Peptidbindung – Proteinbildung</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 7. Klasse | <strong>Thema:</strong> Biochemie – Proteine</p>
+                                <p>Animation der Peptidbindungsbildung zwischen zwei Aminosäuren. Zeigt die Kondensationsreaktion mit Wasserabspaltung und die entstehende CO-NH-Bindung.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/09_Peptidbindung.html"
+                                            style="width: 100%; height: 750px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 10. DNA-Doppelhelix -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <h4>DNA-Doppelhelix 3D</h4>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <p><strong>Schulstufe:</strong> 8. Klasse | <strong>Thema:</strong> Nukleinsäuren</p>
+                                <p>Rotierendes 3D-Modell der DNA-Doppelhelix mit Zucker-Phosphat-Rückgrat und Basenpaaren (A-T, G-C). Interaktive Steuerung für Rotation, Zoom und Neigung.</p>
+                                <div class="simulation-container" style="margin-top: 1rem;">
+                                    <iframe src="materials/chemie-simulationen/10_DNA_Doppelhelix.html"
+                                            style="width: 100%; height: 800px; border: 2px solid var(--cyber-green); border-radius: 8px;"
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+            </div>
+
+        </section>
+
         <!-- SECTION 5: BEURTEILUNG -->
         <section id="beurteilung" class="section">
             <div class="coming-soon">

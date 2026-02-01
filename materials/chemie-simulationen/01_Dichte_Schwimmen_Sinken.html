@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dichte - Schwimmen und Sinken</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            color: #4fc3f7;
+        }
+        .subtitle {
+            text-align: center;
+            color: #90a4ae;
+            margin-bottom: 20px;
+        }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #87CEEB 0%, #1E90FF 50%, #0d1b2a 50%, #1b263b 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .object-btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .object-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .object-btn.wood { background: linear-gradient(135deg, #8B4513, #D2691E); color: white; }
+        .object-btn.ice { background: linear-gradient(135deg, #E0FFFF, #B0E0E6); color: #333; }
+        .object-btn.iron { background: linear-gradient(135deg, #708090, #2F4F4F); color: white; }
+        .object-btn.oil { background: linear-gradient(135deg, #FFD700, #FFA500); color: #333; }
+        .object-btn.stone { background: linear-gradient(135deg, #696969, #A9A9A9); color: white; }
+        .object-btn.cork { background: linear-gradient(135deg, #DEB887, #F5DEB3); color: #333; }
+        .object-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        .slider-container label { font-size: 1em; }
+        input[type="range"] {
+            width: 200px;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #4fc3f7, #e91e63);
+            border-radius: 4px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .density-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4fc3f7;
+            min-width: 120px;
+        }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+        .formula {
+            background: rgba(0,0,0,0.3);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 1.2em;
+            color: #4fc3f7;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            font-size: 0.9em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 12px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚗️ Dichte – Schwimmen und Sinken</h1>
+        <p class="subtitle">3. Klasse Chemie – Warum schwimmen manche Stoffe und andere sinken?</p>
+
+        <div class="simulation-area">
+            <canvas id="densityCanvas" width="800" height="450"></canvas>
+
+            <div class="controls">
+                <button class="object-btn wood" onclick="addObject('wood')">🪵 Holz</button>
+                <button class="object-btn ice" onclick="addObject('ice')">🧊 Eis</button>
+                <button class="object-btn cork" onclick="addObject('cork')">🍾 Kork</button>
+                <button class="object-btn oil" onclick="addObject('oil')">🛢️ Öl</button>
+                <button class="object-btn stone" onclick="addObject('stone')">🪨 Stein</button>
+                <button class="object-btn iron" onclick="addObject('iron')">⚙️ Eisen</button>
+                <button class="object-btn reset" onclick="resetSimulation()">🔄 Reset</button>
+            </div>
+
+            <div class="slider-container">
+                <label>🧪 Flüssigkeitsdichte:</label>
+                <input type="range" id="liquidDensity" min="0.8" max="1.5" step="0.01" value="1.0">
+                <span class="density-display" id="densityDisplay">ρ = 1.00 g/cm³ (Wasser)</span>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">🪵 Holz: 0.6 g/cm³</div>
+                <div class="legend-item">🧊 Eis: 0.92 g/cm³</div>
+                <div class="legend-item">🍾 Kork: 0.24 g/cm³</div>
+                <div class="legend-item">🛢️ Öl: 0.85 g/cm³</div>
+                <div class="legend-item">🪨 Stein: 2.5 g/cm³</div>
+                <div class="legend-item">⚙️ Eisen: 7.87 g/cm³</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Das Prinzip der Dichte</h3>
+            <div class="formula">ρ = m / V (Dichte = Masse / Volumen)</div>
+            <p>Ein Objekt <strong>schwimmt</strong>, wenn seine Dichte <strong>kleiner</strong> als die der Flüssigkeit ist.
+            Ein Objekt <strong>sinkt</strong>, wenn seine Dichte <strong>größer</strong> als die der Flüssigkeit ist.
+            Die Eintauchtiefe hängt vom Verhältnis der Dichten ab!</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('densityCanvas');
+        const ctx = canvas.getContext('2d');
+        const liquidDensitySlider = document.getElementById('liquidDensity');
+        const densityDisplay = document.getElementById('densityDisplay');
+
+        let liquidDensity = 1.0;
+        const waterLevel = canvas.height * 0.5;
+        let objects = [];
+
+        const materials = {
+            wood: { density: 0.6, color: '#8B4513', emoji: '🪵', name: 'Holz' },
+            ice: { density: 0.92, color: '#B0E0E6', emoji: '🧊', name: 'Eis' },
+            cork: { density: 0.24, color: '#DEB887', emoji: '🍾', name: 'Kork' },
+            oil: { density: 0.85, color: '#FFD700', emoji: '🛢️', name: 'Öl' },
+            stone: { density: 2.5, color: '#696969', emoji: '🪨', name: 'Stein' },
+            iron: { density: 7.87, color: '#2F4F4F', emoji: '⚙️', name: 'Eisen' }
+        };
+
+        class FloatingObject {
+            constructor(type, x) {
+                this.type = type;
+                this.x = x;
+                this.y = 50;
+                this.vy = 0;
+                this.size = 40;
+                this.material = materials[type];
+            }
+
+            getTargetY() {
+                const ratio = this.material.density / liquidDensity;
+                if (ratio >= 1) {
+                    return canvas.height - this.size - 10;
+                } else {
+                    const submergedFraction = ratio;
+                    return waterLevel - this.size * (1 - submergedFraction);
+                }
+            }
+
+            update() {
+                const targetY = this.getTargetY();
+                const dy = targetY - this.y;
+                this.vy += dy * 0.02;
+                this.vy *= 0.92;
+                this.y += this.vy;
+
+                // Horizontal drift
+                this.x += Math.sin(Date.now() / 1000 + this.x) * 0.3;
+                if (this.x < this.size) this.x = this.size;
+                if (this.x > canvas.width - this.size) this.x = canvas.width - this.size;
+            }
+
+            draw() {
+                ctx.save();
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(this.x + 3, this.y + this.size + 3, this.size/2, this.size/4, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Object
+                const gradient = ctx.createRadialGradient(
+                    this.x - this.size/4, this.y - this.size/4, 0,
+                    this.x, this.y, this.size
+                );
+                gradient.addColorStop(0, this.lightenColor(this.material.color, 40));
+                gradient.addColorStop(1, this.material.color);
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y + this.size/2, this.size/2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Border
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 12px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.material.name, this.x, this.y + this.size + 20);
+                ctx.font = '10px Segoe UI';
+                ctx.fillStyle = '#90a4ae';
+                ctx.fillText(`ρ = ${this.material.density} g/cm³`, this.x, this.y + this.size + 35);
+
+                ctx.restore();
+            }
+
+            lightenColor(color, percent) {
+                const num = parseInt(color.replace('#', ''), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) + amt;
+                const G = (num >> 8 & 0x00FF) + amt;
+                const B = (num & 0x0000FF) + amt;
+                return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+            }
+        }
+
+        function addObject(type) {
+            const x = 100 + Math.random() * (canvas.width - 200);
+            objects.push(new FloatingObject(type, x));
+            if (objects.length > 12) objects.shift();
+        }
+
+        function resetSimulation() {
+            objects = [];
+        }
+
+        function drawBackground() {
+            // Sky
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, waterLevel);
+            skyGradient.addColorStop(0, '#87CEEB');
+            skyGradient.addColorStop(1, '#E0F7FA');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, canvas.width, waterLevel);
+
+            // Water
+            const waterGradient = ctx.createLinearGradient(0, waterLevel, 0, canvas.height);
+            const hue = liquidDensity > 1.2 ? 200 : liquidDensity > 1.0 ? 210 : 190;
+            waterGradient.addColorStop(0, `hsl(${hue}, 70%, 50%)`);
+            waterGradient.addColorStop(1, `hsl(${hue}, 80%, 20%)`);
+            ctx.fillStyle = waterGradient;
+            ctx.fillRect(0, waterLevel, canvas.width, canvas.height - waterLevel);
+
+            // Water surface waves
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let x = 0; x < canvas.width; x += 5) {
+                const y = waterLevel + Math.sin(x / 30 + Date.now() / 500) * 3;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Density label
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Flüssigkeit: ρ = ${liquidDensity.toFixed(2)} g/cm³`, 15, waterLevel + 25);
+
+            // Water line marker
+            ctx.strokeStyle = '#4fc3f7';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(0, waterLevel);
+            ctx.lineTo(canvas.width, waterLevel);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBackground();
+
+            objects.forEach(obj => {
+                obj.update();
+                obj.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        liquidDensitySlider.addEventListener('input', (e) => {
+            liquidDensity = parseFloat(e.target.value);
+            let label = 'Wasser';
+            if (liquidDensity < 0.9) label = 'Leichte Flüssigkeit';
+            else if (liquidDensity > 1.2) label = 'Salzwasser/Schwer';
+            else if (liquidDensity > 1.0) label = 'Leicht salzig';
+            densityDisplay.textContent = `ρ = ${liquidDensity.toFixed(2)} g/cm³ (${label})`;
+        });
+
+        // Start
+        animate();
+    </script>
+</body>
+</html>

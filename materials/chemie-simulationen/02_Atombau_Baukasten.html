@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atombau - Interaktiver Baukasten</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .main-area {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(circle at center, #1b263b 0%, #0d1b2a 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+        }
+        .control-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .control-section {
+            margin-bottom: 20px;
+        }
+        .control-section h3 {
+            color: #4fc3f7;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        .particle-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        .particle-control label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .particle-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+        .proton-dot { background: #e74c3c; }
+        .neutron-dot { background: #3498db; }
+        .electron-dot { background: #f1c40f; }
+        .particle-control input {
+            width: 60px;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1em;
+        }
+        .particle-control button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .btn-minus { background: #e74c3c; color: white; }
+        .btn-plus { background: #2ecc71; color: white; }
+        .element-display {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(79,195,247,0.2), rgba(233,30,99,0.2));
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .element-symbol {
+            font-size: 3em;
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+        .element-name {
+            font-size: 1.2em;
+            color: #fff;
+        }
+        .element-details {
+            font-size: 0.9em;
+            color: #90a4ae;
+            margin-top: 5px;
+        }
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .preset-btn {
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+        }
+        .preset-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(79,195,247,0.5);
+        }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .info-box h4 { color: #4fc3f7; margin-bottom: 8px; }
+        .info-box p { color: #b0bec5; line-height: 1.5; }
+        .charge-display {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .charge-positive { background: rgba(231,76,60,0.3); color: #e74c3c; }
+        .charge-negative { background: rgba(52,152,219,0.3); color: #3498db; }
+        .charge-neutral { background: rgba(46,204,113,0.3); color: #2ecc71; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚛️ Atombau – Interaktiver Baukasten</h1>
+        <p class="subtitle">4. Klasse Chemie – Baue dein eigenes Atom!</p>
+
+        <div class="main-area">
+            <div class="simulation-area">
+                <canvas id="atomCanvas" width="550" height="500"></canvas>
+            </div>
+
+            <div class="control-panel">
+                <div class="element-display">
+                    <div class="element-symbol" id="elementSymbol">H</div>
+                    <div class="element-name" id="elementName">Wasserstoff</div>
+                    <div class="element-details" id="elementDetails">Ordnungszahl: 1</div>
+                </div>
+
+                <div class="control-section">
+                    <h3>🔴 Protonen (p⁺)</h3>
+                    <div class="particle-control">
+                        <label><div class="particle-dot proton-dot"></div> Anzahl:</label>
+                        <button class="btn-minus" onclick="changeParticle('protons', -1)">−</button>
+                        <input type="number" id="protonCount" value="1" min="1" max="20" onchange="updateAtom()">
+                        <button class="btn-plus" onclick="changeParticle('protons', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>🔵 Neutronen (n⁰)</h3>
+                    <div class="particle-control">
+                        <label><div class="particle-dot neutron-dot"></div> Anzahl:</label>
+                        <button class="btn-minus" onclick="changeParticle('neutrons', -1)">−</button>
+                        <input type="number" id="neutronCount" value="0" min="0" max="30" onchange="updateAtom()">
+                        <button class="btn-plus" onclick="changeParticle('neutrons', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>🟡 Elektronen (e⁻)</h3>
+                    <div class="particle-control">
+                        <label><div class="particle-dot electron-dot"></div> Anzahl:</label>
+                        <button class="btn-minus" onclick="changeParticle('electrons', -1)">−</button>
+                        <input type="number" id="electronCount" value="1" min="0" max="20" onchange="updateAtom()">
+                        <button class="btn-plus" onclick="changeParticle('electrons', 1)">+</button>
+                    </div>
+                </div>
+
+                <div id="chargeDisplay" class="charge-display charge-neutral">
+                    Ladung: neutral
+                </div>
+
+                <div class="control-section" style="margin-top: 20px;">
+                    <h3>🧪 Elemente laden</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="loadElement(1,0,1)">H</button>
+                        <button class="preset-btn" onclick="loadElement(2,2,2)">He</button>
+                        <button class="preset-btn" onclick="loadElement(3,4,3)">Li</button>
+                        <button class="preset-btn" onclick="loadElement(4,5,4)">Be</button>
+                        <button class="preset-btn" onclick="loadElement(5,6,5)">B</button>
+                        <button class="preset-btn" onclick="loadElement(6,6,6)">C</button>
+                        <button class="preset-btn" onclick="loadElement(7,7,7)">N</button>
+                        <button class="preset-btn" onclick="loadElement(8,8,8)">O</button>
+                        <button class="preset-btn" onclick="loadElement(9,10,9)">F</button>
+                        <button class="preset-btn" onclick="loadElement(10,10,10)">Ne</button>
+                        <button class="preset-btn" onclick="loadElement(11,12,11)">Na</button>
+                        <button class="preset-btn" onclick="loadElement(17,18,17)">Cl</button>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>📚 Merke</h4>
+                    <p>• Protonen bestimmen das Element (Ordnungszahl)<br>
+                    • Neutronen + Protonen = Massenzahl<br>
+                    • Elektronen = Protonen → neutrales Atom<br>
+                    • Schalen: K(2), L(8), M(8), ...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('atomCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        const elements = {
+            1: { symbol: 'H', name: 'Wasserstoff' },
+            2: { symbol: 'He', name: 'Helium' },
+            3: { symbol: 'Li', name: 'Lithium' },
+            4: { symbol: 'Be', name: 'Beryllium' },
+            5: { symbol: 'B', name: 'Bor' },
+            6: { symbol: 'C', name: 'Kohlenstoff' },
+            7: { symbol: 'N', name: 'Stickstoff' },
+            8: { symbol: 'O', name: 'Sauerstoff' },
+            9: { symbol: 'F', name: 'Fluor' },
+            10: { symbol: 'Ne', name: 'Neon' },
+            11: { symbol: 'Na', name: 'Natrium' },
+            12: { symbol: 'Mg', name: 'Magnesium' },
+            13: { symbol: 'Al', name: 'Aluminium' },
+            14: { symbol: 'Si', name: 'Silicium' },
+            15: { symbol: 'P', name: 'Phosphor' },
+            16: { symbol: 'S', name: 'Schwefel' },
+            17: { symbol: 'Cl', name: 'Chlor' },
+            18: { symbol: 'Ar', name: 'Argon' },
+            19: { symbol: 'K', name: 'Kalium' },
+            20: { symbol: 'Ca', name: 'Calcium' }
+        };
+
+        let protons = 1, neutrons = 0, electrons = 1;
+        let nucleusParticles = [];
+        let electronAngles = [];
+        let time = 0;
+
+        function initNucleus() {
+            nucleusParticles = [];
+            const total = protons + neutrons;
+            const radius = Math.min(30, 10 + total * 2);
+
+            for (let i = 0; i < protons; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = Math.random() * radius;
+                nucleusParticles.push({
+                    type: 'proton',
+                    x: Math.cos(angle) * r,
+                    y: Math.sin(angle) * r,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
+            }
+
+            for (let i = 0; i < neutrons; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const r = Math.random() * radius;
+                nucleusParticles.push({
+                    type: 'neutron',
+                    x: Math.cos(angle) * r,
+                    y: Math.sin(angle) * r,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
+            }
+        }
+
+        function getElectronShells() {
+            const shells = [];
+            let remaining = electrons;
+            const maxPerShell = [2, 8, 8, 18, 18, 32, 32];
+
+            for (let i = 0; i < maxPerShell.length && remaining > 0; i++) {
+                const inShell = Math.min(remaining, maxPerShell[i]);
+                shells.push(inShell);
+                remaining -= inShell;
+            }
+            return shells;
+        }
+
+        function initElectrons() {
+            electronAngles = [];
+            const shells = getElectronShells();
+
+            shells.forEach((count, shellIndex) => {
+                const shellElectrons = [];
+                for (let i = 0; i < count; i++) {
+                    shellElectrons.push({
+                        angle: (Math.PI * 2 * i) / count,
+                        speed: 0.02 - shellIndex * 0.003
+                    });
+                }
+                electronAngles.push(shellElectrons);
+            });
+        }
+
+        function updateAtom() {
+            protons = parseInt(document.getElementById('protonCount').value) || 1;
+            neutrons = parseInt(document.getElementById('neutronCount').value) || 0;
+            electrons = parseInt(document.getElementById('electronCount').value) || 0;
+
+            protons = Math.max(1, Math.min(20, protons));
+            neutrons = Math.max(0, Math.min(30, neutrons));
+            electrons = Math.max(0, Math.min(20, electrons));
+
+            document.getElementById('protonCount').value = protons;
+            document.getElementById('neutronCount').value = neutrons;
+            document.getElementById('electronCount').value = electrons;
+
+            initNucleus();
+            initElectrons();
+            updateDisplay();
+        }
+
+        function changeParticle(type, delta) {
+            if (type === 'protons') {
+                document.getElementById('protonCount').value =
+                    Math.max(1, Math.min(20, protons + delta));
+            } else if (type === 'neutrons') {
+                document.getElementById('neutronCount').value =
+                    Math.max(0, Math.min(30, neutrons + delta));
+            } else {
+                document.getElementById('electronCount').value =
+                    Math.max(0, Math.min(20, electrons + delta));
+            }
+            updateAtom();
+        }
+
+        function loadElement(p, n, e) {
+            document.getElementById('protonCount').value = p;
+            document.getElementById('neutronCount').value = n;
+            document.getElementById('electronCount').value = e;
+            updateAtom();
+        }
+
+        function updateDisplay() {
+            const element = elements[protons] || { symbol: '?', name: 'Unbekannt' };
+            document.getElementById('elementSymbol').textContent = element.symbol;
+            document.getElementById('elementName').textContent = element.name;
+            document.getElementById('elementDetails').textContent =
+                `Ordnungszahl: ${protons} | Massenzahl: ${protons + neutrons}`;
+
+            const charge = protons - electrons;
+            const chargeDiv = document.getElementById('chargeDisplay');
+            if (charge > 0) {
+                chargeDiv.textContent = `Ladung: ${charge}+ (Kation)`;
+                chargeDiv.className = 'charge-display charge-positive';
+            } else if (charge < 0) {
+                chargeDiv.textContent = `Ladung: ${Math.abs(charge)}− (Anion)`;
+                chargeDiv.className = 'charge-display charge-negative';
+            } else {
+                chargeDiv.textContent = 'Ladung: neutral';
+                chargeDiv.className = 'charge-display charge-neutral';
+            }
+        }
+
+        function drawAtom() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw electron shells
+            const shellRadii = [80, 130, 180, 220];
+            const shells = getElectronShells();
+
+            shells.forEach((_, index) => {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, shellRadii[index], 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(79, 195, 247, ${0.3 - index * 0.05})`;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Shell label
+                const labels = ['K', 'L', 'M', 'N'];
+                ctx.fillStyle = 'rgba(79, 195, 247, 0.5)';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText(labels[index], centerX + shellRadii[index] + 5, centerY);
+            });
+
+            // Update and draw nucleus particles
+            const nucleusRadius = Math.min(35, 15 + (protons + neutrons) * 1.5);
+            nucleusParticles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                const dist = Math.sqrt(p.x * p.x + p.y * p.y);
+                if (dist > nucleusRadius) {
+                    p.x *= nucleusRadius / dist;
+                    p.y *= nucleusRadius / dist;
+                    p.vx *= -0.5;
+                    p.vy *= -0.5;
+                }
+
+                p.vx += (Math.random() - 0.5) * 0.1;
+                p.vy += (Math.random() - 0.5) * 0.1;
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+
+                const gradient = ctx.createRadialGradient(
+                    centerX + p.x, centerY + p.y, 0,
+                    centerX + p.x, centerY + p.y, 12
+                );
+
+                if (p.type === 'proton') {
+                    gradient.addColorStop(0, '#ff6b6b');
+                    gradient.addColorStop(1, '#c0392b');
+                } else {
+                    gradient.addColorStop(0, '#74b9ff');
+                    gradient.addColorStop(1, '#2980b9');
+                }
+
+                ctx.beginPath();
+                ctx.arc(centerX + p.x, centerY + p.y, 10, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 10px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(p.type === 'proton' ? '+' : 'n', centerX + p.x, centerY + p.y);
+            });
+
+            // Draw electrons
+            electronAngles.forEach((shell, shellIndex) => {
+                const radius = shellRadii[shellIndex];
+
+                shell.forEach(electron => {
+                    electron.angle += electron.speed;
+
+                    const x = centerX + Math.cos(electron.angle) * radius;
+                    const y = centerY + Math.sin(electron.angle) * radius;
+
+                    // Electron trail
+                    ctx.beginPath();
+                    ctx.arc(x, y, 15, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(241, 196, 15, 0.2)';
+                    ctx.fill();
+
+                    // Electron
+                    const gradient = ctx.createRadialGradient(x, y, 0, x, y, 8);
+                    gradient.addColorStop(0, '#f1c40f');
+                    gradient.addColorStop(1, '#f39c12');
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, 7, 0, Math.PI * 2);
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+
+                    ctx.fillStyle = '#333';
+                    ctx.font = 'bold 10px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('−', x, y);
+                });
+            });
+
+            // Legend
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillText(`● Protonen: ${protons}`, 15, 25);
+            ctx.fillStyle = '#3498db';
+            ctx.fillText(`● Neutronen: ${neutrons}`, 15, 45);
+            ctx.fillStyle = '#f1c40f';
+            ctx.fillText(`● Elektronen: ${electrons}`, 15, 65);
+
+            time++;
+            requestAnimationFrame(drawAtom);
+        }
+
+        // Initialize
+        initNucleus();
+        initElectrons();
+        updateDisplay();
+        drawAtom();
+    </script>
+</body>
+</html>

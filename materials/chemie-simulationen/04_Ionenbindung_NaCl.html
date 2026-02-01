@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ionenbindung - NaCl Entstehung</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 950px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at center, #1b263b 0%, #0d1b2a 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 12px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .control-btn.start { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .control-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .control-btn.step { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        .control-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .control-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .step-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+        .step-dot.active {
+            background: linear-gradient(135deg, #4fc3f7, #e91e63);
+            border-color: #4fc3f7;
+            box-shadow: 0 0 15px rgba(79,195,247,0.5);
+        }
+        .step-dot.completed {
+            background: #2ecc71;
+            border-color: #27ae60;
+        }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+        .step-description {
+            text-align: center;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            font-size: 1.1em;
+        }
+        .formula-display {
+            text-align: center;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em;
+        }
+        .formula-display .na { color: #9b59b6; }
+        .formula-display .cl { color: #27ae60; }
+        .formula-display .arrow { color: #4fc3f7; margin: 0 10px; }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .legend-dot { width: 20px; height: 20px; border-radius: 50%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Ionenbindung – Entstehung von NaCl</h1>
+        <p class="subtitle">4. Klasse Chemie – Beobachte die Elektronenübertragung</p>
+
+        <div class="simulation-area">
+            <canvas id="ionCanvas" width="850" height="400"></canvas>
+
+            <div class="step-indicator">
+                <div class="step-dot active" id="step1">1</div>
+                <div class="step-dot" id="step2">2</div>
+                <div class="step-dot" id="step3">3</div>
+                <div class="step-dot" id="step4">4</div>
+            </div>
+
+            <div class="step-description" id="stepDesc">
+                <strong>Schritt 1:</strong> Natrium-Atom (Na) und Chlor-Atom (Cl) nähern sich
+            </div>
+
+            <div class="controls">
+                <button class="control-btn step" onclick="nextStep()" id="nextBtn">▶ Nächster Schritt</button>
+                <button class="control-btn start" onclick="autoPlay()" id="autoBtn">⏯ Automatisch</button>
+                <button class="control-btn reset" onclick="resetSimulation()">🔄 Zurücksetzen</button>
+            </div>
+
+            <div class="formula-display">
+                <span class="na">Na</span> + <span class="cl">Cl</span>
+                <span class="arrow">→</span>
+                <span class="na">Na⁺</span> + <span class="cl">Cl⁻</span>
+                <span class="arrow">→</span>
+                <span class="na">Na</span><span class="cl">Cl</span>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background: #9b59b6;"></div> Natrium (Na)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #27ae60;"></div> Chlor (Cl)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #f1c40f;"></div> Elektron (e⁻)</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Die Ionenbindung</h3>
+            <p>Bei der Ionenbindung überträgt ein Metallatom (Na) sein Valenzelektron auf ein Nichtmetallatom (Cl).
+            Dabei entstehen positiv geladene Kationen (Na⁺) und negativ geladene Anionen (Cl⁻).
+            Die entgegengesetzt geladenen Ionen ziehen sich elektrostatisch an und bilden ein Ionengitter.</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('ionCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let currentStep = 1;
+        let animationProgress = 0;
+        let isAnimating = false;
+        let autoPlaying = false;
+
+        const stepDescriptions = {
+            1: "<strong>Schritt 1:</strong> Natrium-Atom (Na) und Chlor-Atom (Cl) nähern sich",
+            2: "<strong>Schritt 2:</strong> Das Valenzelektron von Na wird auf Cl übertragen",
+            3: "<strong>Schritt 3:</strong> Na⁺ (Kation) und Cl⁻ (Anion) sind entstanden",
+            4: "<strong>Schritt 4:</strong> Die Ionen ziehen sich an → NaCl Ionenbindung"
+        };
+
+        class Atom {
+            constructor(x, y, symbol, color, electrons, protons) {
+                this.x = x;
+                this.y = y;
+                this.symbol = symbol;
+                this.color = color;
+                this.electrons = electrons;
+                this.protons = protons;
+                this.electronAngles = [];
+                this.charge = 0;
+                this.targetX = x;
+
+                for (let i = 0; i < electrons.length; i++) {
+                    this.electronAngles.push([]);
+                    for (let j = 0; j < electrons[i]; j++) {
+                        this.electronAngles[i].push((Math.PI * 2 * j) / electrons[i] + Math.random() * 0.5);
+                    }
+                }
+            }
+
+            draw(highlightValence = false, hideValence = false) {
+                // Nucleus
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 30);
+                gradient.addColorStop(0, this.lighten(this.color, 30));
+                gradient.addColorStop(1, this.color);
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 30, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Glow effect
+                if (this.charge !== 0) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 45, 0, Math.PI * 2);
+                    ctx.strokeStyle = this.charge > 0 ? 'rgba(231, 76, 60, 0.5)' : 'rgba(52, 152, 219, 0.5)';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+
+                // Symbol and charge
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 24px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.symbol, this.x, this.y);
+
+                if (this.charge !== 0) {
+                    ctx.font = 'bold 16px Segoe UI';
+                    ctx.fillText(this.charge > 0 ? '+' : '−', this.x + 25, this.y - 15);
+                }
+
+                // Electron shells
+                const shellRadii = [55, 85, 115];
+                this.electrons.forEach((count, shellIndex) => {
+                    if (count === 0) return;
+
+                    // Shell circle
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, shellRadii[shellIndex], 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    // Electrons
+                    for (let i = 0; i < count; i++) {
+                        if (hideValence && shellIndex === this.electrons.length - 1 && i === count - 1 && this.symbol === 'Na') continue;
+
+                        this.electronAngles[shellIndex][i] += 0.02 - shellIndex * 0.005;
+                        const angle = this.electronAngles[shellIndex][i];
+                        const ex = this.x + Math.cos(angle) * shellRadii[shellIndex];
+                        const ey = this.y + Math.sin(angle) * shellRadii[shellIndex];
+
+                        const isValence = shellIndex === this.electrons.length - 1;
+                        const shouldHighlight = highlightValence && isValence && this.symbol === 'Na' && i === count - 1;
+
+                        ctx.beginPath();
+                        ctx.arc(ex, ey, shouldHighlight ? 10 : 6, 0, Math.PI * 2);
+
+                        if (shouldHighlight) {
+                            ctx.fillStyle = '#e74c3c';
+                            ctx.shadowColor = '#e74c3c';
+                            ctx.shadowBlur = 15;
+                        } else {
+                            ctx.fillStyle = '#f1c40f';
+                            ctx.shadowBlur = 0;
+                        }
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            lighten(color, percent) {
+                const num = parseInt(color.replace('#', ''), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.min(255, (num >> 16) + amt);
+                const G = Math.min(255, (num >> 8 & 0x00FF) + amt);
+                const B = Math.min(255, (num & 0x0000FF) + amt);
+                return `rgb(${R},${G},${B})`;
+            }
+        }
+
+        let naAtom = new Atom(200, 200, 'Na', '#9b59b6', [2, 8, 1], 11);
+        let clAtom = new Atom(650, 200, 'Cl', '#27ae60', [2, 8, 7], 17);
+        let transferringElectron = null;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Background grid
+            ctx.strokeStyle = 'rgba(79, 195, 247, 0.1)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            if (currentStep === 1) {
+                naAtom.draw(false, false);
+                clAtom.draw(false, false);
+            } else if (currentStep === 2) {
+                naAtom.draw(true, false);
+                clAtom.draw(false, false);
+
+                // Animate electron transfer
+                if (transferringElectron) {
+                    ctx.beginPath();
+                    ctx.arc(transferringElectron.x, transferringElectron.y, 8, 0, Math.PI * 2);
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.shadowColor = '#e74c3c';
+                    ctx.shadowBlur = 20;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    // Arrow
+                    const midX = (naAtom.x + clAtom.x) / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(naAtom.x + 120, 200);
+                    ctx.lineTo(clAtom.x - 120, 200);
+                    ctx.strokeStyle = 'rgba(231, 76, 60, 0.5)';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([10, 5]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            } else if (currentStep === 3) {
+                naAtom.electrons = [2, 8, 0];
+                naAtom.charge = 1;
+                clAtom.electrons = [2, 8, 8];
+                clAtom.charge = -1;
+
+                naAtom.draw(false, false);
+                clAtom.draw(false, false);
+            } else if (currentStep === 4) {
+                // Ions attract
+                naAtom.x = 350;
+                clAtom.x = 500;
+
+                naAtom.draw(false, false);
+                clAtom.draw(false, false);
+
+                // Attraction lines
+                ctx.beginPath();
+                ctx.moveTo(naAtom.x + 50, 200);
+                ctx.lineTo(clAtom.x - 50, 200);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Bond label
+                ctx.fillStyle = '#4fc3f7';
+                ctx.font = 'bold 16px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Ionenbindung', 425, 170);
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        function updateStepIndicators() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`step${i}`);
+                dot.classList.remove('active', 'completed');
+                if (i < currentStep) dot.classList.add('completed');
+                if (i === currentStep) dot.classList.add('active');
+            }
+            document.getElementById('stepDesc').innerHTML = stepDescriptions[currentStep];
+        }
+
+        function nextStep() {
+            if (isAnimating || currentStep >= 4) return;
+
+            currentStep++;
+
+            if (currentStep === 2) {
+                // Start electron transfer animation
+                isAnimating = true;
+                transferringElectron = { x: naAtom.x + 115, y: 200 };
+
+                const animate = () => {
+                    if (transferringElectron.x < clAtom.x - 115) {
+                        transferringElectron.x += 5;
+                        setTimeout(animate, 30);
+                    } else {
+                        transferringElectron = null;
+                        isAnimating = false;
+                        if (autoPlaying) setTimeout(() => nextStep(), 1000);
+                    }
+                };
+                setTimeout(animate, 500);
+            } else if (currentStep === 4) {
+                // Animate attraction
+                isAnimating = true;
+                const attractAnimation = setInterval(() => {
+                    if (naAtom.x < 350) naAtom.x += 5;
+                    if (clAtom.x > 500) clAtom.x -= 5;
+                    if (naAtom.x >= 350 && clAtom.x <= 500) {
+                        clearInterval(attractAnimation);
+                        isAnimating = false;
+                    }
+                }, 30);
+            }
+
+            updateStepIndicators();
+
+            if (currentStep >= 4) {
+                document.getElementById('nextBtn').disabled = true;
+                document.getElementById('autoBtn').disabled = true;
+                autoPlaying = false;
+            }
+        }
+
+        function autoPlay() {
+            autoPlaying = !autoPlaying;
+            document.getElementById('autoBtn').textContent = autoPlaying ? '⏸ Pause' : '⏯ Automatisch';
+            if (autoPlaying && !isAnimating) nextStep();
+        }
+
+        function resetSimulation() {
+            currentStep = 1;
+            isAnimating = false;
+            autoPlaying = false;
+            transferringElectron = null;
+
+            naAtom = new Atom(200, 200, 'Na', '#9b59b6', [2, 8, 1], 11);
+            clAtom = new Atom(650, 200, 'Cl', '#27ae60', [2, 8, 7], 17);
+
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('autoBtn').disabled = false;
+            document.getElementById('autoBtn').textContent = '⏯ Automatisch';
+
+            updateStepIndicators();
+        }
+
+        updateStepIndicators();
+        draw();
+    </script>
+</body>
+</html>

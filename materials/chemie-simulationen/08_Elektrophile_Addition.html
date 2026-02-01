@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrophile Addition</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 950px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .reaction-equation {
+            text-align: center;
+            font-size: 1.5em;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .alkene { color: #2ecc71; }
+        .reagent { color: #e74c3c; }
+        .product { color: #3498db; }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at center, #1b263b 0%, #0d1b2a 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 20px 0;
+        }
+        .step-dot {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        .step-dot.active {
+            background: linear-gradient(135deg, #4fc3f7, #e91e63);
+            border-color: #4fc3f7;
+            box-shadow: 0 0 15px rgba(79,195,247,0.5);
+            transform: scale(1.1);
+        }
+        .step-dot.completed { background: #2ecc71; border-color: #27ae60; }
+        .step-description {
+            text-align: center;
+            padding: 15px 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin: 15px 0;
+            min-height: 80px;
+        }
+        .step-description h4 { color: #4fc3f7; margin-bottom: 8px; }
+        .step-description p { color: #b0bec5; line-height: 1.5; }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .control-btn {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .control-btn:hover { transform: translateY(-2px); }
+        .control-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .control-btn.next { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .control-btn.prev { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        .control-btn.reset { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .control-btn.auto { background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+        }
+        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
+        .info-box p { line-height: 1.6; color: #b0bec5; }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; }
+        .legend-dot { width: 18px; height: 18px; border-radius: 50%; }
+        .mechanism-note {
+            background: rgba(233, 30, 99, 0.1);
+            border: 1px solid #e91e63;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚗️ Elektrophile Addition (AE)</h1>
+        <p class="subtitle">6. Klasse Chemie – Reaktionsmechanismus an der Doppelbindung</p>
+
+        <div class="simulation-area">
+            <div class="reaction-equation">
+                <span class="alkene">CH₂=CH₂</span> + <span class="reagent">Br₂</span>
+                → <span class="product">CH₂Br-CH₂Br</span>
+            </div>
+
+            <canvas id="mechanismCanvas" width="850" height="350"></canvas>
+
+            <div class="step-indicator">
+                <div class="step-dot active" id="step1">1</div>
+                <div class="step-dot" id="step2">2</div>
+                <div class="step-dot" id="step3">3</div>
+                <div class="step-dot" id="step4">4</div>
+            </div>
+
+            <div class="step-description" id="stepDesc">
+                <h4>Schritt 1: Ausgangssituation</h4>
+                <p>Ethen (CH₂=CH₂) mit seiner elektronenreichen π-Bindung und Brom (Br₂) als Elektrophil nähern sich.</p>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn prev" onclick="prevStep()" id="prevBtn" disabled>◀ Zurück</button>
+                <button class="control-btn next" onclick="nextStep()" id="nextBtn">Weiter ▶</button>
+                <button class="control-btn auto" onclick="autoPlay()" id="autoBtn">▶ Automatisch</button>
+                <button class="control-btn reset" onclick="resetMechanism()">↺ Reset</button>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background: #2c3e50;"></div> Kohlenstoff</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #ecf0f1;"></div> Wasserstoff</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #c0392b;"></div> Brom</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #27ae60;"></div> π-Elektronen</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #e74c3c;"></div> Elektronenbewegung</div>
+            </div>
+
+            <div class="mechanism-note">
+                🔬 <strong>Markovnikov-Regel:</strong> Bei unsymmetrischen Alkenen bindet das H an das C mit mehr H-Atomen
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📚 Elektrophile Addition</h3>
+            <p>Die elektrophile Addition ist eine typische Reaktion von Alkenen. Die elektronenreiche Doppelbindung (π-Bindung)
+            greift ein Elektrophil (z.B. Br⁺) an. Es bildet sich ein zyklisches Bromonium-Ion als Zwischenprodukt,
+            das dann von Br⁻ von der Rückseite angegriffen wird (anti-Addition).</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mechanismCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let currentStep = 1;
+        let animProgress = 0;
+        let isAnimating = false;
+        let autoPlaying = false;
+
+        const stepData = [
+            {
+                title: "Schritt 1: Ausgangssituation",
+                desc: "Ethen (CH₂=CH₂) mit seiner elektronenreichen π-Bindung und Brom (Br₂) als Elektrophil nähern sich."
+            },
+            {
+                title: "Schritt 2: Polarisierung & π-Komplex",
+                desc: "Die π-Elektronen polarisieren das Br₂-Molekül. Es bildet sich ein π-Komplex zwischen Ethen und Brom."
+            },
+            {
+                title: "Schritt 3: Bromonium-Ion Bildung",
+                desc: "Die π-Bindung bricht, ein Br bindet an beide C-Atome (zyklisches Bromonium-Ion). Br⁻ wird freigesetzt."
+            },
+            {
+                title: "Schritt 4: Produkt",
+                desc: "Br⁻ greift von der Rückseite an (anti-Addition). Es entsteht 1,2-Dibromethan (CH₂Br-CH₂Br)."
+            }
+        ];
+
+        function drawAtom(x, y, radius, color, label, labelColor = '#fff') {
+            const gradient = ctx.createRadialGradient(x - radius/3, y - radius/3, 0, x, y, radius);
+            gradient.addColorStop(0, lightenColor(color, 40));
+            gradient.addColorStop(1, color);
+
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            if (label) {
+                ctx.fillStyle = labelColor;
+                ctx.font = `bold ${radius * 0.8}px Segoe UI`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(label, x, y);
+            }
+        }
+
+        function drawBond(x1, y1, x2, y2, double = false, color = '#4fc3f7') {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+
+            if (double) {
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const len = Math.sqrt(dx*dx + dy*dy);
+                const nx = -dy / len * 4;
+                const ny = dx / len * 4;
+
+                ctx.beginPath();
+                ctx.moveTo(x1 + nx, y1 + ny);
+                ctx.lineTo(x2 + nx, y2 + ny);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(x1 - nx, y1 - ny);
+                ctx.lineTo(x2 - nx, y2 - ny);
+                ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+        }
+
+        function drawCurvedArrow(x1, y1, x2, y2, cx, cy, color = '#e74c3c') {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.quadraticCurveTo(cx, cy, x2, y2);
+            ctx.stroke();
+
+            // Arrowhead
+            const angle = Math.atan2(y2 - cy, x2 - cx);
+            ctx.beginPath();
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - 10 * Math.cos(angle - 0.4), y2 - 10 * Math.sin(angle - 0.4));
+            ctx.lineTo(x2 - 10 * Math.cos(angle + 0.4), y2 - 10 * Math.sin(angle + 0.4));
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function drawPiCloud(x, y, width, height) {
+            ctx.fillStyle = 'rgba(46, 204, 113, 0.3)';
+            ctx.beginPath();
+            ctx.ellipse(x, y - height/2, width/2, height/3, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(x, y + height/2, width/2, height/3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = 'rgba(46, 204, 113, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function lightenColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.min(255, (num >> 16) + amt);
+            const G = Math.min(255, (num >> 8 & 0x00FF) + amt);
+            const B = Math.min(255, (num & 0x0000FF) + amt);
+            return `rgb(${R}, ${G}, ${B})`;
+        }
+
+        function drawStep1() {
+            // Ethene
+            const cx = 250, cy = 175;
+            drawBond(cx - 40, cy, cx + 40, cy, true);
+            drawAtom(cx - 40, cy, 22, '#2c3e50', 'C');
+            drawAtom(cx + 40, cy, 22, '#2c3e50', 'C');
+
+            // Hydrogens
+            drawBond(cx - 40, cy, cx - 70, cy - 35);
+            drawBond(cx - 40, cy, cx - 70, cy + 35);
+            drawBond(cx + 40, cy, cx + 70, cy - 35);
+            drawBond(cx + 40, cy, cx + 70, cy + 35);
+            drawAtom(cx - 70, cy - 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(cx - 70, cy + 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(cx + 70, cy - 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(cx + 70, cy + 35, 12, '#ecf0f1', 'H', '#333');
+
+            // Pi cloud
+            drawPiCloud(cx, cy, 100, 60);
+
+            // Bromine molecule
+            const bx = 600;
+            drawBond(bx - 25, cy, bx + 25, cy, false, '#c0392b');
+            drawAtom(bx - 25, cy, 25, '#c0392b', 'Br');
+            drawAtom(bx + 25, cy, 25, '#c0392b', 'Br');
+
+            // Labels
+            ctx.fillStyle = '#4fc3f7';
+            ctx.font = '14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Ethen', cx, cy + 80);
+            ctx.fillText('(π-Elektronen)', cx, cy + 95);
+            ctx.fillText('Brom', bx, cy + 80);
+            ctx.fillText('(Elektrophil)', bx, cy + 95);
+        }
+
+        function drawStep2() {
+            const cx = 300, cy = 175;
+            const bx = 480;
+
+            // Ethene with pi cloud
+            drawBond(cx - 40, cy, cx + 40, cy, true);
+            drawAtom(cx - 40, cy, 22, '#2c3e50', 'C');
+            drawAtom(cx + 40, cy, 22, '#2c3e50', 'C');
+
+            drawBond(cx - 40, cy, cx - 70, cy - 35);
+            drawBond(cx - 40, cy, cx - 70, cy + 35);
+            drawBond(cx + 40, cy, cx + 70, cy - 35);
+            drawBond(cx + 40, cy, cx + 70, cy + 35);
+            drawAtom(cx - 70, cy - 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(cx - 70, cy + 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(cx + 70, cy - 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(cx + 70, cy + 35, 12, '#ecf0f1', 'H', '#333');
+
+            drawPiCloud(cx, cy, 100, 60);
+
+            // Polarized bromine
+            drawBond(bx - 20, cy, bx + 30, cy, false, '#c0392b');
+            drawAtom(bx - 20, cy, 25, '#c0392b', 'Br');
+            drawAtom(bx + 30, cy, 25, '#922B21', 'Br');
+
+            // Partial charges
+            ctx.fillStyle = '#3498db';
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillText('δ+', bx - 20, cy - 35);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillText('δ-', bx + 30, cy - 35);
+
+            // Electron flow arrow
+            drawCurvedArrow(cx + 50, cy - 30, bx - 45, cy, cx + 100, cy - 60);
+
+            ctx.fillStyle = '#90a4ae';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('π-Elektronen polarisieren Br₂', (cx + bx) / 2, cy + 100);
+        }
+
+        function drawStep3() {
+            const cx = 350, cy = 175;
+
+            // Bromonium ion (triangular structure)
+            const c1x = cx - 35, c1y = cy + 20;
+            const c2x = cx + 35, c2y = cy + 20;
+            const brx = cx, bry = cy - 40;
+
+            drawBond(c1x, c1y, c2x, c2y);
+            drawBond(c1x, c1y, brx, bry, false, '#c0392b');
+            drawBond(c2x, c2y, brx, bry, false, '#c0392b');
+
+            drawAtom(c1x, c1y, 22, '#2c3e50', 'C');
+            drawAtom(c2x, c2y, 22, '#2c3e50', 'C');
+            drawAtom(brx, bry, 25, '#c0392b', 'Br');
+
+            // Hydrogens
+            drawBond(c1x, c1y, c1x - 35, c1y - 25);
+            drawBond(c1x, c1y, c1x - 35, c1y + 25);
+            drawBond(c2x, c2y, c2x + 35, c2y - 25);
+            drawBond(c2x, c2y, c2x + 35, c2y + 25);
+            drawAtom(c1x - 35, c1y - 25, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(c1x - 35, c1y + 25, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(c2x + 35, c2y - 25, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(c2x + 35, c2y + 25, 12, '#ecf0f1', 'H', '#333');
+
+            // Positive charge
+            ctx.fillStyle = '#e74c3c';
+            ctx.font = 'bold 18px Segoe UI';
+            ctx.fillText('+', brx + 35, bry);
+
+            // Bromide ion
+            const brMinusX = 600;
+            drawAtom(brMinusX, cy, 25, '#2980b9', 'Br');
+            ctx.fillStyle = '#3498db';
+            ctx.font = 'bold 18px Segoe UI';
+            ctx.fillText('−', brMinusX + 30, cy - 15);
+
+            // Attack arrow
+            drawCurvedArrow(brMinusX - 30, cy + 10, c2x + 25, c2y + 30, 550, cy + 80, '#3498db');
+
+            ctx.fillStyle = '#4fc3f7';
+            ctx.font = '14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Bromonium-Ion', cx, cy + 100);
+            ctx.fillText('(zyklisch)', cx, cy + 115);
+            ctx.fillText('Bromid-Ion', brMinusX, cy + 60);
+            ctx.fillText('greift von hinten an', brMinusX, cy + 75);
+        }
+
+        function drawStep4() {
+            const cx = 425, cy = 175;
+
+            // 1,2-Dibromoethane
+            const c1x = cx - 50, c2x = cx + 50;
+
+            drawBond(c1x, cy, c2x, cy);
+            drawAtom(c1x, cy, 22, '#2c3e50', 'C');
+            drawAtom(c2x, cy, 22, '#2c3e50', 'C');
+
+            // Hydrogens
+            drawBond(c1x, cy, c1x - 30, cy - 35);
+            drawBond(c1x, cy, c1x - 30, cy + 35);
+            drawBond(c2x, cy, c2x + 30, cy - 35);
+            drawBond(c2x, cy, c2x + 30, cy + 35);
+            drawAtom(c1x - 30, cy - 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(c1x - 30, cy + 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(c2x + 30, cy - 35, 12, '#ecf0f1', 'H', '#333');
+            drawAtom(c2x + 30, cy + 35, 12, '#ecf0f1', 'H', '#333');
+
+            // Bromines (anti position)
+            drawBond(c1x, cy, c1x, cy - 50, false, '#c0392b');
+            drawBond(c2x, cy, c2x, cy + 50, false, '#c0392b');
+            drawAtom(c1x, cy - 50, 25, '#c0392b', 'Br');
+            drawAtom(c2x, cy + 50, 25, '#c0392b', 'Br');
+
+            // Product label
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('1,2-Dibromethan', cx, cy + 110);
+            ctx.font = '14px Segoe UI';
+            ctx.fillStyle = '#90a4ae';
+            ctx.fillText('(anti-Addition: Br-Atome auf gegenüberliegenden Seiten)', cx, cy + 130);
+
+            // Success indicator
+            ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 120, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            switch(currentStep) {
+                case 1: drawStep1(); break;
+                case 2: drawStep2(); break;
+                case 3: drawStep3(); break;
+                case 4: drawStep4(); break;
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        function updateUI() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`step${i}`);
+                dot.classList.remove('active', 'completed');
+                if (i < currentStep) dot.classList.add('completed');
+                if (i === currentStep) dot.classList.add('active');
+            }
+
+            document.getElementById('stepDesc').innerHTML =
+                `<h4>${stepData[currentStep-1].title}</h4><p>${stepData[currentStep-1].desc}</p>`;
+
+            document.getElementById('prevBtn').disabled = currentStep === 1;
+            document.getElementById('nextBtn').disabled = currentStep === 4;
+        }
+
+        function nextStep() {
+            if (currentStep < 4) {
+                currentStep++;
+                updateUI();
+                if (autoPlaying && currentStep < 4) {
+                    setTimeout(nextStep, 2500);
+                } else if (currentStep === 4) {
+                    autoPlaying = false;
+                    document.getElementById('autoBtn').textContent = '▶ Automatisch';
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        function autoPlay() {
+            autoPlaying = !autoPlaying;
+            document.getElementById('autoBtn').textContent = autoPlaying ? '⏸ Pause' : '▶ Automatisch';
+            if (autoPlaying) nextStep();
+        }
+
+        function resetMechanism() {
+            currentStep = 1;
+            autoPlaying = false;
+            document.getElementById('autoBtn').textContent = '▶ Automatisch';
+            updateUI();
+        }
+
+        updateUI();
+        draw();
+    </script>
+</body>
+</html>

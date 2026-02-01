@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alkan-Molekülbauer</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
+        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+        .simulation-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(ellipse at center, #1b263b 0%, #0d1b2a 100%);
+            border-radius: 10px;
+            border: 2px solid #4fc3f7;
+        }
+        .control-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .molecule-info {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(79,195,247,0.2), rgba(46,204,113,0.2));
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .molecule-name { font-size: 1.8em; font-weight: bold; color: #4fc3f7; }
+        .molecule-formula { font-size: 1.3em; margin: 5px 0; }
+        .molecule-mass { font-size: 0.9em; color: #90a4ae; }
+        .carbon-slider {
+            margin: 20px 0;
+        }
+        .carbon-slider label { display: block; margin-bottom: 10px; }
+        .carbon-slider input {
+            width: 100%;
+            height: 10px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #2ecc71, #4fc3f7);
+            border-radius: 5px;
+        }
+        .carbon-slider input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .carbon-display {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #2ecc71;
+        }
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .preset-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(79,195,247,0.5);
+        }
+        .properties {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .properties h4 { color: #4fc3f7; margin-bottom: 10px; }
+        .prop-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9em;
+        }
+        .prop-label { color: #90a4ae; }
+        .prop-value { color: #fff; }
+        .view-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .view-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #4fc3f7;
+            border-radius: 8px;
+            background: transparent;
+            color: #4fc3f7;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .view-btn.active, .view-btn:hover {
+            background: #4fc3f7;
+            color: #1a1a2e;
+        }
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .info-box h4 { color: #4fc3f7; margin-bottom: 8px; }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; }
+        .legend-dot { width: 20px; height: 20px; border-radius: 50%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 Alkan-Molekülbauer</h1>
+        <p class="subtitle">6. Klasse Chemie – Baue Kohlenwasserstoffe</p>
+
+        <div class="main-grid">
+            <div class="simulation-area">
+                <canvas id="moleculeCanvas" width="600" height="450"></canvas>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: #2c3e50;"></div> Kohlenstoff (C)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #ecf0f1;"></div> Wasserstoff (H)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #4fc3f7;"></div> C-C Bindung</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #95a5a6;"></div> C-H Bindung</div>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="molecule-info">
+                    <div class="molecule-name" id="molName">Methan</div>
+                    <div class="molecule-formula" id="molFormula">CH₄</div>
+                    <div class="molecule-mass" id="molMass">M = 16.04 g/mol</div>
+                </div>
+
+                <div class="carbon-slider">
+                    <label>Anzahl Kohlenstoffatome:</label>
+                    <input type="range" id="carbonSlider" min="1" max="10" value="1">
+                    <div class="carbon-display" id="carbonDisplay">1</div>
+                </div>
+
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="setCarbon(1)">Methan</button>
+                    <button class="preset-btn" onclick="setCarbon(2)">Ethan</button>
+                    <button class="preset-btn" onclick="setCarbon(3)">Propan</button>
+                    <button class="preset-btn" onclick="setCarbon(4)">Butan</button>
+                    <button class="preset-btn" onclick="setCarbon(5)">Pentan</button>
+                    <button class="preset-btn" onclick="setCarbon(6)">Hexan</button>
+                    <button class="preset-btn" onclick="setCarbon(7)">Heptan</button>
+                    <button class="preset-btn" onclick="setCarbon(8)">Octan</button>
+                </div>
+
+                <div class="view-buttons">
+                    <button class="view-btn active" id="view3d" onclick="setView('3d')">3D</button>
+                    <button class="view-btn" id="viewFlat" onclick="setView('flat')">Strukturformel</button>
+                </div>
+
+                <div class="properties">
+                    <h4>📊 Eigenschaften</h4>
+                    <div class="prop-row">
+                        <span class="prop-label">Siedepunkt:</span>
+                        <span class="prop-value" id="propBP">-161 °C</span>
+                    </div>
+                    <div class="prop-row">
+                        <span class="prop-label">Schmelzpunkt:</span>
+                        <span class="prop-value" id="propMP">-182 °C</span>
+                    </div>
+                    <div class="prop-row">
+                        <span class="prop-label">Aggregatzustand:</span>
+                        <span class="prop-value" id="propState">gasförmig</span>
+                    </div>
+                    <div class="prop-row">
+                        <span class="prop-label">Summenformel:</span>
+                        <span class="prop-value" id="propSum">C₁H₄</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>📚 Alkane</h4>
+                    <p>Allgemeine Formel: <strong>CₙH₂ₙ₊₂</strong><br>
+                    Gesättigte Kohlenwasserstoffe mit nur Einfachbindungen.
+                    Homologe Reihe: Jedes Glied unterscheidet sich um CH₂.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('moleculeCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const alkanes = {
+            1: { name: 'Methan', bp: -161, mp: -182, state: 'gasförmig' },
+            2: { name: 'Ethan', bp: -89, mp: -183, state: 'gasförmig' },
+            3: { name: 'Propan', bp: -42, mp: -188, state: 'gasförmig' },
+            4: { name: 'Butan', bp: -1, mp: -138, state: 'gasförmig' },
+            5: { name: 'Pentan', bp: 36, mp: -130, state: 'flüssig' },
+            6: { name: 'Hexan', bp: 69, mp: -95, state: 'flüssig' },
+            7: { name: 'Heptan', bp: 98, mp: -91, state: 'flüssig' },
+            8: { name: 'Octan', bp: 126, mp: -57, state: 'flüssig' },
+            9: { name: 'Nonan', bp: 151, mp: -51, state: 'flüssig' },
+            10: { name: 'Decan', bp: 174, mp: -30, state: 'flüssig' }
+        };
+
+        let carbonCount = 1;
+        let viewMode = '3d';
+        let rotation = 0;
+        let tilt = 0.3;
+
+        function getFormula(n) {
+            const h = 2 * n + 2;
+            const subscript = n => String(n).split('').map(d => '₀₁₂₃₄₅₆₇₈₉'[d]).join('');
+            return `C${subscript(n)}H${subscript(h)}`;
+        }
+
+        function getMolarMass(n) {
+            return (12.01 * n + 1.008 * (2 * n + 2)).toFixed(2);
+        }
+
+        function setCarbon(n) {
+            carbonCount = n;
+            document.getElementById('carbonSlider').value = n;
+            updateDisplay();
+        }
+
+        function setView(mode) {
+            viewMode = mode;
+            document.getElementById('view3d').classList.toggle('active', mode === '3d');
+            document.getElementById('viewFlat').classList.toggle('active', mode === 'flat');
+        }
+
+        function updateDisplay() {
+            const data = alkanes[carbonCount];
+            document.getElementById('carbonDisplay').textContent = carbonCount;
+            document.getElementById('molName').textContent = data.name;
+            document.getElementById('molFormula').textContent = getFormula(carbonCount);
+            document.getElementById('molMass').textContent = `M = ${getMolarMass(carbonCount)} g/mol`;
+            document.getElementById('propBP').textContent = data.bp + ' °C';
+            document.getElementById('propMP').textContent = data.mp + ' °C';
+            document.getElementById('propState').textContent = data.state;
+            document.getElementById('propSum').textContent = `C${carbonCount}H${2*carbonCount+2}`;
+        }
+
+        function project3D(x, y, z) {
+            const cosR = Math.cos(rotation);
+            const sinR = Math.sin(rotation);
+            const cosT = Math.cos(tilt);
+            const sinT = Math.sin(tilt);
+
+            const x1 = x * cosR - z * sinR;
+            const z1 = x * sinR + z * cosR;
+            const y1 = y * cosT - z1 * sinT;
+            const z2 = y * sinT + z1 * cosT;
+
+            const scale = 200 / (200 + z2);
+            return {
+                x: canvas.width/2 + x1 * scale,
+                y: canvas.height/2 + y1 * scale,
+                z: z2,
+                scale: scale
+            };
+        }
+
+        function drawMolecule3D() {
+            const atoms = [];
+            const bonds = [];
+
+            const spacing = Math.min(80, 400 / carbonCount);
+            const startX = -(carbonCount - 1) * spacing / 2;
+
+            // Create carbon atoms in zigzag
+            for (let i = 0; i < carbonCount; i++) {
+                const x = startX + i * spacing;
+                const y = (i % 2 === 0) ? 20 : -20;
+                const z = (i % 2 === 0) ? 10 : -10;
+                atoms.push({ type: 'C', x, y, z, index: i });
+
+                // Add hydrogen atoms
+                const hCount = (i === 0 || i === carbonCount - 1) ? 3 : 2;
+                const angleOffset = (i % 2 === 0) ? 0 : Math.PI;
+
+                for (let h = 0; h < hCount; h++) {
+                    let hx, hy, hz;
+                    if (carbonCount === 1) {
+                        // Tetrahedral for methane
+                        const angles = [
+                            { a: 0, b: 0 },
+                            { a: 2*Math.PI/3, b: Math.acos(-1/3) },
+                            { a: 4*Math.PI/3, b: Math.acos(-1/3) },
+                            { a: Math.PI, b: Math.PI - Math.acos(-1/3) }
+                        ];
+                        const ang = angles[h];
+                        hx = x + 40 * Math.sin(ang.b) * Math.cos(ang.a);
+                        hy = y + 40 * Math.cos(ang.b);
+                        hz = z + 40 * Math.sin(ang.b) * Math.sin(ang.a);
+                    } else {
+                        const baseAngle = angleOffset + (h / hCount) * Math.PI + Math.PI/4;
+                        hx = x + 35 * Math.cos(baseAngle);
+                        hy = y + 35 * Math.sin(baseAngle) * (h === 0 ? 1 : -1);
+                        hz = z + (h === hCount - 1 ? 25 : -25);
+                    }
+                    atoms.push({ type: 'H', x: hx, y: hy, z: hz, parent: i });
+                    bonds.push({ from: atoms.length - 1, to: atoms.findIndex(a => a.index === i), type: 'CH' });
+                }
+
+                // C-C bonds
+                if (i > 0) {
+                    bonds.push({
+                        from: atoms.findIndex(a => a.index === i),
+                        to: atoms.findIndex(a => a.index === i - 1),
+                        type: 'CC'
+                    });
+                }
+            }
+
+            // Project all atoms
+            const projected = atoms.map(a => ({
+                ...a,
+                ...project3D(a.x, a.y, a.z)
+            }));
+
+            // Sort by z for proper depth
+            const sortedBonds = bonds.map(b => ({
+                ...b,
+                avgZ: (projected[b.from].z + projected[b.to].z) / 2
+            })).sort((a, b) => a.avgZ - b.avgZ);
+
+            const sortedAtoms = [...projected].sort((a, b) => a.z - b.z);
+
+            // Draw bonds
+            sortedBonds.forEach(bond => {
+                const from = projected[bond.from];
+                const to = projected[bond.to];
+
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x, to.y);
+                ctx.strokeStyle = bond.type === 'CC' ? '#4fc3f7' : '#7f8c8d';
+                ctx.lineWidth = bond.type === 'CC' ? 6 : 3;
+                ctx.stroke();
+            });
+
+            // Draw atoms
+            sortedAtoms.forEach(atom => {
+                const radius = atom.type === 'C' ? 25 * atom.scale : 15 * atom.scale;
+                const gradient = ctx.createRadialGradient(
+                    atom.x - radius/3, atom.y - radius/3, 0,
+                    atom.x, atom.y, radius
+                );
+
+                if (atom.type === 'C') {
+                    gradient.addColorStop(0, '#5d6d7e');
+                    gradient.addColorStop(1, '#2c3e50');
+                } else {
+                    gradient.addColorStop(0, '#ffffff');
+                    gradient.addColorStop(1, '#bdc3c7');
+                }
+
+                ctx.beginPath();
+                ctx.arc(atom.x, atom.y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                ctx.fillStyle = atom.type === 'C' ? '#fff' : '#2c3e50';
+                ctx.font = `bold ${radius * 0.8}px Segoe UI`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(atom.type, atom.x, atom.y);
+            });
+        }
+
+        function drawMoleculeFlat() {
+            const spacing = Math.min(60, 500 / carbonCount);
+            const startX = canvas.width/2 - (carbonCount - 1) * spacing / 2;
+            const y = canvas.height / 2;
+
+            ctx.font = 'bold 20px Courier New';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let i = 0; i < carbonCount; i++) {
+                const x = startX + i * spacing;
+
+                // Draw C-C bond
+                if (i > 0) {
+                    ctx.strokeStyle = '#4fc3f7';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(x - spacing + 15, y);
+                    ctx.lineTo(x - 15, y);
+                    ctx.stroke();
+                }
+
+                // Draw carbon
+                ctx.fillStyle = '#2ecc71';
+                ctx.fillText('C', x, y);
+
+                // Draw hydrogens
+                const hCount = (i === 0 || i === carbonCount - 1) ? 3 : 2;
+
+                ctx.fillStyle = '#ecf0f1';
+                ctx.font = '16px Courier New';
+
+                if (hCount === 3) {
+                    if (i === 0) {
+                        ctx.fillText('H', x - 25, y);
+                        ctx.fillText('H', x, y - 25);
+                        ctx.fillText('H', x, y + 25);
+                    } else {
+                        ctx.fillText('H', x + 25, y);
+                        ctx.fillText('H', x, y - 25);
+                        ctx.fillText('H', x, y + 25);
+                    }
+                } else {
+                    ctx.fillText('H', x, y - 25);
+                    ctx.fillText('H', x, y + 25);
+                }
+
+                ctx.font = 'bold 20px Courier New';
+            }
+
+            // Condensed formula
+            ctx.fillStyle = '#4fc3f7';
+            ctx.font = '16px Segoe UI';
+            let condensed = '';
+            for (let i = 0; i < carbonCount; i++) {
+                const h = (i === 0 || i === carbonCount - 1) ? 3 : 2;
+                condensed += `CH${h}`;
+                if (i < carbonCount - 1) condensed += '-';
+            }
+            ctx.fillText(`Halbstrukturformel: ${condensed}`, canvas.width/2, canvas.height - 30);
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (viewMode === '3d') {
+                rotation += 0.01;
+                drawMolecule3D();
+            } else {
+                drawMoleculeFlat();
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        document.getElementById('carbonSlider').addEventListener('input', (e) => {
+            carbonCount = parseInt(e.target.value);
+            updateDisplay();
+        });
+
+        updateDisplay();
+        animate();
+    </script>
+</body>
+</html>
