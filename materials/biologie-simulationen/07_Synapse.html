@@ -5,536 +5,802 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synapse - Signalübertragung</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0c0a1d 0%, #1a1333 50%, #0c0a1d 100%);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
             color: #fff;
         }
-        .container { max-width: 100%; margin: 0 auto; padding: 0 10px; }
-        h1 { text-align: center; margin-bottom: 10px; font-size: 1.8em; color: #4fc3f7; }
-        .subtitle { text-align: center; color: #90a4ae; margin-bottom: 20px; }
-        .simulation-area {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
+
+        .bg-neural {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
         }
+
+        .neural-spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(167, 139, 250, 0.4);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.6);
+            animation: spark 4s infinite;
+        }
+
+        @keyframes spark {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa, #818cf8, #c4b5fd);
+            background-size: 200% 200%;
+            animation: gradient-shift 4s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.5);
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 25px;
+            align-items: start;
+        }
+
+        @media (max-width: 1000px) {
+            .main-content { grid-template-columns: 1fr; }
+        }
+
+        .simulation-wrapper {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #1a1530 0%, #0c0a1d 100%);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(167, 139, 250, 0.05);
+        }
+
         canvas {
             display: block;
-            margin: 0 auto;
-            background: radial-gradient(ellipse at center, #0a1628 0%, #050a14 100%);
-            border-radius: 10px;
-            border: 2px solid #4fc3f7;
-            max-width: 100%;
+            width: 100%;
             height: auto;
         }
-        .step-display {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .step-item {
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.1);
+
+        .glass-panel {
+            background: rgba(20, 15, 35, 0.9);
+            backdrop-filter: blur(20px);
             border-radius: 20px;
-            font-size: 0.85em;
-            transition: all 0.3s;
+            border: 1px solid rgba(167, 139, 250, 0.15);
+            padding: 22px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-        .step-item.active {
-            background: linear-gradient(135deg, #9b59b6, #3498db);
-            font-weight: bold;
+
+        .panel-title {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 18px;
         }
-        .step-item.completed { background: rgba(46, 204, 113, 0.3); }
-        .info-display {
-            text-align: center;
-            padding: 20px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 15px;
-            margin: 15px 0;
-        }
-        .info-title { font-size: 1.4em; color: #4fc3f7; margin-bottom: 10px; }
-        .info-desc { color: #b0bec5; line-height: 1.6; max-width: 700px; margin: 0 auto; }
-        .neurotransmitter-selector {
+
+        /* Step Progress */
+        .step-progress {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
         }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .step-item:hover {
+            background: rgba(167, 139, 250, 0.1);
+        }
+
+        .step-item.active {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.25), rgba(129, 140, 248, 0.15));
+            border: 1px solid rgba(167, 139, 250, 0.4);
+        }
+
+        .step-item.completed {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(167, 139, 250, 0.2);
+            color: #a78bfa;
+            font-size: 0.85em;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-item.active .step-num {
+            background: #a78bfa;
+            color: #0c0a1d;
+        }
+
+        .step-item.completed .step-num {
+            background: #22c55e;
+            color: white;
+        }
+
+        .step-text {
+            font-size: 0.85em;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .step-item.active .step-text {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* Neurotransmitter Selector */
+        .nt-selector {
+            margin-bottom: 20px;
+        }
+
+        .nt-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
         .nt-btn {
-            padding: 10px 20px;
+            padding: 12px 10px;
             border: 2px solid;
             background: transparent;
-            border-radius: 20px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.2s;
-        }
-        .nt-btn.acetylcholin { border-color: #2ecc71; color: #2ecc71; }
-        .nt-btn.dopamin { border-color: #f1c40f; color: #f1c40f; }
-        .nt-btn.serotonin { border-color: #9b59b6; color: #9b59b6; }
-        .nt-btn.active { color: #1a1a2e; }
-        .nt-btn.active.acetylcholin { background: #2ecc71; }
-        .nt-btn.active.dopamin { background: #f1c40f; }
-        .nt-btn.active.serotonin { background: #9b59b6; }
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .control-btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-            transition: all 0.2s;
-        }
-        .control-btn:hover { transform: translateY(-2px); }
-        .control-btn.fire { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
-        .control-btn.reset { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85em; }
-        .legend-dot { width: 16px; height: 16px; border-radius: 50%; }
-        .potential-display {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 15px 0;
-        }
-        .potential-box {
-            padding: 15px 25px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+            transition: all 0.3s;
             text-align: center;
         }
-        .potential-value { font-size: 1.8em; font-weight: bold; }
-        .potential-label { font-size: 0.85em; color: #90a4ae; }
-        .info-box {
-            background: rgba(79, 195, 247, 0.1);
-            border-left: 4px solid #4fc3f7;
-            padding: 15px 20px;
-            border-radius: 0 10px 10px 0;
-            margin-top: 20px;
+
+        .nt-btn.acetylcholine { border-color: rgba(34, 211, 238, 0.4); color: #22d3ee; }
+        .nt-btn.dopamine { border-color: rgba(251, 191, 36, 0.4); color: #fbbf24; }
+        .nt-btn.serotonin { border-color: rgba(248, 113, 113, 0.4); color: #f87171; }
+        .nt-btn.gaba { border-color: rgba(74, 222, 128, 0.4); color: #4ade80; }
+
+        .nt-btn.active {
+            color: #0c0a1d;
+            font-weight: 600;
         }
-        .info-box h3 { color: #4fc3f7; margin-bottom: 10px; }
-        .info-box p { line-height: 1.6; color: #b0bec5; }
+
+        .nt-btn.active.acetylcholine { background: #22d3ee; }
+        .nt-btn.active.dopamine { background: #fbbf24; }
+        .nt-btn.active.serotonin { background: #f87171; }
+        .nt-btn.active.gaba { background: #4ade80; }
+
+        /* Control Buttons */
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .ctrl-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ctrl-btn.play {
+            background: linear-gradient(135deg, #a78bfa, #818cf8);
+            color: white;
+            box-shadow: 0 8px 25px rgba(167, 139, 250, 0.3);
+        }
+
+        .ctrl-btn.reset {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+        }
+
+        .ctrl-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Info Card */
+        .info-card {
+            padding: 18px;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(167, 139, 250, 0.02));
+            border-radius: 14px;
+            border: 1px solid rgba(167, 139, 250, 0.15);
+        }
+
+        .info-card h4 {
+            color: #a78bfa;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        .nt-effect {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+
+        .nt-effect span {
+            display: block;
+            margin-bottom: 4px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .nt-effect strong {
+            color: #a78bfa;
+        }
+
+        .info-footer {
+            margin-top: 25px;
+            padding: 22px;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(129, 140, 248, 0.05));
+            border-radius: 18px;
+            border-left: 4px solid #a78bfa;
+        }
+
+        .info-footer h3 {
+            color: #c4b5fd;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .info-footer p {
+            color: rgba(255,255,255,0.6);
+            line-height: 1.7;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
+    <div class="bg-neural" id="bgNeural"></div>
+
     <div class="container">
-        <h1>⚡ Synapse – Signalübertragung</h1>
-        <p class="subtitle">6. Klasse Biologie – Wie Nervenzellen kommunizieren</p>
+        <header>
+            <h1>⚡ Synapse – Signalübertragung</h1>
+            <p class="subtitle">Beobachte, wie Nervenzellen miteinander kommunizieren</p>
+        </header>
 
-        <div class="simulation-area">
-            <div class="neurotransmitter-selector">
-                <span style="color: #90a4ae;">Neurotransmitter:</span>
-                <button class="nt-btn acetylcholin active" onclick="selectNT('acetylcholin')">🟢 Acetylcholin</button>
-                <button class="nt-btn dopamin" onclick="selectNT('dopamin')">🟡 Dopamin</button>
-                <button class="nt-btn serotonin" onclick="selectNT('serotonin')">🟣 Serotonin</button>
+        <div class="main-content">
+            <div class="simulation-wrapper">
+                <canvas id="canvas" width="800" height="550"></canvas>
             </div>
 
-            <canvas id="synapseCanvas" width="850" height="400"></canvas>
+            <div class="glass-panel">
+                <div class="panel-title">📡 Übertragungsschritte</div>
 
-            <div class="potential-display">
-                <div class="potential-box">
-                    <div class="potential-value" id="presynapticPotential" style="color: #e74c3c;">-70 mV</div>
-                    <div class="potential-label">Präsynaptisches Neuron</div>
-                </div>
-                <div class="potential-box">
-                    <div class="potential-value" id="postsynapticPotential" style="color: #3498db;">-70 mV</div>
-                    <div class="potential-label">Postsynaptisches Neuron</div>
-                </div>
-            </div>
+                <div class="step-progress" id="stepProgress"></div>
 
-            <div class="step-display">
-                <div class="step-item active" data-step="0">1. Ruhezustand</div>
-                <div class="step-item" data-step="1">2. Aktionspotential</div>
-                <div class="step-item" data-step="2">3. Ca²⁺-Einstrom</div>
-                <div class="step-item" data-step="3">4. Vesikel-Fusion</div>
-                <div class="step-item" data-step="4">5. Transmitter</div>
-                <div class="step-item" data-step="5">6. Rezeptorbindung</div>
-            </div>
+                <div class="panel-title">🧪 Neurotransmitter</div>
+                <div class="nt-selector">
+                    <div class="nt-grid">
+                        <button class="nt-btn acetylcholine active" onclick="setNT('acetylcholine')">Acetylcholin</button>
+                        <button class="nt-btn dopamine" onclick="setNT('dopamine')">Dopamin</button>
+                        <button class="nt-btn serotonin" onclick="setNT('serotonin')">Serotonin</button>
+                        <button class="nt-btn gaba" onclick="setNT('gaba')">GABA</button>
+                    </div>
+                </div>
 
-            <div class="info-display">
-                <div class="info-title" id="stepTitle">1. Ruhezustand</div>
-                <div class="info-desc" id="stepDesc">
-                    Das Neuron ist im Ruhezustand. Das Membranpotential beträgt -70 mV.
-                    Die Vesikel mit Neurotransmittern warten im synaptischen Endknöpfchen.
+                <div class="control-buttons">
+                    <button class="ctrl-btn play" id="playBtn" onclick="togglePlay()">▶ Starten</button>
+                    <button class="ctrl-btn reset" onclick="resetSimulation()">↺ Reset</button>
                 </div>
-            </div>
 
-            <div class="controls">
-                <button class="control-btn fire" onclick="fireNeuron()">⚡ Signal senden</button>
-                <button class="control-btn reset" onclick="resetSynapse()">↺ Zurücksetzen</button>
-            </div>
-
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: #f39c12;"></div>
-                    <span>Vesikel</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: #2ecc71;"></div>
-                    <span>Neurotransmitter</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: #e74c3c;"></div>
-                    <span>Ca²⁺ Ionen</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: #9b59b6;"></div>
-                    <span>Rezeptoren</span>
+                <div class="info-card" id="infoCard">
+                    <h4 id="stepTitle">Bereit zum Start</h4>
+                    <p id="stepDesc">Drücke "Starten", um die synaptische Übertragung zu beobachten.</p>
+                    <div class="nt-effect" id="ntEffect">
+                        <span>Aktueller Neurotransmitter:</span>
+                        <strong id="ntName">Acetylcholin</strong>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="info-box">
-            <h3>📚 Die Synapse</h3>
-            <p>Die Synapse ist die Verbindungsstelle zwischen zwei Nervenzellen. Ein elektrisches Signal (Aktionspotential)
-            löst die Freisetzung von <strong>Neurotransmittern</strong> aus. Diese binden an <strong>Rezeptoren</strong>
-            der nächsten Zelle und lösen dort ein neues Signal aus. Der synaptische Spalt ist nur 20-40 nm breit!</p>
+        <div class="info-footer">
+            <h3>📚 Wusstest du?</h3>
+            <p>Dein Gehirn enthält etwa <strong>86 Milliarden Neuronen</strong>, die über <strong>100 Billionen Synapsen</strong> verbunden sind.
+            Die Signalübertragung dauert nur etwa 0,5-1 Millisekunde – schneller als ein Wimpernschlag!</p>
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('synapseCanvas');
+        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        const ntColors = {
-            acetylcholin: '#2ecc71',
-            dopamin: '#f1c40f',
-            serotonin: '#9b59b6'
+        const steps = [
+            { title: 'Aktionspotential', desc: 'Ein elektrisches Signal (Aktionspotential) erreicht das Axonende des präsynaptischen Neurons.' },
+            { title: 'Ca²⁺-Einstrom', desc: 'Spannungsgesteuerte Calciumkanäle öffnen sich. Ca²⁺-Ionen strömen in die Zelle.' },
+            { title: 'Vesikelfusion', desc: 'Der Ca²⁺-Anstieg bewirkt, dass Vesikel mit der Membran verschmelzen (Exozytose).' },
+            { title: 'NT-Freisetzung', desc: 'Neurotransmitter werden in den synaptischen Spalt freigesetzt.' },
+            { title: 'Rezeptorbindung', desc: 'Neurotransmitter binden an spezifische Rezeptoren der postsynaptischen Membran.' },
+            { title: 'Signalweiterleitung', desc: 'Ionenkanäle öffnen sich, ein neues elektrisches Signal wird ausgelöst.' }
+        ];
+
+        const neurotransmitters = {
+            acetylcholine: { name: 'Acetylcholin', color: '#22d3ee', effect: 'Muskelkontraktion, Gedächtnis, Lernen' },
+            dopamine: { name: 'Dopamin', color: '#fbbf24', effect: 'Belohnung, Motivation, Bewegung' },
+            serotonin: { name: 'Serotonin', color: '#f87171', effect: 'Stimmung, Schlaf, Appetit' },
+            gaba: { name: 'GABA', color: '#4ade80', effect: 'Hemmung, Entspannung, Angstlösung' }
         };
 
-        let selectedNT = 'acetylcholin';
-        let currentStep = 0;
-        let isAnimating = false;
-        let animationProgress = 0;
+        let currentStep = -1;
+        let isPlaying = false;
+        let currentNT = 'acetylcholine';
+        let animTime = 0;
+        let particles = [];
         let vesicles = [];
-        let neurotransmitters = [];
-        let calciumIons = [];
-
-        const steps = [
-            { title: '1. Ruhezustand', desc: 'Das Neuron ist im Ruhezustand. Das Membranpotential beträgt -70 mV. Die Vesikel mit Neurotransmittern warten im synaptischen Endknöpfchen.' },
-            { title: '2. Aktionspotential', desc: 'Ein Aktionspotential (+40 mV) erreicht das synaptische Endknöpfchen. Die Depolarisation breitet sich entlang des Axons aus.' },
-            { title: '3. Ca²⁺-Einstrom', desc: 'Spannungsgesteuerte Calciumkanäle öffnen sich. Ca²⁺-Ionen strömen in das Endknöpfchen ein.' },
-            { title: '4. Vesikel-Fusion', desc: 'Die erhöhte Ca²⁺-Konzentration bewirkt, dass Vesikel mit der präsynaptischen Membran verschmelzen.' },
-            { title: '5. Transmitter-Freisetzung', desc: 'Neurotransmitter werden durch Exozytose in den synaptischen Spalt freigesetzt.' },
-            { title: '6. Rezeptorbindung', desc: 'Neurotransmitter binden an Rezeptoren der postsynaptischen Membran. Ionenkanäle öffnen sich, ein neues Signal entsteht.' }
-        ];
+        let actionPotentialPos = 0;
 
         // Initialize vesicles
         function initVesicles() {
             vesicles = [];
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 8; i++) {
                 vesicles.push({
-                    x: 180 + (i % 3) * 30,
-                    y: 150 + Math.floor(i / 3) * 30,
-                    released: false
+                    x: 250 + Math.random() * 80,
+                    y: 220 + Math.random() * 60,
+                    radius: 8 + Math.random() * 4,
+                    released: false,
+                    fusing: false
                 });
             }
         }
 
-        function selectNT(nt) {
-            selectedNT = nt;
-            document.querySelectorAll('.nt-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.nt-btn.${nt}`).classList.add('active');
-            resetSynapse();
+        // Render step progress
+        function renderSteps() {
+            const container = document.getElementById('stepProgress');
+            container.innerHTML = steps.map((step, i) => `
+                <div class="step-item ${i === currentStep ? 'active' : ''} ${i < currentStep ? 'completed' : ''}" onclick="goToStep(${i})">
+                    <div class="step-num">${i < currentStep ? '✓' : i + 1}</div>
+                    <div class="step-text">${step.title}</div>
+                </div>
+            `).join('');
         }
 
+        function setNT(nt) {
+            currentNT = nt;
+            document.querySelectorAll('.nt-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.nt-btn.${nt}`).classList.add('active');
+            document.getElementById('ntName').textContent = neurotransmitters[nt].name;
+            document.getElementById('ntName').style.color = neurotransmitters[nt].color;
+        }
+
+        function goToStep(step) {
+            if (step >= 0 && step < steps.length) {
+                currentStep = step;
+                updateStepInfo();
+                renderSteps();
+            }
+        }
+
+        function updateStepInfo() {
+            if (currentStep >= 0 && currentStep < steps.length) {
+                document.getElementById('stepTitle').textContent = steps[currentStep].title;
+                document.getElementById('stepDesc').textContent = steps[currentStep].desc;
+            }
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+            btn.textContent = isPlaying ? '⏸ Pause' : '▶ Starten';
+
+            if (isPlaying && currentStep < 0) {
+                currentStep = 0;
+                updateStepInfo();
+                renderSteps();
+            }
+        }
+
+        function resetSimulation() {
+            isPlaying = false;
+            currentStep = -1;
+            actionPotentialPos = 0;
+            particles = [];
+            initVesicles();
+            document.getElementById('playBtn').textContent = '▶ Starten';
+            document.getElementById('stepTitle').textContent = 'Bereit zum Start';
+            document.getElementById('stepDesc').textContent = 'Drücke "Starten", um die synaptische Übertragung zu beobachten.';
+            renderSteps();
+        }
+
+        // Drawing functions
         function drawPresynapticNeuron() {
+            const cx = 200, cy = 280;
+
             // Axon
-            ctx.fillStyle = currentStep >= 1 ? '#ff6b6b' : '#e74c3c';
             ctx.beginPath();
-            ctx.moveTo(0, 180);
-            ctx.lineTo(150, 180);
-            ctx.lineTo(150, 220);
-            ctx.lineTo(0, 220);
+            ctx.moveTo(50, cy);
+            ctx.lineTo(cx - 30, cy);
+            ctx.strokeStyle = '#a78bfa';
+            ctx.lineWidth = 20;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Axon glow
+            ctx.beginPath();
+            ctx.moveTo(50, cy);
+            ctx.lineTo(cx - 30, cy);
+            ctx.strokeStyle = 'rgba(167, 139, 250, 0.3)';
+            ctx.lineWidth = 30;
+            ctx.stroke();
+
+            // Action potential
+            if (currentStep >= 0 && currentStep < 3 && isPlaying) {
+                actionPotentialPos += 3;
+                if (actionPotentialPos > 180) actionPotentialPos = 0;
+
+                const apX = 50 + actionPotentialPos;
+                const glow = ctx.createRadialGradient(apX, cy, 5, apX, cy, 30);
+                glow.addColorStop(0, 'rgba(255, 255, 100, 0.9)');
+                glow.addColorStop(1, 'rgba(255, 255, 100, 0)');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(apX, cy, 30, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Axon terminal (bouton)
+            ctx.beginPath();
+            ctx.arc(cx + 50, cy, 80, 0, Math.PI * 2);
+            const termGrad = ctx.createRadialGradient(cx + 30, cy - 20, 20, cx + 50, cy, 80);
+            termGrad.addColorStop(0, '#c4b5fd');
+            termGrad.addColorStop(0.5, '#a78bfa');
+            termGrad.addColorStop(1, '#6d28d9');
+            ctx.fillStyle = termGrad;
             ctx.fill();
 
-            // Synaptic terminal (enlarged end)
+            // Terminal glow
+            const termGlow = ctx.createRadialGradient(cx + 50, cy, 50, cx + 50, cy, 120);
+            termGlow.addColorStop(0, 'rgba(167, 139, 250, 0.2)');
+            termGlow.addColorStop(1, 'rgba(167, 139, 250, 0)');
+            ctx.fillStyle = termGlow;
             ctx.beginPath();
-            ctx.arc(200, 200, 80, 0, Math.PI * 2);
-            const terminalGrad = ctx.createRadialGradient(180, 180, 10, 200, 200, 80);
-            terminalGrad.addColorStop(0, currentStep >= 1 ? '#ff8080' : '#ff6b6b');
-            terminalGrad.addColorStop(1, currentStep >= 1 ? '#c0392b' : '#a93226');
-            ctx.fillStyle = terminalGrad;
+            ctx.arc(cx + 50, cy, 120, 0, Math.PI * 2);
             ctx.fill();
 
             // Vesicles
+            const ntColor = neurotransmitters[currentNT].color;
             vesicles.forEach(v => {
                 if (!v.released) {
                     ctx.beginPath();
-                    ctx.arc(v.x, v.y, 12, 0, Math.PI * 2);
-                    ctx.fillStyle = '#f39c12';
+                    ctx.arc(v.x, v.y, v.radius, 0, Math.PI * 2);
+                    const vGrad = ctx.createRadialGradient(v.x - 2, v.y - 2, 2, v.x, v.y, v.radius);
+                    vGrad.addColorStop(0, ntColor);
+                    vGrad.addColorStop(1, ntColor.replace(')', ', 0.6)').replace('rgb', 'rgba'));
+                    ctx.fillStyle = vGrad;
                     ctx.fill();
-                    ctx.strokeStyle = '#e67e22';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                }
+            });
 
-                    // NT inside vesicle
-                    ctx.fillStyle = ntColors[selectedNT];
-                    for (let i = 0; i < 3; i++) {
+            // Calcium channels (step 1-2)
+            if (currentStep >= 1) {
+                ctx.fillStyle = currentStep >= 2 ? '#22c55e' : '#facc15';
+                for (let i = 0; i < 5; i++) {
+                    const angle = Math.PI * 0.3 + i * 0.15;
+                    const x = cx + 50 + Math.cos(angle) * 75;
+                    const y = cy + Math.sin(angle) * 75;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Ca2+ ions entering
+                    if (currentStep >= 2 && isPlaying) {
+                        const offset = (animTime * 2 + i) % 20;
                         ctx.beginPath();
-                        ctx.arc(v.x + (i - 1) * 5, v.y, 2, 0, Math.PI * 2);
+                        ctx.arc(x - offset, y + offset * 0.5, 3, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(34, 197, 94, 0.8)';
                         ctx.fill();
                     }
                 }
-            });
-
-            // Calcium channels
-            if (currentStep >= 2) {
-                ctx.fillStyle = '#3498db';
-                for (let i = 0; i < 3; i++) {
-                    ctx.fillRect(260, 160 + i * 25, 15, 20);
-                }
             }
 
-            // Calcium ions
-            calciumIons.forEach(ion => {
-                ctx.beginPath();
-                ctx.arc(ion.x, ion.y, 5, 0, Math.PI * 2);
-                ctx.fillStyle = '#e74c3c';
-                ctx.fill();
-                ctx.fillStyle = '#fff';
-                ctx.font = '8px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('Ca', ion.x, ion.y + 3);
-            });
-
-            // Label
+            // Labels
+            ctx.font = 'bold 12px Inter';
             ctx.fillStyle = '#fff';
-            ctx.font = 'bold 12px Segoe UI';
             ctx.textAlign = 'center';
-            ctx.fillText('Präsynaptisches', 120, 260);
-            ctx.fillText('Neuron', 120, 275);
+            ctx.fillText('Präsynaptisches', cx + 50, cy + 110);
+            ctx.fillText('Neuron', cx + 50, cy + 125);
         }
 
         function drawSynapticCleft() {
-            // Synaptic cleft (gap)
-            ctx.fillStyle = 'rgba(52, 152, 219, 0.2)';
-            ctx.fillRect(280, 120, 60, 160);
+            // Cleft area
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillRect(345, 180, 110, 200);
 
-            // Neurotransmitters in cleft
-            neurotransmitters.forEach(nt => {
-                ctx.beginPath();
-                ctx.arc(nt.x, nt.y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = ntColors[selectedNT];
-                ctx.fill();
-            });
+            // Membrane lines
+            ctx.strokeStyle = 'rgba(167, 139, 250, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+
+            ctx.beginPath();
+            ctx.moveTo(345, 180);
+            ctx.lineTo(345, 380);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(455, 180);
+            ctx.lineTo(455, 380);
+            ctx.stroke();
+
+            ctx.setLineDash([]);
 
             // Label
-            ctx.fillStyle = '#90a4ae';
-            ctx.font = '10px Segoe UI';
+            ctx.font = '11px Inter';
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
             ctx.textAlign = 'center';
-            ctx.fillText('Synaptischer', 310, 300);
-            ctx.fillText('Spalt (20nm)', 310, 315);
+            ctx.fillText('Synaptischer', 400, 400);
+            ctx.fillText('Spalt (~20nm)', 400, 415);
+
+            // Neurotransmitter particles
+            const ntColor = neurotransmitters[currentNT].color;
+            if (currentStep >= 3) {
+                particles.forEach(p => {
+                    const glow = ctx.createRadialGradient(p.x, p.y, 2, p.x, p.y, 10);
+                    glow.addColorStop(0, ntColor);
+                    glow.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = glow;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = ntColor;
+                    ctx.fill();
+                });
+            }
         }
 
         function drawPostsynapticNeuron() {
-            // Dendrite
-            ctx.fillStyle = currentStep >= 5 ? '#5dade2' : '#3498db';
+            const cx = 600, cy = 280;
+
+            // Dendrite body
             ctx.beginPath();
-            ctx.moveTo(340, 120);
-            ctx.lineTo(850, 120);
-            ctx.lineTo(850, 280);
-            ctx.lineTo(340, 280);
+            ctx.arc(cx - 50, cy, 80, 0, Math.PI * 2);
+            const dendGrad = ctx.createRadialGradient(cx - 70, cy - 20, 20, cx - 50, cy, 80);
+            dendGrad.addColorStop(0, '#93c5fd');
+            dendGrad.addColorStop(0.5, '#60a5fa');
+            dendGrad.addColorStop(1, '#1d4ed8');
+            ctx.fillStyle = dendGrad;
+            ctx.fill();
+
+            // Glow
+            const dendGlow = ctx.createRadialGradient(cx - 50, cy, 50, cx - 50, cy, 120);
+            dendGlow.addColorStop(0, 'rgba(96, 165, 250, 0.2)');
+            dendGlow.addColorStop(1, 'rgba(96, 165, 250, 0)');
+            ctx.fillStyle = dendGlow;
+            ctx.beginPath();
+            ctx.arc(cx - 50, cy, 120, 0, Math.PI * 2);
             ctx.fill();
 
             // Receptors
-            ctx.fillStyle = '#9b59b6';
-            for (let i = 0; i < 5; i++) {
-                const y = 140 + i * 25;
-                ctx.beginPath();
-                ctx.moveTo(340, y);
-                ctx.lineTo(355, y - 10);
-                ctx.lineTo(370, y);
-                ctx.lineTo(355, y + 10);
-                ctx.closePath();
-                ctx.fill();
+            const ntColor = neurotransmitters[currentNT].color;
+            for (let i = 0; i < 6; i++) {
+                const angle = Math.PI * 0.7 + i * 0.12;
+                const x = cx - 50 + Math.cos(angle) * 75;
+                const y = cy + Math.sin(angle) * 75;
 
-                // Receptor binding site
-                ctx.fillStyle = currentStep >= 5 && neurotransmitters.some(nt => Math.abs(nt.y - y) < 15) ? ntColors[selectedNT] : '#7d3c98';
+                // Receptor shape (Y-shape)
+                ctx.strokeStyle = currentStep >= 4 ? ntColor : 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 3;
                 ctx.beginPath();
-                ctx.arc(355, y, 6, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#9b59b6';
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + 8, y - 8);
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - 8, y - 8);
+                ctx.moveTo(x, y);
+                ctx.lineTo(x, y + 10);
+                ctx.stroke();
+
+                // Bound neurotransmitter
+                if (currentStep >= 4) {
+                    ctx.beginPath();
+                    ctx.arc(x, y - 5, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = ntColor;
+                    ctx.fill();
+                }
             }
 
-            // Ion channels (open when activated)
+            // Ion channels opening (step 5)
             if (currentStep >= 5) {
-                ctx.fillStyle = '#2ecc71';
-                ctx.font = '10px Segoe UI';
-                ctx.fillText('Na⁺ →', 380, 170);
-                ctx.fillText('Na⁺ →', 380, 220);
+                ctx.fillStyle = 'rgba(34, 211, 238, 0.7)';
+                for (let i = 0; i < 4; i++) {
+                    const angle = Math.PI * 0.6 + i * 0.2;
+                    const x = cx - 50 + Math.cos(angle) * 60;
+                    const y = cy + Math.sin(angle) * 60;
+
+                    // Ion flow
+                    for (let j = 0; j < 3; j++) {
+                        const offset = (animTime * 3 + i + j) % 15;
+                        ctx.beginPath();
+                        ctx.arc(x + offset, y - offset * 0.5, 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                // Signal propagation
+                const signalX = cx + 30 + (animTime * 2) % 100;
+                const glow = ctx.createRadialGradient(signalX, cy, 5, signalX, cy, 25);
+                glow.addColorStop(0, 'rgba(96, 165, 250, 0.9)');
+                glow.addColorStop(1, 'rgba(96, 165, 250, 0)');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(signalX, cy, 25, 0, Math.PI * 2);
+                ctx.fill();
             }
 
-            // Label
+            // Axon continuing
+            ctx.beginPath();
+            ctx.moveTo(cx + 30, cy);
+            ctx.lineTo(750, cy);
+            ctx.strokeStyle = '#60a5fa';
+            ctx.lineWidth = 20;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(96, 165, 250, 0.3)';
+            ctx.lineWidth = 30;
+            ctx.stroke();
+
+            // Labels
+            ctx.font = 'bold 12px Inter';
             ctx.fillStyle = '#fff';
-            ctx.font = 'bold 12px Segoe UI';
             ctx.textAlign = 'center';
-            ctx.fillText('Postsynaptisches Neuron', 550, 300);
+            ctx.fillText('Postsynaptisches', cx - 50, cy + 110);
+            ctx.fillText('Neuron', cx - 50, cy + 125);
         }
 
-        function draw() {
+        function updateParticles() {
+            if (currentStep >= 3 && currentStep < 5 && isPlaying) {
+                // Release particles from vesicles
+                if (particles.length < 30 && Math.random() > 0.7) {
+                    particles.push({
+                        x: 330 + Math.random() * 20,
+                        y: 240 + Math.random() * 80,
+                        vx: 1 + Math.random() * 2,
+                        vy: (Math.random() - 0.5) * 0.5
+                    });
+                }
+            }
+
+            // Move particles toward receptors
+            particles.forEach(p => {
+                if (currentStep >= 4) {
+                    // Move toward receptors
+                    p.vx = 2;
+                    if (p.x > 460) {
+                        p.x = 460;
+                        p.vx = 0;
+                    }
+                }
+                p.x += p.vx;
+                p.y += p.vy;
+            });
+
+            // Remove particles that reached receptors
+            if (currentStep >= 5) {
+                particles = particles.filter(p => p.x < 455);
+            }
+        }
+
+        function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Background
+            const bgGrad = ctx.createRadialGradient(400, 280, 100, 400, 280, 400);
+            bgGrad.addColorStop(0, '#1a1530');
+            bgGrad.addColorStop(1, '#0c0a1d');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            animTime += 0.05;
+
+            // Auto-advance steps
+            if (isPlaying) {
+                const stepDuration = 120; // frames per step
+                const frameInStep = Math.floor(animTime * 10) % stepDuration;
+
+                if (frameInStep === 0 && currentStep < steps.length - 1) {
+                    currentStep++;
+                    updateStepInfo();
+                    renderSteps();
+                }
+            }
+
+            updateParticles();
 
             drawPresynapticNeuron();
             drawSynapticCleft();
             drawPostsynapticNeuron();
 
-            // Draw action potential wave if in step 1
-            if (currentStep === 1) {
-                ctx.strokeStyle = '#f1c40f';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                for (let x = 0; x < 200; x += 5) {
-                    const y = 200 + Math.sin((x + animationProgress * 100) * 0.1) * 20;
-                    if (x === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.stroke();
+            requestAnimationFrame(animate);
+        }
+
+        // Create background sparks
+        function createSparks() {
+            const container = document.getElementById('bgNeural');
+            for (let i = 0; i < 50; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'neural-spark';
+                spark.style.left = Math.random() * 100 + '%';
+                spark.style.top = Math.random() * 100 + '%';
+                spark.style.animationDelay = Math.random() * 4 + 's';
+                spark.style.animationDuration = (3 + Math.random() * 3) + 's';
+                container.appendChild(spark);
             }
         }
 
-        function updateStepDisplay() {
-            document.querySelectorAll('.step-item').forEach((item, i) => {
-                item.classList.remove('active', 'completed');
-                if (i < currentStep) item.classList.add('completed');
-                if (i === currentStep) item.classList.add('active');
-            });
-
-            document.getElementById('stepTitle').textContent = steps[currentStep].title;
-            document.getElementById('stepDesc').textContent = steps[currentStep].desc;
-
-            // Update potential displays
-            const prePotential = currentStep >= 1 ? '+40 mV' : '-70 mV';
-            const postPotential = currentStep >= 5 ? '-55 mV' : '-70 mV';
-            document.getElementById('presynapticPotential').textContent = prePotential;
-            document.getElementById('presynapticPotential').style.color = currentStep >= 1 ? '#f1c40f' : '#e74c3c';
-            document.getElementById('postsynapticPotential').textContent = postPotential;
-            document.getElementById('postsynapticPotential').style.color = currentStep >= 5 ? '#2ecc71' : '#3498db';
-        }
-
-        function fireNeuron() {
-            if (isAnimating) return;
-            isAnimating = true;
-            animateSequence();
-        }
-
-        function animateSequence() {
-            if (currentStep >= 6) {
-                isAnimating = false;
-                return;
-            }
-
-            currentStep++;
-            updateStepDisplay();
-
-            if (currentStep === 3) {
-                // Add calcium ions
-                for (let i = 0; i < 8; i++) {
-                    calciumIons.push({
-                        x: 280,
-                        y: 160 + Math.random() * 80,
-                        targetX: 200 + Math.random() * 60,
-                        targetY: 160 + Math.random() * 80
-                    });
-                }
-            }
-
-            if (currentStep === 4) {
-                // Move vesicles to membrane
-                vesicles.forEach((v, i) => {
-                    if (i < 3) {
-                        v.targetX = 260;
-                        v.targetY = 150 + i * 35;
-                    }
-                });
-            }
-
-            if (currentStep === 5) {
-                // Release neurotransmitters
-                vesicles.forEach((v, i) => {
-                    if (i < 3) {
-                        v.released = true;
-                        for (let j = 0; j < 5; j++) {
-                            neurotransmitters.push({
-                                x: 280,
-                                y: v.y + (Math.random() - 0.5) * 20,
-                                targetX: 340,
-                                targetY: 140 + Math.floor(j / 2) * 25 + (i * 8)
-                            });
-                        }
-                    }
-                });
-            }
-
-            animateStep();
-        }
-
-        function animateStep() {
-            animationProgress += 0.02;
-
-            // Animate calcium ions
-            calciumIons.forEach(ion => {
-                ion.x += (ion.targetX - ion.x) * 0.1;
-                ion.y += (ion.targetY - ion.y) * 0.1;
-            });
-
-            // Animate vesicles
-            vesicles.forEach(v => {
-                if (v.targetX) {
-                    v.x += (v.targetX - v.x) * 0.1;
-                    v.y += (v.targetY - v.y) * 0.1;
-                }
-            });
-
-            // Animate neurotransmitters
-            neurotransmitters.forEach(nt => {
-                if (nt.targetX) {
-                    nt.x += (nt.targetX - nt.x) * 0.05;
-                    nt.y += (nt.targetY - nt.y) * 0.05;
-                }
-            });
-
-            draw();
-
-            if (animationProgress < 1) {
-                requestAnimationFrame(animateStep);
-            } else {
-                animationProgress = 0;
-                setTimeout(animateSequence, 800);
-            }
-        }
-
-        function resetSynapse() {
-            currentStep = 0;
-            isAnimating = false;
-            animationProgress = 0;
-            neurotransmitters = [];
-            calciumIons = [];
-            initVesicles();
-            updateStepDisplay();
-            draw();
-        }
-
+        // Initialize
+        createSparks();
         initVesicles();
-        draw();
+        renderSteps();
+        animate();
     </script>
 </body>
 </html>
