@@ -169,7 +169,7 @@
 
         <div class="main-layout">
             <div class="canvas-section">
-                <canvas id="ionCanvas" width="600" height="280"></canvas>
+                <canvas id="ionCanvas" width="700" height="350"></canvas>
 
                 <div class="formula-display">
                     <span class="na">Na</span> + <span class="cl">Cl</span>
@@ -329,8 +329,8 @@
             }
         }
 
-        let naAtom = new Atom(200, 200, 'Na', '#9b59b6', [2, 8, 1], 11);
-        let clAtom = new Atom(650, 200, 'Cl', '#27ae60', [2, 8, 7], 17);
+        let naAtom = new Atom(180, 175, 'Na', '#9b59b6', [2, 8, 1], 11);
+        let clAtom = new Atom(520, 175, 'Cl', '#27ae60', [2, 8, 7], 17);
         let transferringElectron = null;
 
         function draw() {
@@ -372,8 +372,8 @@
                     // Arrow
                     const midX = (naAtom.x + clAtom.x) / 2;
                     ctx.beginPath();
-                    ctx.moveTo(naAtom.x + 120, 200);
-                    ctx.lineTo(clAtom.x - 120, 200);
+                    ctx.moveTo(naAtom.x + 120, 175);
+                    ctx.lineTo(clAtom.x - 120, 175);
                     ctx.strokeStyle = 'rgba(231, 76, 60, 0.5)';
                     ctx.lineWidth = 3;
                     ctx.setLineDash([10, 5]);
@@ -390,16 +390,16 @@
                 clAtom.draw(false, false);
             } else if (currentStep === 4) {
                 // Ions attract
-                naAtom.x = 350;
-                clAtom.x = 500;
+                naAtom.x = 280;
+                clAtom.x = 420;
 
                 naAtom.draw(false, false);
                 clAtom.draw(false, false);
 
                 // Attraction lines
                 ctx.beginPath();
-                ctx.moveTo(naAtom.x + 50, 200);
-                ctx.lineTo(clAtom.x - 50, 200);
+                ctx.moveTo(naAtom.x + 50, 175);
+                ctx.lineTo(clAtom.x - 50, 175);
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
                 ctx.lineWidth = 3;
                 ctx.setLineDash([5, 5]);
@@ -410,7 +410,7 @@
                 ctx.fillStyle = '#4fc3f7';
                 ctx.font = 'bold 16px Segoe UI';
                 ctx.textAlign = 'center';
-                ctx.fillText('Ionenbindung', 425, 170);
+                ctx.fillText('Ionenbindung', 350, 145);
             }
 
             requestAnimationFrame(draw);
