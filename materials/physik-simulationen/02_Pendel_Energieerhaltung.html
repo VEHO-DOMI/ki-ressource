@@ -381,9 +381,8 @@
         const pivotY = 60;
 
         function getPivotX() {
-            // Pivot so positionieren, dass voller Schwungbogen sichtbar ist
-            // Links: mindestens length+30 Platz, Rechts: Platz für Höhenbalken
-            return Math.min(length + 50, canvas.width * 0.5);
+            // Pivot in der Mitte, aber mit Offset für Höhenbalken rechts
+            return (canvas.width - 80) / 2;
         }
 
         let length = 200;
