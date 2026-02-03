@@ -252,41 +252,300 @@
 
             draw() {
                 ctx.save();
+                ctx.textAlign = 'center';
 
-                // Shadow
-                ctx.fillStyle = 'rgba(0,0,0,0.3)';
-                ctx.beginPath();
-                ctx.ellipse(this.x + 3, this.y + this.size + 3, this.size/2, this.size/4, 0, 0, Math.PI * 2);
-                ctx.fill();
+                const cx = this.x;
+                const cy = this.y + this.size/2;
+                const s = this.size;
 
-                // Object
-                const gradient = ctx.createRadialGradient(
-                    this.x - this.size/4, this.y - this.size/4, 0,
-                    this.x, this.y, this.size
-                );
-                gradient.addColorStop(0, this.lightenColor(this.material.color, 40));
-                gradient.addColorStop(1, this.material.color);
-
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y + this.size/2, this.size/2, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Border
-                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                // Draw shape based on material type
+                switch(this.type) {
+                    case 'wood':
+                        this.drawWood(cx, cy, s);
+                        break;
+                    case 'ice':
+                        this.drawIce(cx, cy, s);
+                        break;
+                    case 'cork':
+                        this.drawCork(cx, cy, s);
+                        break;
+                    case 'oil':
+                        this.drawOil(cx, cy, s);
+                        break;
+                    case 'stone':
+                        this.drawStone(cx, cy, s);
+                        break;
+                    case 'iron':
+                        this.drawIron(cx, cy, s);
+                        break;
+                }
 
                 // Label
                 ctx.fillStyle = 'white';
                 ctx.font = 'bold 12px Segoe UI';
-                ctx.textAlign = 'center';
                 ctx.fillText(this.material.name, this.x, this.y + this.size + 20);
                 ctx.font = '10px Segoe UI';
                 ctx.fillStyle = '#90a4ae';
                 ctx.fillText(`ρ = ${this.material.density} g/cm³`, this.x, this.y + this.size + 35);
 
                 ctx.restore();
+            }
+
+            // Holz - Holzscheit/Baumstamm
+            drawWood(cx, cy, s) {
+                const w = s * 1.4;
+                const h = s * 0.7;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fillRect(cx - w/2 + 4, cy - h/2 + 4, w, h);
+
+                // Main body
+                const grad = ctx.createLinearGradient(cx - w/2, cy, cx + w/2, cy);
+                grad.addColorStop(0, '#6B4423');
+                grad.addColorStop(0.3, '#8B5A2B');
+                grad.addColorStop(0.5, '#A0522D');
+                grad.addColorStop(0.7, '#8B5A2B');
+                grad.addColorStop(1, '#6B4423');
+                ctx.fillStyle = grad;
+                ctx.fillRect(cx - w/2, cy - h/2, w, h);
+
+                // Wood grain lines
+                ctx.strokeStyle = 'rgba(139, 69, 19, 0.6)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 5; i++) {
+                    const yPos = cy - h/2 + (i + 1) * h/6;
+                    ctx.beginPath();
+                    ctx.moveTo(cx - w/2 + 5, yPos);
+                    ctx.bezierCurveTo(cx - w/4, yPos - 3, cx + w/4, yPos + 3, cx + w/2 - 5, yPos);
+                    ctx.stroke();
+                }
+
+                // End grain circles (log ends)
+                ctx.fillStyle = '#D2691E';
+                ctx.beginPath();
+                ctx.ellipse(cx - w/2, cy, h/6, h/2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#8B4513';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Tree rings on end
+                ctx.strokeStyle = 'rgba(139, 69, 19, 0.5)';
+                ctx.lineWidth = 1;
+                for (let r = 5; r < h/2; r += 6) {
+                    ctx.beginPath();
+                    ctx.ellipse(cx - w/2, cy, r * 0.3, r, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+
+            // Eis - Eiswürfel
+            drawIce(cx, cy, s) {
+                const size = s * 0.8;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(cx - size/2 + 4, cy - size/2 + 4, size, size);
+
+                // Main cube (slightly transparent)
+                const grad = ctx.createLinearGradient(cx - size/2, cy - size/2, cx + size/2, cy + size/2);
+                grad.addColorStop(0, 'rgba(240, 255, 255, 0.9)');
+                grad.addColorStop(0.5, 'rgba(200, 240, 255, 0.8)');
+                grad.addColorStop(1, 'rgba(176, 224, 230, 0.9)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(cx - size/2, cy - size/2, size, size);
+
+                // Ice cracks
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(cx - size/4, cy - size/2);
+                ctx.lineTo(cx, cy);
+                ctx.lineTo(cx + size/3, cy + size/2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(cx + size/2, cy - size/4);
+                ctx.lineTo(cx, cy + size/6);
+                ctx.stroke();
+
+                // Shine/reflection
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.fillRect(cx - size/2 + 5, cy - size/2 + 5, size/4, size/6);
+
+                // Border
+                ctx.strokeStyle = 'rgba(150, 200, 220, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(cx - size/2, cy - size/2, size, size);
+            }
+
+            // Kork - Weinkorken
+            drawCork(cx, cy, s) {
+                const w = s * 0.5;
+                const h = s * 1.0;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(cx + 3, cy + h/2 + 3, w/2, w/4, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cork body (cylinder)
+                const grad = ctx.createLinearGradient(cx - w/2, cy, cx + w/2, cy);
+                grad.addColorStop(0, '#C4A574');
+                grad.addColorStop(0.3, '#DEB887');
+                grad.addColorStop(0.7, '#D2B48C');
+                grad.addColorStop(1, '#C4A574');
+                ctx.fillStyle = grad;
+                ctx.fillRect(cx - w/2, cy - h/2, w, h);
+
+                // Top ellipse
+                ctx.fillStyle = '#E8D4B8';
+                ctx.beginPath();
+                ctx.ellipse(cx, cy - h/2, w/2, w/4, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#A08060';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Cork texture dots
+                ctx.fillStyle = 'rgba(139, 90, 43, 0.4)';
+                for (let i = 0; i < 12; i++) {
+                    const px = cx - w/3 + Math.random() * w * 0.66;
+                    const py = cy - h/3 + Math.random() * h * 0.66;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Side edges
+                ctx.strokeStyle = '#A08060';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(cx - w/2, cy - h/2);
+                ctx.lineTo(cx - w/2, cy + h/2);
+                ctx.moveTo(cx + w/2, cy - h/2);
+                ctx.lineTo(cx + w/2, cy + h/2);
+                ctx.stroke();
+            }
+
+            // Öl - Öltropfen
+            drawOil(cx, cy, s) {
+                const r = s * 0.45;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(cx + 3, cy + 3, r, r * 0.8, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Droplet shape
+                ctx.beginPath();
+                ctx.moveTo(cx, cy - r * 1.2);
+                ctx.bezierCurveTo(cx + r * 0.5, cy - r * 0.5, cx + r, cy, cx + r, cy + r * 0.3);
+                ctx.bezierCurveTo(cx + r, cy + r, cx + r * 0.5, cy + r, cx, cy + r);
+                ctx.bezierCurveTo(cx - r * 0.5, cy + r, cx - r, cy + r, cx - r, cy + r * 0.3);
+                ctx.bezierCurveTo(cx - r, cy, cx - r * 0.5, cy - r * 0.5, cx, cy - r * 1.2);
+                ctx.closePath();
+
+                const grad = ctx.createRadialGradient(cx - r/3, cy - r/3, 0, cx, cy, r * 1.2);
+                grad.addColorStop(0, '#FFE44D');
+                grad.addColorStop(0.5, '#FFD700');
+                grad.addColorStop(1, '#CC9900');
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                // Shine
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.beginPath();
+                ctx.ellipse(cx - r/3, cy - r/4, r/4, r/6, -0.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Stein - Unregelmäßiger Stein
+            drawStone(cx, cy, s) {
+                const r = s * 0.5;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.beginPath();
+                ctx.ellipse(cx + 4, cy + r + 4, r * 0.9, r * 0.3, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Irregular stone shape
+                ctx.beginPath();
+                ctx.moveTo(cx - r * 0.8, cy - r * 0.2);
+                ctx.lineTo(cx - r * 0.5, cy - r * 0.7);
+                ctx.lineTo(cx + r * 0.1, cy - r * 0.8);
+                ctx.lineTo(cx + r * 0.7, cy - r * 0.5);
+                ctx.lineTo(cx + r * 0.9, cy + r * 0.1);
+                ctx.lineTo(cx + r * 0.6, cy + r * 0.7);
+                ctx.lineTo(cx - r * 0.2, cy + r * 0.8);
+                ctx.lineTo(cx - r * 0.8, cy + r * 0.4);
+                ctx.closePath();
+
+                const grad = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+                grad.addColorStop(0, '#909090');
+                grad.addColorStop(0.3, '#707070');
+                grad.addColorStop(0.7, '#606060');
+                grad.addColorStop(1, '#505050');
+                ctx.fillStyle = grad;
+                ctx.fill();
+                ctx.strokeStyle = '#404040';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Stone texture/speckles
+                ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
+                ctx.beginPath();
+                ctx.arc(cx - r * 0.3, cy - r * 0.2, 4, 0, Math.PI * 2);
+                ctx.arc(cx + r * 0.2, cy + r * 0.3, 3, 0, Math.PI * 2);
+                ctx.arc(cx + r * 0.4, cy - r * 0.3, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Eisen - Metallgewicht/Block
+            drawIron(cx, cy, s) {
+                const w = s * 0.9;
+                const h = s * 0.7;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(cx - w/2 + 5, cy - h/2 + 5, w, h);
+
+                // Main block with metallic gradient
+                const grad = ctx.createLinearGradient(cx - w/2, cy - h/2, cx + w/2, cy + h/2);
+                grad.addColorStop(0, '#708090');
+                grad.addColorStop(0.2, '#A8A8A8');
+                grad.addColorStop(0.4, '#888888');
+                grad.addColorStop(0.6, '#686868');
+                grad.addColorStop(0.8, '#808080');
+                grad.addColorStop(1, '#505050');
+                ctx.fillStyle = grad;
+                ctx.fillRect(cx - w/2, cy - h/2, w, h);
+
+                // Metallic shine stripe
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillRect(cx - w/2 + 5, cy - h/2 + 3, w - 10, 6);
+
+                // "Fe" label on the metal
+                ctx.fillStyle = '#303030';
+                ctx.font = 'bold 16px serif';
+                ctx.fillText('Fe', cx, cy + 5);
+
+                // Bolt/rivet decorations
+                ctx.fillStyle = '#606060';
+                ctx.beginPath();
+                ctx.arc(cx - w/3, cy - h/4, 4, 0, Math.PI * 2);
+                ctx.arc(cx + w/3, cy - h/4, 4, 0, Math.PI * 2);
+                ctx.arc(cx - w/3, cy + h/4, 4, 0, Math.PI * 2);
+                ctx.arc(cx + w/3, cy + h/4, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Border
+                ctx.strokeStyle = '#404040';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(cx - w/2, cy - h/2, w, h);
             }
 
             lightenColor(color, percent) {
