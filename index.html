@@ -1599,15 +1599,25 @@
                                     <p>Für Sprachinteressierte ist das ein faszinierender Befund: Die Layer-Hierarchie eines Transformers spiegelt in verblüffender Weise die Ebenen linguistischer Analyse wider, von Phonologie und Morphologie (untere Layer erkennen Wortbestandteile und Flexionsmuster) über Syntax (mittlere Layer erfassen grammatische Strukturen und Abhängigkeiten zwischen Satzteilen) bis hin zu Semantik und Pragmatik (obere Layer verarbeiten Bedeutung im Kontext, Sprecherintention und implizite Zusammenhänge). Das Modell wurde nie instruiert, diese linguistischen Ebenen zu unterscheiden; es hat sie als emergente Struktur aus der reinen Textvorhersage entwickelt. Ob das etwas Grundlegendes über die Struktur von Sprache selbst aussagt, ist eine offene und spannende Frage und unter anderem eine Fragestellung, die ich in meiner MA-Thesis adressiert habe.</p>
 
                                     <h4>Schritt 3: Von Vektoren zur Vorhersage</h4>
-                                    <p>Nach dem Durchlauf durch alle Transformer-Layer hat das letzte Token einen Vektor, der die gesamte verarbeitete Information des bisherigen Textes kondensiert. Dieser Vektor wird durch eine letzte lineare Transformation auf das gesamte Vokabular projiziert, bei GPT-3 waren das ca. 50.000 mögliche Tokens. Für jedes dieser Tokens entsteht ein Score.</p>
+                                    <p>Nach dem Durchlauf durch alle Transformer-Layer hat das letzte Token einen Vektor, der die gesamte verarbeitete Information des bisherigen Textes kondensiert. Dieser Vektor wird durch eine letzte lineare Transformation auf das gesamte Vokabular projiziert – bei GPT-3 waren das ca. 50.000 mögliche Tokens. Für jedes dieser Tokens entsteht ein <strong>Score</strong>: eine Zahl, die angibt, wie gut dieses Wort als nächstes passen würde.</p>
 
                                     <p>Diese Scores werden dann durch die <em>Softmax-Funktion</em> in eine Wahrscheinlichkeitsverteilung umgewandelt:</p>
 
                                     <div class="formula-block">$$P(w_i) = \frac{e^{z_i}}{\sum_{j=1}^{N} e^{z_j}}$$</div>
 
-                                    <p>Dabei ist $z_i$ der Score für Token $i$ und $N$ die Vokabulargröße. Alle Scores werden exponenziert ($e^{z_i}$), dann durch die Summe aller exponenzierten Scores geteilt. Das Ergebnis: Für jedes mögliche nächste Token eine Wahrscheinlichkeit zwischen 0 und 1, und alle zusammen ergeben 1. Diese Funktion, dieselbe, die auch im Attention-Mechanismus die Gewichte normalisiert, spielt eine zentrale Rolle dabei, warum LLMs auf bestimmte Weise scheitern (dazu mehr in Abschnitt 1.3).</p>
+                                    <p><strong>Was bedeuten die einzelnen Teile?</strong></p>
+                                    <ul>
+                                        <li><strong>$z_i$</strong> – Der Rohscore für Wort $i$. Je höher, desto besser passt das Wort laut Modell. Beispiel: Nach „Der Hund bellte laut, weil er..." könnte $z_{\text{hungrig}}$ = 8.2 sein, $z_{\text{Quantenphysik}}$ = -4.1.</li>
+                                        <li><strong>$e^{z_i}$</strong> – Die Exponentialfunktion macht aus den Scores positive Zahlen und verstärkt Unterschiede: Ein Score von 8 wird zu ~2981, ein Score von 2 nur zu ~7. Das „belohnt" hohe Scores überproportional.</li>
+                                        <li><strong>$\sum_{j=1}^{N} e^{z_j}$</strong> – Die Summe aller exponenzierten Scores. Sie dient als Normalisierungsfaktor, damit am Ende echte Prozente herauskommen.</li>
+                                        <li><strong>$N$</strong> – Die Größe des Vokabulars (bei GPT-3: ~50.000 Wörter/Tokens).</li>
+                                    </ul>
 
-                                    <p>Aus dieser Verteilung wird dann ein Token ausgewählt, nicht immer das wahrscheinlichste (dazu mehr unter Temperatur in Abschnitt 1.3), und der Prozess beginnt von vorne.</p>
+                                    <p><strong>Das Ergebnis:</strong> Für jedes mögliche nächste Wort eine Wahrscheinlichkeit zwischen 0 und 1, die sich insgesamt zu 100% addieren. „hungrig" bekommt vielleicht 73%, „müde" 15%, „glücklich" 8%, und die restlichen 49.997 Wörter teilen sich die übrigen 4%.</p>
+
+                                    <p>Aus dieser Verteilung wird dann ein Token ausgewählt – nicht immer das wahrscheinlichste (dazu mehr unter <em>Temperatur</em> in Abschnitt 1.3) – und der Prozess beginnt von vorne.</p>
+
+                                    <p><strong>Wichtig:</strong> Das Modell <em>muss</em> immer ein Wort wählen. Es kann nicht sagen „Ich weiß es nicht." Das ist einer der Gründe, warum Halluzinationen entstehen (siehe Abschnitt 1.3).</p>
 
                                     <h4>Die entscheidende Frage: Warum entsteht daraus Intelligenz?</h4>
                                     <p>Ein System, das nur das nächste Wort vorhersagt, sollte eigentlich nicht in der Lage sein, logisch zu argumentieren, Gedichte zu schreiben oder Code zu schreiben. Und tatsächlich: Bei kleinen Modellen mit wenigen Millionen Parametern kommt auch nur grammatikalisch plausibel klingender, aber inhaltlich zusammenhangsloser Text heraus.</p>
