@@ -448,7 +448,7 @@
 
                 ctx.fillStyle = '#42a5f5';
                 for (let i = 0; i < electronPositions.length; i++) {
-                    electronPositions[i] = (electronPositions[i] + speed) % 1;
+                    electronPositions[i] = (electronPositions[i] - speed + 1) % 1;
                     const pos = electronPositions[i];
 
                     // Calculate position along path
