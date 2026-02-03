@@ -2147,7 +2147,18 @@
                         <p>Ein Beispiel aus der Praxis:</p>
                         <p><em>„Erstelle ein Arbeitsblatt zu First Conditional."</em></p>
                         <p>Das liefert generisches Material, das vielleicht technisch korrekt ist, aber nicht in deinen Unterricht passt. Vergleiche mit:</p>
-                        <p><em>„Erstelle ein Arbeitsblatt zu First Conditional für meine 3. Klasse (A2), das auf die Unit über Superstitions aufbaut und als Vorbereitung für die nächste Schularbeit dient. Die Schüler:innen haben If-Sätze erst eingeführt bekommen und brauchen noch viel Übung mit den verschiedenen Bildungen, die „unless" beinhalten, und wo wir Haupt- und Nebensatz verschieben."</em></p>
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>📋 Beispiel: First Conditional mit Kontext</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Erstelle ein Arbeitsblatt zu First Conditional für meine 3. Klasse (A2), das auf die Unit über Superstitions aufbaut und als Vorbereitung für die nächste Schularbeit dient. Die Schüler:innen haben If-Sätze erst eingeführt bekommen und brauchen noch viel Übung mit den verschiedenen Bildungen, die „unless" beinhalten, und wo wir Haupt- und Nebensatz verschieben.</pre>
+                                </div>
+                            </div>
+                        </div>
                         <p>Die KI weiß jetzt: A2-Niveau, also keine komplexen Satzstrukturen. Testvorbereitung, also sollte das Format testähnlich sein. Phase nach der Einführung, also eher kontrollierte Übungen als freie Produktion. Thema Superstitions, also können die Beispielsätze thematisch anknüpfen. All diese Schlüsse zieht die KI selbst, weil sie das WARUM kennt.</p>
 
                         <h4>Die One-Shot Taktik: Alles in einen Prompt</h4>
@@ -2163,7 +2174,18 @@
                         Nachricht 5: „Mit Answer Key bitte."</em></p>
 
                         <p>Lieber so:</p>
-                        <p><em>„Erstelle einen Vokabeltest für More! 3, Unit 5 mit 20 Items in meinem Check-up-Format. Teil A: 10 Lückensätze auf Englisch. Teil B: 10 Deutsch-zu-Englisch-Übersetzungen. Erstelle einen separaten Answer Key."</em></p>
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>📋 Beispiel: Vokabeltest (One-Shot)</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Erstelle einen Vokabeltest für More! 3, Unit 5 mit 20 Items in meinem Check-up-Format. Teil A: 10 Lückensätze auf Englisch. Teil B: 10 Deutsch-zu-Englisch-Übersetzungen. Erstelle einen separaten Answer Key.</pre>
+                                </div>
+                            </div>
+                        </div>
 
                         <p>Das bedeutet nicht, dass man immer alles in einen einzigen Prompt quetschen muss. Es bedeutet, dass der erste Prompt so vollständig wie möglich sein sollte. Verfeinerungen und Korrekturen in Folge-Nachrichten sind völlig normal und Teil des iterativen Prozesses (dazu gleich mehr). Aber die Grundinformation sollte gebündelt kommen.</p>
 
@@ -2182,11 +2204,33 @@
                         <p>Sobald du mit den Grundprinzipien vertraut bist, gibt es zwei Techniken, die den Workflow erheblich verbessern können:</p>
 
                         <p><strong>Die Reverse-Engineering-Technik.</strong> Du hast ein Arbeitsblatt, das perfekt ist – vielleicht von einer Kollegin, vielleicht ein eigenes aus analogen Zeiten. Du willst, dass die KI exakt in diesem Stil weitere Materialien erstellt. Statt zu versuchen, das Format in Worten zu beschreiben, sagst du:</p>
-                        <p><em>„Analysiere dieses Dokument methodisch. Extrahiere alles, was nötig ist, um es perfekt nachzubauen: Struktur, Aufbau, Aufgabentypen, Stil, Tonalität, Formatierung, implizite Regeln. Schreibe mir dann eine Anleitung, mit der ich zukünftige Materialien in genau diesem Stil erstellen lassen kann."</em></p>
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>📋 Prompt: Reverse Engineering</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Analysiere dieses Dokument methodisch. Extrahiere alles, was nötig ist, um es perfekt nachzubauen: Struktur, Aufbau, Aufgabentypen, Stil, Tonalität, Formatierung, implizite Regeln. Schreibe mir dann eine Anleitung, mit der ich zukünftige Materialien in genau diesem Stil erstellen lassen kann.</pre>
+                                </div>
+                            </div>
+                        </div>
                         <p>Die KI zerlegt das Dokument in seine Bestandteile und liefert dir einen wiederverwendbaren Blueprint. Das ist besonders nützlich, wenn du ein konsistentes Format über viele Materialien hinweg beibehalten willst.</p>
 
                         <p><strong>Die Prompt-Bereinigung.</strong> Du hast ein tolles Ergebnis erzielt, aber es hat mehrere langwierige Iterationen gebraucht, bis alles gepasst hat. Jetzt willst du das beim nächsten Mal in einem einzigen Prompt schaffen:</p>
-                        <p><em>„Analysiere unsere gesamte Konversation und schreibe den einen Prompt, der dieses Endergebnis in einem Schritt produziert hätte."</em></p>
+                        <div class="prompt-box">
+                            <div class="prompt-header" onclick="togglePrompt(this)">
+                                <span>📋 Prompt: Prompt-Bereinigung</span>
+                                <span class="toggle-prompt">▼ anzeigen</span>
+                            </div>
+                            <div class="prompt-content">
+                                <div class="prompt-inner">
+                                    <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                    <pre>Analysiere unsere gesamte Konversation und schreibe den einen Prompt, der dieses Endergebnis in einem Schritt produziert hätte.</pre>
+                                </div>
+                            </div>
+                        </div>
                         <p>Die KI destilliert alle Korrekturen, Anpassungen und Verfeinerungen in einen einzigen, optimierten Prompt. Drei Vorteile: Erstens kannst du diesen Prompt speichern und für ähnliche Aufgaben wiederverwenden. Zweitens gehen keine der kleinen Anpassungen verloren, die du unterwegs gemacht hast. Drittens lernst du dabei, was einen wirklich guten Prompt ausmacht, weil du siehst, wie die KI alle Informationen strukturiert.</p>
 
                         <div class="highlight-box">
