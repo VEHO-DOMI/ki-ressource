@@ -296,14 +296,16 @@
         function resizeCanvas() {
             const simPanel = canvas.parentElement;
             canvas.width = simPanel.clientWidth - 24;
-            canvas.height = Math.min(400, simPanel.clientHeight - 50);
+            canvas.height = Math.min(500, simPanel.clientHeight - 50);
+            // Interface at 60% from top - more room for incident ray experiments
+            centerX = canvas.width / 2;
+            centerY = canvas.height * 0.6;
         }
 
         window.addEventListener('resize', resizeCanvas);
         setTimeout(resizeCanvas, 100);
 
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        let centerX, centerY;
 
         let n1 = 1.00;
         let n2 = 1.33;
