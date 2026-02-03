@@ -1301,8 +1301,8 @@
                 <span class="nav-number">2</span>Vorbereitung & Anwendung<span class="nav-expand">▼</span>
             </a>
             <div class="nav-subitems" data-parent="vorbereitung">
-                <a href="#" class="nav-subitem" data-section="vorbereitung" data-subsection="2.1">2.1 Effektive Prompts</a>
-                <a href="#" class="nav-subitem" data-section="vorbereitung" data-subsection="2.2">2.2 Voice Input</a>
+                <a href="#" class="nav-subitem" data-section="vorbereitung" data-subsection="2.1">2.1 Spracheingabe</a>
+                <a href="#" class="nav-subitem" data-section="vorbereitung" data-subsection="2.2">2.2 Effektive Prompts</a>
                 <a href="#" class="nav-subitem" data-section="vorbereitung" data-subsection="2.3">2.3 Schulbuch-Transkription</a>
                 <a href="#" class="nav-subitem" data-section="vorbereitung" data-subsection="2.4">2.4 Claude Projects</a>
                 <a href="#" class="nav-subitem" data-section="vorbereitung" data-subsection="2.5">2.5 Context Management</a>
@@ -2056,22 +2056,57 @@
 
         <!-- SECTION 2: VORBEREITUNG -->
         <section id="vorbereitung" class="section">
-            <h1 class="section-title">Vorbereitung & Anwendung</h1>
-            <p class="section-subtitle">Prompt-Prinzipien, Transkription, Claude Projects, Voice Input</p>
+            <h1 class="section-title">Kapitel 2: Vorbereitung & Anwendung</h1>
+            <p class="section-subtitle">Spracheingabe, Prompt-Prinzipien, Schulbuch-Transkription, Claude Projects, Context Management</p>
 
-            <p>Vor der Erstellung von Materialien sollte Zeit in eine sorgfältige Vorbereitung investiert werden. Diese Vorarbeit verbessert alle nachfolgenden KI-Interaktionen erheblich.</p>
+            <p>Bevor es an die Erstellung konkreter Materialien geht, lohnt es sich, Zeit in die Vorbereitung zu investieren. Die Qualität der Vorarbeit bestimmt die Qualität aller nachfolgenden Outputs. Dieses Kapitel beschreibt den Workflow, den ich mir über fast drei Jahre aufgebaut habe – von der Eingabemethode über die Formulierung effektiver Prompts bis hin zur systematischen Aufbereitung von Referenzmaterialien.</p>
 
-            <!-- 2.1 Grundprinzipien -->
+            <!-- 2.1 Spracheingabe -->
             <div class="collapsible open">
                 <div class="collapsible-header">
-                    <h3>2.1 Die Grundprinzipien effektiver Prompts</h3>
+                    <h3>2.1 Spracheingabe: Der unterschätzte Einstiegspunkt</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Ein Prinzip, das sich durch meine gesamte Arbeit zieht: Je mehr Kontext man der KI gibt, desto besser wird das Ergebnis. Das lässt sich natürlich alles tippen. Aber oft will man einfach reden – seine Gedanken laut entwickeln, eine Idee durchsprechen, einen Arbeitsauftrag mündlich formulieren, statt ihn perfekt auszuformulieren.</p>
+
+                        <p>Moderne KI-Modelle sind sehr gut darin, auch unstrukturierte Spracheingaben zu verstehen. Sie können aus einem fünfminütigen Gedankenstream die Kernidee extrahieren. Dieses Dokument selbst ist größtenteils durch Spracheingabe entstanden.</p>
+
+                        <h4>ChatGPT als Transkriptions-Tool</h4>
+                        <p>Nach ausgiebigem Testen hat sich ChatGPT als die zuverlässigste Plattform für Spracheingabe herauskristallisiert. Das Besondere: Die KI ist bereits in der Transkription selbst aktiv – auch wenn man wild und unstrukturiert spricht, transkribiert ChatGPT das in kohärente, grammatikalisch korrekte Sätze, behält aber den Originalinhalt 1:1 bei.</p>
+
+                        <h4>Praktische Tipps</h4>
+                        <ul>
+                            <li>Spracheingabe starten (Mikrofon-Icon)</li>
+                            <li>Einfach losreden – auch längere, komplexe Instruktionen</li>
+                            <li>Zeitlimit: 10 Minuten pro Aufnahme</li>
+                            <li>Nach 10 Minuten: Stoppen, transkribieren lassen, dann wieder aufnehmen</li>
+                            <li>Theoretisch unbegrenzt lange Eingaben möglich</li>
+                        </ul>
+
+                        <h4>Video- und Audio-Transkription</h4>
+                        <p><strong>Szenario:</strong> Ein YouTube-Video soll transkribiert werden, aber es gibt kein Transkript.</p>
+                        <p><strong>Lösung:</strong> Video auf dem Laptop abspielen, gleichzeitig auf einem anderen Gerät die ChatGPT-Sprachaufnahme starten. Die KI nimmt den Ton auf und transkribiert ihn zuverlässig.</p>
+                        <p>Das funktioniert auch bei: Listening-Übungen aus dem Schulbuch, Podcasts, Videos mit mehreren Sprechern.</p>
+
+                        <h4>Warum Spracheingabe vor den Prompting-Prinzipien steht</h4>
+                        <p>In der Praxis beginnt mein Workflow fast immer mit Spracheingabe: Ich spreche meine Idee, meinen Kontext, mein Ziel ein – oft unstrukturiert, als Gedankenstream. Erst danach forme ich daraus (oder lasse die KI daraus formen) einen strukturierten Prompt. Spracheingabe ist der Einstiegspunkt, Prompting die Verfeinerung.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.2 Grundprinzipien -->
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <h3>2.2 Die Grundprinzipien effektiver Prompts</h3>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
                         <p>Ein guter Prompt ist wie eine gute Arbeitsanweisung: Je präziser und kontextreicher, desto besser das Ergebnis.</p>
 
-                        <h4>Die fünf Kernelemente eines effektiven Prompts</h4>
+                        <h4>Die fünf Kernelemente</h4>
                         <ol>
                             <li><strong>Rolle definieren:</strong> Wer soll die KI sein? Ein Experte, ein Lehrer, ein Korrektor?</li>
                             <li><strong>Kontext liefern:</strong> Was ist die Ausgangssituation? Für welche Zielgruppe? Welches Niveau?</li>
@@ -2082,39 +2117,22 @@
 
                         <div class="highlight-box">
                             <h4>Warum das WARUM so wichtig ist</h4>
-                            <p style="margin-bottom:0">Wenn die KI den Endzweck kennt – was erreicht werden soll und warum das wichtig ist – kann sie Lücken im Prompt intelligent schließen. Die KI ist intelligent genug, die entsprechenden Schritte zu setzen, wenn sie das Ziel vor Augen hat.</p>
+                            <p>Wenn die KI den Endzweck kennt – was erreicht werden soll und warum das wichtig ist – kann sie Lücken im Prompt intelligent schließen. Die KI ist intelligent genug, die entsprechenden Schritte zu setzen, wenn sie das Ziel vor Augen hat.</p>
+                            <p style="margin-bottom:0">Ein Beispiel: „Erstelle ein Arbeitsblatt zu First Conditional" liefert generisches Material. „Erstelle ein Arbeitsblatt zu First Conditional für meine 3. Klasse (A2), das auf die Unit über Tiere aufbaut und als Vorbereitung für den nächsten Test dient" liefert etwas, das tatsächlich in den Unterricht passt.</p>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- 2.2 Voice Input -->
-            <div class="collapsible">
-                <div class="collapsible-header">
-                    <h3>2.2 Voice Input: Der unterschätzte Produktivitäts-Hack</h3>
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <div class="collapsible-inner">
-                        <h4>ChatGPT als zuverlässigste Lösung</h4>
-                        <p>Nach ausgiebigem Testen hat sich ChatGPT als die zuverlässigste Plattform für Spracheingabe herauskristallisiert.</p>
-                        <p><strong>Das Besondere:</strong> Die KI ist bereits in der Transkription selbst aktiv. Selbst wenn wild und unstrukturiert gesprochen wird, transkribiert ChatGPT das in kohärente, grammatikalisch korrekte Sätze – behält aber den Originalinhalt 1:1 bei.</p>
+                        <h4>Der iterative Prozess</h4>
+                        <p>Ein häufiges Missverständnis: Man tippt einen Prompt und bekommt das perfekte Ergebnis. In der Realität ist die Erstellung guter Materialien fast immer ein iterativer Prozess über mehrere Prompts:</p>
+                        <ol>
+                            <li><strong>Erster Prompt:</strong> Grundidee und Kontext vermitteln → erstes Ergebnis begutachten</li>
+                            <li><strong>Verfeinerung:</strong> Was passt nicht? Niveau anpassen, Umfang ändern, Format korrigieren</li>
+                            <li><strong>Integration:</strong> Bestehendes Material einarbeiten (Kolleg:innen-Worksheets, Schulbuch-Vokabular)</li>
+                            <li><strong>Finalisierung:</strong> Letzte Korrekturen, Answer Keys, Teacher Resources</li>
+                        </ol>
+                        <p>Die Materialien in Kapitel 3 zeigen diesen Prozess transparent – mit allen Prompts, die nötig waren, um zum fertigen Ergebnis zu kommen. Typisch sind 3–8 Prompts pro Material.</p>
 
-                        <h4>Praktische Anwendung</h4>
-                        <ul>
-                            <li>Spracheingabe starten (Mikrofon-Icon in ChatGPT)</li>
-                            <li>Einfach losreden – auch längere, komplexe Instruktionen</li>
-                            <li><strong>Zeitlimit:</strong> 10 Minuten pro Aufnahme</li>
-                            <li><strong>Nach 10 Minuten:</strong> Auf das Viereck drücken (transkribieren lassen), dann wieder auf Aufnahme</li>
-                            <li>Theoretisch unbegrenzt lange Eingaben möglich</li>
-                        </ul>
-
-                        <h4>Video- und Audio-Transkription</h4>
-                        <p><strong>Szenario:</strong> Ein YouTube-Video soll transkribiert werden, aber es gibt kein Transkript.</p>
-                        <p><strong>Lösung:</strong> Video auf dem Laptop abspielen, gleichzeitig auf einem anderen Gerät die ChatGPT-Sprachaufnahme starten. Die KI nimmt den Ton auf und transkribiert ihn zuverlässig.</p>
-                        <p>Das funktioniert auch bei: Listening-Übungen, Podcasts, Videos mit mehreren Sprechern.</p>
-
-                        <h4>Nachbearbeitung</h4>
+                        <h4>Prompt-Bereinigung bei Spracheingabe</h4>
+                        <p>Wenn der initiale Prompt per Spracheingabe erstellt wurde, kann es helfen, die KI zuerst um eine Bereinigung zu bitten:</p>
                         <div class="prompt-box">
                             <div class="prompt-header" onclick="togglePrompt(this)">
                                 <span>📋 Prompt: Transkript bereinigen</span>
@@ -2123,7 +2141,8 @@
                             <div class="prompt-content">
                                 <div class="prompt-inner">
                                     <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                    <pre>Bitte bereinige dieses Transkript auf Grammatik und Satzstellung, behalte aber den Inhalt WORTWÖRTLICH bei.</pre>
+                                    <pre>Bitte bereinige dieses Transkript auf Grammatik und Satzstellung,
+behalte aber den Inhalt WORTWÖRTLICH bei.</pre>
                                 </div>
                             </div>
                         </div>
@@ -2140,26 +2159,27 @@
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
                         <h4>Warum reine Texttranskripte?</h4>
-                        <p><strong>Das Problem mit PDFs und Screenshots:</strong> Wenn der KI ein PDF oder Screenshot gegeben wird, muss sie zuerst das Bild in Text umwandeln (OCR). Diese zusätzliche Aufgabe kostet Kapazität.</p>
-                        <p><strong>Die Lösung:</strong> Schulbücher vorab transkribieren und als reine Textdateien speichern. Dadurch:</p>
+                        <p><strong>Das Problem mit PDFs und Screenshots:</strong> Wenn der KI ein PDF oder Screenshot gegeben wird, muss sie zuerst das Bild in Text umwandeln (OCR). Diese zusätzliche Aufgabe kostet Kapazität – Kapazität, die dann für die eigentliche Aufgabe fehlt.</p>
+                        <p><strong>Die Lösung:</strong> Schulbücher vorab transkribieren und als reine Textdateien speichern. Dadurch erhält die KI den Inhalt in ihrer „nativen Sprache", kann ihre volle Kapazität für die eigentliche Aufgabe nutzen, und die Outputs werden schneller und genauer.</p>
+                        <p>Das ist Aufwand, der sich aber bei jeder weiteren Nutzung auszahlt. Ich habe das für folgende Materialien gemacht:</p>
                         <ul>
-                            <li>Erhält die KI den Inhalt in ihrer "nativen Sprache"</li>
-                            <li>Kann sie ihre volle Kapazität für die eigentliche Aufgabe nutzen</li>
-                            <li>Werden Outputs schneller und genauer</li>
+                            <li>MORE! 1–4 (alle Units)</li>
+                            <li>way2go! Oberstufe</li>
+                            <li>PuP Maturamaterial</li>
+                            <li>Englisch mündliche Matura Unterlagen</li>
                         </ul>
 
-                        <p>Ich habe das für folgende Materialien gemacht: MORE! 1–4 (alle Units), way2go! Oberstufe, PuP Maturamaterial, Englisch mündliche Matura Unterlagen.</p>
-
-                        <h4>Master-Transkriptions-Prompt (Deutsch)</h4>
+                        <h4>Transkriptions-Prompts</h4>
                         <div class="prompt-box">
                             <div class="prompt-header" onclick="togglePrompt(this)">
-                                <span>📋 Prompt: Einfache Transkription</span>
+                                <span>📋 Prompt: Einfache Transkription (Deutsch)</span>
                                 <span class="toggle-prompt">▼ anzeigen</span>
                             </div>
                             <div class="prompt-content">
                                 <div class="prompt-inner">
                                     <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                    <pre>Transkribiere diese Seite WORTWÖRTLICH - jedes Wort, jeden Buchstaben, jedes Satzzeichen exakt wie es erscheint.
+                                    <pre>Transkribiere diese Seite WORTWÖRTLICH - jedes Wort, jeden Buchstaben,
+jedes Satzzeichen exakt wie es erscheint.
 
 ANFORDERUNGEN:
 1. Den GESAMTEN Text exakt wie geschrieben reproduzieren
@@ -2171,10 +2191,9 @@ ANFORDERUNGEN:
                             </div>
                         </div>
 
-                        <h4>Advanced Transcription Prompt (English – Recommended)</h4>
                         <div class="prompt-box">
                             <div class="prompt-header" onclick="togglePrompt(this)">
-                                <span>📋 Prompt: Detaillierte Transkription (Englisch)</span>
+                                <span>📋 Prompt: Detaillierte Transkription (Englisch – Empfohlen)</span>
                                 <span class="toggle-prompt">▼ anzeigen</span>
                             </div>
                             <div class="prompt-content">
@@ -2182,8 +2201,8 @@ ANFORDERUNGEN:
                                     <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
                                     <pre># Role: Accessibility Specialist & Verbatim Transcriber
 
-**Objective:** Transcribe textbook pages into digital format. Output must 
-provide a 1:1 verbatim text record and highly detailed, accessible 
+**Objective:** Transcribe textbook pages into digital format. Output must
+provide a 1:1 verbatim text record and highly detailed, accessible
 descriptions of all visual elements for visually impaired readers.
 
 **Input:** A set of images representing sequential pages of a textbook.
@@ -2196,7 +2215,7 @@ descriptions of all visual elements for visually impaired readers.
 * If a sentence cuts off at page bottom, maintain flow but keep separator
 
 ### 2. Text Transcription (Verbatim)
-* **Accuracy:** Transcribe text EXACTLY as written. Do NOT correct typos, 
+* **Accuracy:** Transcribe text EXACTLY as written. Do NOT correct typos,
   grammar, or summarize content.
 * **Formatting:** Replicate visual hierarchy using Markdown:
   - Use # H1, ## H2, ### H3 for headings
@@ -2222,6 +2241,7 @@ For EVERY image, diagram, graph, or icon, insert [Visual Description]:
                         </div>
 
                         <h4>Vokabel-Masterlisten</h4>
+                        <p>Neben den Unit-Transkripten habe ich auch die kompletten Vokabellisten der Schulbücher digitalisiert:</p>
                         <table>
                             <tr><th>Schulbuch</th><th>Einträge</th><th>Format</th></tr>
                             <tr><td>MORE! 1</td><td>786</td><td>Wort + Beispielsatz + Deutsch</td></tr>
@@ -2229,6 +2249,7 @@ For EVERY image, diagram, graph, or icon, insert [Visual Description]:
                             <tr><td>MORE! 3</td><td>750+</td><td>Wort + Beispielsatz + Deutsch</td></tr>
                             <tr><td>MORE! 4</td><td>700+</td><td>Wort + Beispielsatz + Deutsch</td></tr>
                         </table>
+                        <p>Diese Listen werden als Referenzdokumente in Claude Projects hinterlegt (siehe 2.4) und stellen sicher, dass generierte Materialien das Vokabular verwenden, das die Schüler:innen tatsächlich kennen.</p>
                     </div>
                 </div>
             </div>
@@ -2236,7 +2257,7 @@ For EVERY image, diagram, graph, or icon, insert [Visual Description]:
             <!-- 2.4 Claude Projects -->
             <div class="collapsible">
                 <div class="collapsible-header">
-                    <h3>2.4 Claude Projects einrichten</h3>
+                    <h3>2.4 Claude Projects: Wiederkehrende Aufgaben automatisieren</h3>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
@@ -2246,18 +2267,42 @@ For EVERY image, diagram, graph, or icon, insert [Visual Description]:
                         <ul>
                             <li>Einem Namen und einer Beschreibung</li>
                             <li>Einem System-Prompt (Instruktionen, die bei JEDER Nachricht aktiv sind)</li>
-                            <li>Hochgeladenen Referenzdokumenten (Richtlinien, Beispiele, Vokabellisten)</li>
+                            <li>Hochgeladenen Referenzdokumenten (Richtlinien, Beispiele, Vokabellisten, Transkripte)</li>
                         </ul>
-                        <p><strong>Der Vorteil:</strong> Man muss nicht jedes Mal den gleichen Prompt eingeben. Man wirft einfach den Input rein, und die KI weiß sofort, was zu tun ist.</p>
+                        <p>Der Vorteil: Man muss nicht jedes Mal den gleichen Kontext liefern. Man wirft einfach den Input rein, und die KI weiß sofort, was zu tun ist – weil der System-Prompt und die Referenzdokumente automatisch mitgeschickt werden.</p>
 
-                        <h4>Empfohlene Projekt-Setups</h4>
-                        <p><strong>Schreibkorrektur-Assistent:</strong> System-Prompt mit Korrekturanweisungen, Dokumente mit Beurteilungsraster. Anwendung: Schülertext reinwerfen → fertige Korrektur.</p>
-                        <p><strong>Check-up-Generator:</strong> Format- und Strukturvorgaben, Vokabellisten, Unit-Transkripte. Anwendung: "Unit 5 Check-up" → fertiger Test.</p>
-                        <p><strong>Matura-Aufgaben-Generator:</strong> Offizielle Richtlinien, R-T-R-Struktur, Beispielaufgaben. Anwendung: Thema eingeben → kompetenzorientierte Aufgabe.</p>
-                        <p><strong>Schüler-EFL-Tutor:</strong> Niveau-angepasste Erklärungen, Schulbuchinhalte. Anwendung: Schüler:innen können selbständig üben.</p>
+                        <h4>Meine Projekt-Setups</h4>
+                        <p><strong>Schreibkorrektur-Assistent</strong></p>
+                        <ul>
+                            <li>System-Prompt: Korrekturanweisungen, Beurteilungskriterien, Niveaustufe</li>
+                            <li>Dokumente: Beurteilungsraster, Textsortenmerkmale</li>
+                            <li>Anwendung: Schülertext reinwerfen → fertige Korrektur mit Feedback</li>
+                        </ul>
 
+                        <p><strong>Check-up-Generator</strong></p>
+                        <ul>
+                            <li>System-Prompt: Format- und Strukturvorgaben für Tests</li>
+                            <li>Dokumente: Vokabellisten, Unit-Transkripte, Grammatik-Überblick</li>
+                            <li>Anwendung: „Unit 5 Check-up" eingeben → fertiger Test</li>
+                        </ul>
+
+                        <p><strong>Matura-Aufgaben-Generator</strong></p>
+                        <ul>
+                            <li>System-Prompt: Offizielle Richtlinien, R-T-R-Struktur</li>
+                            <li>Dokumente: Beispielaufgaben, Themenkatalog, Bewertungskriterien</li>
+                            <li>Anwendung: Thema eingeben → kompetenzorientierte Aufgabe</li>
+                        </ul>
+
+                        <p><strong>Schüler-EFL-Tutor</strong></p>
+                        <ul>
+                            <li>System-Prompt: Niveau-angepasste Erklärungen, pädagogischer Stil</li>
+                            <li>Dokumente: Schulbuchinhalte, Vokabellisten</li>
+                            <li>Anwendung: Schüler:innen können selbständig üben und Fragen stellen</li>
+                        </ul>
+
+                        <h4>Wann lohnt sich ein Project?</h4>
                         <div class="warning-box">
-                            <strong>Wichtig:</strong> Der Aufwand für die Einrichtung lohnt sich nur bei wiederkehrenden Aufgaben. Für einmalige Aufgaben ist ein guter Einzel-Prompt effizienter.
+                            <strong>Wichtig:</strong> Der Aufwand für die Einrichtung lohnt sich nur bei wiederkehrenden Aufgaben. Für einmalige Aufgaben ist ein guter Einzel-Prompt effizienter. Die Faustregel: Wenn man denselben Typ von Aufgabe mehr als 3–4 Mal macht, lohnt sich ein Project.
                         </div>
                     </div>
                 </div>
@@ -2272,9 +2317,10 @@ For EVERY image, diagram, graph, or icon, insert [Visual Description]:
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
                         <h4>Das Problem</h4>
-                        <p>Wenn man längere Zeit in einem Chat arbeitet und das Kontextlimit erreicht, werden die Ergebnisse zunehmend unzuverlässig.</p>
+                        <p>Bei längeren Arbeitssitzungen in einem Chat nähert man sich irgendwann dem Kontextlimit. Ab diesem Punkt werden die Ergebnisse zunehmend unzuverlässig – die KI „vergisst" frühere Teile der Konversation oder produziert Widersprüche.</p>
 
                         <h4>Die Lösung: Übergabe-Prompts</h4>
+                        <p>Bevor man an das Limit stößt, lässt man die KI einen Übergabe-Prompt erstellen:</p>
                         <div class="prompt-box">
                             <div class="prompt-header" onclick="togglePrompt(this)">
                                 <span>📋 Prompt: Übergabe-Prompt erstellen</span>
@@ -2283,16 +2329,33 @@ For EVERY image, diagram, graph, or icon, insert [Visual Description]:
                             <div class="prompt-content">
                                 <div class="prompt-inner">
                                     <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                    <pre>Ich möchte einen neuen Chat starten, weil wir das Kontextlimit dieses Chats erreichen. Schreibe mir einen detaillierten Kontext-Prompt und System-Instruktionen, die ich in den nächsten Chat kopieren kann, damit wir genau dort weitermachen können, wo wir aufgehört haben.</pre>
+                                    <pre>Ich möchte einen neuen Chat starten, weil wir das Kontextlimit
+dieses Chats erreichen. Schreibe mir einen detaillierten Kontext-Prompt
+und System-Instruktionen, die ich in den nächsten Chat kopieren kann,
+damit wir genau dort weitermachen können, wo wir aufgehört haben.</pre>
                                 </div>
                             </div>
                         </div>
-                        <p>Die KI erstellt dann: Eine Zusammenfassung des bisherigen Kontexts, die relevanten Entscheidungen und Ergebnisse, die aktuellen Arbeitsanweisungen, den Stand des Projekts.</p>
+                        <p>Die KI erstellt dann: Eine Zusammenfassung des bisherigen Kontexts, die relevanten Entscheidungen und Ergebnisse, die aktuellen Arbeitsanweisungen und den Stand des Projekts.</p>
 
                         <h4>Ausblick</h4>
-                        <p>Das Kontextproblem wird voraussichtlich innerhalb dieses Jahres gelöst sein – die Kontextfenster werden immer größer. Bis dahin ist diese Methode ein zuverlässiger Workaround.</p>
+                        <p>Das Kontextproblem wird voraussichtlich innerhalb dieses Jahres gelöst sein – die Kontextfenster werden immer größer, und Funktionen wie Claude's Memory reduzieren die Abhängigkeit von einzelnen Chat-Sessions. Bis dahin ist diese Methode ein zuverlässiger Workaround.</p>
                     </div>
                 </div>
+            </div>
+
+            <!-- Zusammenfassung Kapitel 2 -->
+            <div class="highlight-box" style="margin-top: 2rem;">
+                <h4>Zusammenfassung Kapitel 2</h4>
+                <ol>
+                    <li><strong>Spracheingabe als Einstiegspunkt</strong> – Gedanken per Voice Input formulieren, dann verfeinern. ChatGPT liefert die beste Transkriptionsqualität.</li>
+                    <li><strong>Die fünf Prompt-Elemente</strong> – Rolle, Kontext, Ergebnis, WARUM, Beispiele. Das WARUM ist am wichtigsten.</li>
+                    <li><strong>Iteration ist normal</strong> – Gute Materialien entstehen über 3–8 Prompts, nicht in einem Durchgang.</li>
+                    <li><strong>Schulbuch-Transkription</strong> – Die wichtigste Vorarbeit. Reine Textdateien statt PDFs, Vokabel-Masterlisten als Referenz.</li>
+                    <li><strong>Claude Projects</strong> – Für wiederkehrende Aufgaben: System-Prompt + Referenzdokumente = konsistente Ergebnisse.</li>
+                    <li><strong>Context Management</strong> – Übergabe-Prompts erstellen, bevor das Kontextlimit erreicht wird.</li>
+                </ol>
+                <p style="margin-bottom:0; margin-top: 1rem;"><strong>Weiter zu Kapitel 3: Unterrichtsmaterialien →</strong></p>
             </div>
         </section>
 
