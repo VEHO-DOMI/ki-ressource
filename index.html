@@ -2117,37 +2117,89 @@
             <!-- 2.2 Grundprinzipien -->
             <div class="collapsible">
                 <div class="collapsible-header">
-                    <h3>2.2 Die Grundprinzipien effektiver Prompts</h3>
+                    <h3>2.2 Grundprinzipien effektiver Prompts</h3>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
-                        <p>Ein guter Prompt ist wie eine gute Arbeitsanweisung: Je präziser und kontextreicher, desto besser das Ergebnis.</p>
+                        <p>Ein guter Prompt ist wie eine gute Arbeitsanweisung: Je präziser und kontextreicher, desto besser das Ergebnis. Was das konkret bedeutet und warum manche Prompts dramatisch bessere Ergebnisse liefern als andere, hat viel damit zu tun, wie diese Modelle intern funktionieren.</p>
+
+                        <h4>Von „Prompt Engineering" zu „Context Engineering"</h4>
+                        <p>In der KI-Community hat sich ein Begriffswandel vollzogen, der auch für den Schulalltag relevant ist. Der Begriff „Prompt Engineering" wird zunehmend durch „Context Engineering" ersetzt. Die Idee dahinter: Es geht nicht nur darum, eine gute Frage oder Input zu stellen. Es geht darum, der KI genau den richtigen Kontext zu liefern, damit sie die Aufgabe optimal lösen kann.</p>
+
+                        <p>Kontext bedeutet hier alles, was die KI braucht, um dein Ziel zu verstehen: Wer du bist, wofür das Material gedacht ist, welches Niveau deine Schüler:innen haben, welches Schulbuch ihr verwendet, wie das Ergebnis aussehen soll. Je vollständiger dieses Bild ist, desto besser der Output. In Kapitel 1 haben wir gesehen, dass LLMs im Grunde Textvorhersagemaschinen sind; sie generieren die wahrscheinlichste Fortsetzung basierend auf dem, was im Kontextfenster steht. Das bedeutet: Was du in den Kontext packst, bestimmt direkt die Qualität des Ergebnisses.</p>
+
+                        <p>Dabei gilt das Prinzip der goldenen Mitte: Zu wenig Kontext und die KI hat nicht genug Information, um etwas Brauchbares zu produzieren. Zu viel irrelevanter Kontext und die KI verliert den Fokus, weil das Wesentliche in der Masse untergeht. Die Kunst liegt darin, genau die richtigen Informationen in der richtigen Menge zu liefern.</p>
 
                         <h4>Die fünf Kernelemente</h4>
+                        <p>Was gehört also in einen guten Prompt? Fünf Dinge haben sich als besonders wirksam erwiesen:</p>
                         <ol>
-                            <li><strong>Rolle definieren:</strong> Wer soll die KI sein? Ein Experte, ein Lehrer, ein Korrektor?</li>
-                            <li><strong>Kontext liefern:</strong> Was ist die Ausgangssituation? Für welche Zielgruppe? Welches Niveau?</li>
-                            <li><strong>Erwartetes Ergebnis spezifizieren:</strong> Format, Länge, Struktur, Stil.</li>
-                            <li><strong>Das WARUM erklären (entscheidend!):</strong> Wofür wird das gebraucht? Was ist der Endzweck?</li>
-                            <li><strong>Best-Practice-Beispiele vorgeben</strong> (falls vorhanden).</li>
+                            <li><strong>Rolle definieren.</strong> Wer soll die KI sein? Ein erfahrener Sprachlehrer, ein Prüfungsersteller, ein Lektor? Die Rollenzuweisung aktiviert relevantes „Wissen" und beeinflusst Ton und Detailtiefe. Wenn du der KI sagst, sie soll ein erfahrener Lehrbuchautor sein, schreibt sie anders, als wenn sie einfach „eine Übung erstellen" soll.</li>
+                            <li><strong>Kontext liefern.</strong> Was ist die Ausgangssituation? Für welche Klasse, welches Alter, welches Sprachniveau? Welches Schulbuch wird verwendet? Was wurde in der letzten Stunde gemacht? Je mehr relevanter Kontext, desto passgenauer der Output.</li>
+                            <li><strong>Erwartetes Ergebnis spezifizieren.</strong> Was genau soll herauskommen? Format, Länge, Struktur, Stil. Soll es ein einseitiges Arbeitsblatt sein oder ein dreiseitiger Test? Mit oder ohne Answer Key? Multiple Choice oder offene Fragen? Alles, was das gewünschte Ergebnis charakterisiert, gehört in den Prompt.</li>
+                            <li><strong>Das WARUM erklären (entscheidend!).</strong> Wofür wird das Material gebraucht? Was ist der Endzweck? Dies ist oft der unterschätzteste, aber wirkungsvollste Teil eines Prompts.</li>
+                            <li><strong>Best-Practice-Beispiele vorgeben</strong> (falls vorhanden). Konkrete Beispiele zeigen der KI genau, was du erwartest. Wenn du ein Arbeitsblatt hast, das dir besonders gut gelungen ist, lade es hoch und sag: „In diesem Stil bitte." Das ist oft effektiver als jede noch so detaillierte Beschreibung.</li>
                         </ol>
 
-                        <div class="highlight-box">
-                            <h4>Warum das WARUM so wichtig ist</h4>
-                            <p>Wenn die KI den Endzweck kennt – was erreicht werden soll und warum das wichtig ist – kann sie Lücken im Prompt intelligent schließen. Die KI ist intelligent genug, die entsprechenden Schritte zu setzen, wenn sie das Ziel vor Augen hat.</p>
-                            <p style="margin-bottom:0">Ein Beispiel: „Erstelle ein Arbeitsblatt zu First Conditional" liefert generisches Material. „Erstelle ein Arbeitsblatt zu First Conditional für meine 3. Klasse (A2), das auf die Unit über Tiere aufbaut und als Vorbereitung für den nächsten Test dient" liefert etwas, das tatsächlich in den Unterricht passt.</p>
-                        </div>
+                        <h4>Warum das WARUM so wichtig ist</h4>
+                        <p>Es kommt häufig vor, dass ein Prompt nicht alle Details enthält oder Lücken hat. Wenn die KI aber den Endzweck kennt, was erreicht werden soll und warum das wichtig ist, kann sie diese Lücken intelligent schließen. Die KI ist intelligent genug, die entsprechenden Schritte selbst zu setzen, wenn sie das Ziel vor Augen hat.</p>
+
+                        <p>Ein Beispiel aus der Praxis:</p>
+                        <p><em>„Erstelle ein Arbeitsblatt zu First Conditional."</em></p>
+                        <p>Das liefert generisches Material, das vielleicht technisch korrekt ist, aber nicht in deinen Unterricht passt. Vergleiche mit:</p>
+                        <p><em>„Erstelle ein Arbeitsblatt zu First Conditional für meine 3. Klasse (A2), das auf die Unit über Superstitions aufbaut und als Vorbereitung für die nächste Schularbeit dient. Die Schüler:innen haben If-Sätze erst eingeführt bekommen und brauchen noch viel Übung mit den verschiedenen Bildungen, die „unless" beinhalten, und wo wir Haupt- und Nebensatz verschieben."</em></p>
+                        <p>Die KI weiß jetzt: A2-Niveau, also keine komplexen Satzstrukturen. Testvorbereitung, also sollte das Format testähnlich sein. Phase nach der Einführung, also eher kontrollierte Übungen als freie Produktion. Thema Superstitions, also können die Beispielsätze thematisch anknüpfen. All diese Schlüsse zieht die KI selbst, weil sie das WARUM kennt.</p>
+
+                        <h4>Die One-Shot Taktik: Alles in einen Prompt</h4>
+                        <p>KI-Modelle arbeiten signifikant besser, wenn sie alle relevanten Informationen in einem einzigen Prompt erhalten, statt sie über mehrere Nachrichten zu verteilen.</p>
+
+                        <p>Jede neue Nachricht zwingt das Modell, die Information neu zu kontextualisieren. Details gehen verloren oder werden weniger stark gewichtet, und das Modell muss Verbindungen zwischen getrennten Nachrichten herstellen, die es bei einem zusammenhängenden Text automatisch erkennt.</p>
+
+                        <p>Statt also:</p>
+                        <p><em>Nachricht 1: „Ich brauche einen Vokabeltest."<br>
+                        Nachricht 2: „Für Unit 5 in meinem Check-up-Format."<br>
+                        Nachricht 3: „Aus More! 3."<br>
+                        Nachricht 4: „20 Items, Lückentext und Übersetzungen."<br>
+                        Nachricht 5: „Mit Answer Key bitte."</em></p>
+
+                        <p>Lieber so:</p>
+                        <p><em>„Erstelle einen Vokabeltest für More! 3, Unit 5 mit 20 Items in meinem Check-up-Format. Teil A: 10 Lückensätze auf Englisch. Teil B: 10 Deutsch-zu-Englisch-Übersetzungen. Erstelle einen separaten Answer Key."</em></p>
+
+                        <p>Das bedeutet nicht, dass man immer alles in einen einzigen Prompt quetschen muss. Es bedeutet, dass der erste Prompt so vollständig wie möglich sein sollte. Verfeinerungen und Korrekturen in Folge-Nachrichten sind völlig normal und Teil des iterativen Prozesses (dazu gleich mehr). Aber die Grundinformation sollte gebündelt kommen.</p>
 
                         <h4>Der iterative Prozess</h4>
-                        <p>Ein häufiges Missverständnis: Man tippt einen Prompt und bekommt das perfekte Ergebnis. In der Realität ist die Erstellung guter Materialien fast immer ein iterativer Prozess über mehrere Prompts:</p>
-                        <ol>
-                            <li><strong>Erster Prompt:</strong> Grundidee und Kontext vermitteln → erstes Ergebnis begutachten</li>
-                            <li><strong>Verfeinerung:</strong> Was passt nicht? Niveau anpassen, Umfang ändern, Format korrigieren</li>
-                            <li><strong>Integration:</strong> Bestehendes Material einarbeiten (Kolleg:innen-Worksheets, Schulbuch-Vokabular)</li>
-                            <li><strong>Finalisierung:</strong> Letzte Korrekturen, Answer Keys, Teacher Resources</li>
-                        </ol>
-                        <p>Die Materialien in Kapitel 3 zeigen diesen Prozess transparent – mit allen Prompts, die nötig waren, um zum fertigen Ergebnis zu kommen. Typisch sind 3–8 Prompts pro Material.</p>
+                        <p>Eine häufige Annahme ist, dass man mit einem Prompt gleich das perfekte Ergebnis bekommen kann. In der Realität ist die Erstellung guter Materialien fast immer ein iterativer Prozess über mehrere Prompts.</p>
+
+                        <p>Mein typischer Workflow sieht so aus:</p>
+                        <p><strong>Schritt 1 – Grundidee und Kontext vermitteln.</strong> Erster Prompt mit allen fünf Kernelementen. Ergebnis begutachten und überlegen: Was passt, was nicht?</p>
+                        <p><strong>Schritt 2 – Verfeinerung.</strong> Niveau anpassen, Umfang ändern, Format korrigieren. „Das ist zu schwer für A2, vereinfache die Sätze." Oder: „Mach daraus 15 statt 20 Items." Oder: „Die Gap-Fill-Sätze sind zu offensichtlich, mach die Lücken schwieriger."</p>
+                        <p><strong>Schritt 3 – Integration.</strong> Bestehendes Material einarbeiten: Kolleg:innen-Worksheets, Schulbuch-Vokabular, vorhandene Testformate. „Verwende nur Vokabeln aus dieser Liste" (Datei hochladen). Dieser Schritt macht den Unterschied zwischen generischem KI-Material und etwas, das tatsächlich in deinen Unterricht passt.</p>
+                        <p><strong>Schritt 4 – Finalisierung.</strong> Letzte Korrekturen, Answer Keys erstellen, Teacher Notes hinzufügen. „Erstelle jetzt einen Answer Key und füge bei jeder Aufgabe die Seitenzahl aus dem Schulbuch hinzu."</p>
+
+                        <p>Die Materialien in Kapitel 3 zeigen diesen Prozess transparent – mit allen Prompts, die nötig waren, um zum fertigen Ergebnis zu kommen. Typisch sind 3 bis 8 Prompts pro Material. Bei komplexeren Projekten wie dem Dead Poets Society Film oder den PuP-Themenblöcken waren es deutlich mehr.</p>
+
+                        <h4>Zwei Techniken für Fortgeschrittene</h4>
+                        <p>Sobald du mit den Grundprinzipien vertraut bist, gibt es zwei Techniken, die den Workflow erheblich verbessern können:</p>
+
+                        <p><strong>Die Reverse-Engineering-Technik.</strong> Du hast ein Arbeitsblatt, das perfekt ist – vielleicht von einer Kollegin, vielleicht ein eigenes aus analogen Zeiten. Du willst, dass die KI exakt in diesem Stil weitere Materialien erstellt. Statt zu versuchen, das Format in Worten zu beschreiben, sagst du:</p>
+                        <p><em>„Analysiere dieses Dokument methodisch. Extrahiere alles, was nötig ist, um es perfekt nachzubauen: Struktur, Aufbau, Aufgabentypen, Stil, Tonalität, Formatierung, implizite Regeln. Schreibe mir dann eine Anleitung, mit der ich zukünftige Materialien in genau diesem Stil erstellen lassen kann."</em></p>
+                        <p>Die KI zerlegt das Dokument in seine Bestandteile und liefert dir einen wiederverwendbaren Blueprint. Das ist besonders nützlich, wenn du ein konsistentes Format über viele Materialien hinweg beibehalten willst.</p>
+
+                        <p><strong>Die Prompt-Bereinigung.</strong> Du hast ein tolles Ergebnis erzielt, aber es hat mehrere langwierige Iterationen gebraucht, bis alles gepasst hat. Jetzt willst du das beim nächsten Mal in einem einzigen Prompt schaffen:</p>
+                        <p><em>„Analysiere unsere gesamte Konversation und schreibe den einen Prompt, der dieses Endergebnis in einem Schritt produziert hätte."</em></p>
+                        <p>Die KI destilliert alle Korrekturen, Anpassungen und Verfeinerungen in einen einzigen, optimierten Prompt. Drei Vorteile: Erstens kannst du diesen Prompt speichern und für ähnliche Aufgaben wiederverwenden. Zweitens gehen keine der kleinen Anpassungen verloren, die du unterwegs gemacht hast. Drittens lernst du dabei, was einen wirklich guten Prompt ausmacht, weil du siehst, wie die KI alle Informationen strukturiert.</p>
+
+                        <div class="highlight-box">
+                            <h4>Zusammenfassung: Die Prinzipien auf einen Blick</h4>
+                            <ol>
+                                <li><strong>Context Engineering statt Prompt Engineering:</strong> Es geht nicht um die perfekte Frage, sondern um den richtigen Kontext. Nicht zu viel, nicht zu wenig; genau das, was die KI braucht.</li>
+                                <li><strong>Fünf Kernelemente:</strong> Rolle, Kontext, erwartetes Ergebnis, WARUM, Beispiele. Das WARUM ist dabei der am meisten unterschätzte Hebel.</li>
+                                <li><strong>Single-Shot-Prinzip:</strong> Alle wichtigen Informationen gebündelt im ersten Prompt. Nachliefern über mehrere Nachrichten kostet oftmals Qualität.</li>
+                                <li><strong>Iteration ist normal:</strong> 3–8 Prompts pro Material sind der Regelfall, nicht die Ausnahme. Wer Perfektion im ersten Anlauf erwartet, wird frustriert.</li>
+                                <li><strong>Reverse Engineering und Prompt Reversal</strong> sind Power-Techniken, die sich besonders für wiederkehrende Aufgaben lohnen.</li>
+                                <li><strong>Spracheingabe (siehe 2.1)</strong> und das Single-Shot-Prinzip ergänzen sich perfekt: Beim Sprechen liefert man natürlicherweise mehr Kontext als beim Tippen.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>
