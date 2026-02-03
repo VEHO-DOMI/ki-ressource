@@ -7623,102 +7623,61 @@ OUTPUT:
                             </div>
                             <div class="sub-collapsible-content">
                                 <div class="sub-collapsible-inner">
-                                    <p><strong>Chat-Datei:</strong> 021.txt | <strong>Besonderheit:</strong> Iterativer Prozess mit Qualitätskontrolle durch zweites KI-Tool</p>
+                                    <p><strong>Chat-Datei:</strong> 021.txt</p>
 
                                     <!-- PROMPT 1 -->
                                     <div class="prompt-box">
                                         <div class="prompt-header" onclick="togglePrompt(this)">
-                                            <span>👤 Prompt 1 – Video-Transkripte + Taktiken</span>
-                                            <span class="toggle-prompt">▼ anzeigen</span>
-                                        </div>
-                                        <div class="prompt-content">
-                                            <div class="prompt-inner">
-                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                                <pre>[4 Video-Transkripte eingefügt: Matura-Angebot, WhatsApp-Gruppe, Schulzeitreise, StudyDrive]
-
-Das sollen kurze Videoclips sein zum Einstieg in das Thema Werbepsychologie. Inwiefern ist das psychologisch fundiert?</pre>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p><strong>🤖 Claude:</strong> Identifizierte 10+ Taktiken (Scarcity, FOMO, Loss Aversion, etc.) mit Theorien (Cialdini, Kahneman). → Reduziert auf finale 8 Taktiken.</p>
-
-                                    <!-- PROMPT 2 -->
-                                    <div class="prompt-box">
-                                        <div class="prompt-header" onclick="togglePrompt(this)">
-                                            <span>👤 Prompt 2 – Qualitätskontrolle</span>
+                                            <span>👤 Prompt 1 – Qualitätskontrolle durch zweites KI-Tool</span>
                                             <span class="toggle-prompt">▼ anzeigen</span>
                                         </div>
                                         <div class="prompt-content">
                                             <div class="prompt-inner">
                                                 <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
                                                 <pre>kurze zwischenfrage, arbeiten wir eh sauber:
-[ChatGPT-Review eingefügt mit Korrektur: Commodity Theory = Brock 1968, nicht Brehm]
+
+überprüfe ob das so stimmt: PSYCHOLOGISCHE THEORIE: Reaktanztheorie (Brehm, 1966): Wenn die Freiheit eingeschränkt wird (z.B. durch Knappheit), entsteht psychologische Reaktanz – das begehrte Objekt wird wertvoller. NEUROBIOLOGIE: Amygdala aktiviert → Stressreaktion ("Das entgeht mir!") → erhöhte Aufmerksamkeit und Handlungsdrang.
+
+[ChatGPT-Output eingefügt]:
+Die Reaktanztheorie (Brehm, 1966) erklärt tatsächlich, warum Menschen auf wahrgenommene Einschränkungen ihrer Freiheit reagieren... ABER: Für Scarcity (Verknappung) ist die Commodity Theory (Brock, 1968) die passendere Grundlage...
+
 ### das kommt aus einer unabhängigen überprüfung – was sagst du?</pre>
                                             </div>
                                         </div>
                                     </div>
-                                    <p><strong>🤖 Claude:</strong> Bestätigte Kritik, korrigierte alle Quellenangaben. → Zwei Versionen erstellt: Lehrkraft (vollständig) + SuS (reduziert).</p>
+                                    <p><strong>🤖 Claude:</strong> Bestätigte die Kritik als berechtigt. Hatte Commodity Theory (Brock) fälschlich mit Reaktanztheorie (Brehm) vermischt. Überarbeitete alle Taktiken auf theoretische Sauberkeit.</p>
+
+                                    <!-- PROMPT 2 -->
+                                    <div class="prompt-box">
+                                        <div class="prompt-header" onclick="togglePrompt(this)">
+                                            <span>👤 Prompt 2 – Supermarkt-Psychologie</span>
+                                            <span class="toggle-prompt">▼ anzeigen</span>
+                                        </div>
+                                        <div class="prompt-content">
+                                            <div class="prompt-inner">
+                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
+                                                <pre>Afterwards I wanna go into the psychology of grocery stores. I figured watching this video would be a good transition from online advertising to offline marketing tactics. Can you create a worksheet for students to fill out while watching, identifying the 7 tactics mentioned?</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p><strong>🤖 Claude:</strong> Erstellte Arbeitsblatt mit 7 Supermarkt-Taktiken (Metaphorical Doors, Transition State, Counterclockwise Layout, Anchor Products, Endcaps, Empty Cart Effect, Eye Level = Buy Level) + Lehrerfassung mit Musterlösungen und Verbindungen zu den 8 Online-Taktiken.</p>
 
                                     <!-- PROMPT 3 -->
                                     <div class="prompt-box">
                                         <div class="prompt-header" onclick="togglePrompt(this)">
-                                            <span>👤 Prompt 3 – AIDA-Einstieg</span>
+                                            <span>👤 Prompt 3 – Features vs. Benefits + USP</span>
                                             <span class="toggle-prompt">▼ anzeigen</span>
                                         </div>
                                         <div class="prompt-content">
                                             <div class="prompt-inner">
                                                 <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                                <pre>[AIDA-Modell Beschreibung eingefügt]
-schreib das um für SuS</pre>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p><strong>🤖 Claude:</strong> Erstellte SuS-freundliche AIDA-Erklärung: A = Aufmerksamkeit (erste 3 Sek), I = Interesse (Problem zeigen), D = Desire (Lösung versprechen), A = Action (Call-to-Action).</p>
+                                                <pre>I wanted to introduce the concept of features versus benefits, and the psychological component behind it. Ideally, they would then write 2 to 3 features of their own product, and the benefits to them. To do that, I need to provide them with the theoretical input of it, and to give a couple of examples to illustrate it.
 
-                                    <!-- PROMPT 4 -->
-                                    <div class="prompt-box">
-                                        <div class="prompt-header" onclick="togglePrompt(this)">
-                                            <span>👤 Prompt 4 – Supermarkt-Psychologie</span>
-                                            <span class="toggle-prompt">▼ anzeigen</span>
-                                        </div>
-                                        <div class="prompt-content">
-                                            <div class="prompt-inner">
-                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                                <pre>Afterwards I wanna go into the psychology of grocery stores. I figured watching this video: [Supermarket Psychology Video]</pre>
+[Follow-up]: and how can we include the idea of an "USP" in there as well?</pre>
                                             </div>
                                         </div>
                                     </div>
-                                    <p><strong>🤖 Claude:</strong> Erstellte Arbeitsblatt mit 7 Supermarkt-Taktiken: Metaphorical Doors, Transition State, Counterclockwise Layout, Anchor Products, Endcaps, Empty Cart Effect, Eye Level = Buy Level. + Lehrerfassung mit Musterlösungen.</p>
-
-                                    <!-- PROMPT 5 -->
-                                    <div class="prompt-box">
-                                        <div class="prompt-header" onclick="togglePrompt(this)">
-                                            <span>👤 Prompt 5 – Features vs. Benefits</span>
-                                            <span class="toggle-prompt">▼ anzeigen</span>
-                                        </div>
-                                        <div class="prompt-content">
-                                            <div class="prompt-inner">
-                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                                <pre>I wanted to introduce the concept of features versus benefits, and the psychological component behind it. Ideally, they would then write 2 to 3 features of their own product, and the benefits to them.</pre>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p><strong>🤖 Claude:</strong> Erstellte Theorie-Input: WIIFM-Prinzip, System 1 vs. 2, Maslow. Formel: Feature + "Das bedeutet für dich" + Benefit. Arbeitsblatt für SuS-Produkte.</p>
-
-                                    <!-- PROMPT 6 -->
-                                    <div class="prompt-box">
-                                        <div class="prompt-header" onclick="togglePrompt(this)">
-                                            <span>👤 Prompt 6 – USP einbauen</span>
-                                            <span class="toggle-prompt">▼ anzeigen</span>
-                                        </div>
-                                        <div class="prompt-content">
-                                            <div class="prompt-inner">
-                                                <button class="copy-btn" onclick="copyPrompt(this)">Kopieren</button>
-                                                <pre>and how can we include the idea of an "USP" in there as well?</pre>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p><strong>🤖 Claude:</strong> Erweiterte um USP (Unique Selling Proposition): 5 USP-Typen (Feature, Benefit, Zielgruppe, Versprechen, Story). Vollständige Formel: Feature → Benefit → USP + 8 Werbetaktiken.</p>
+                                    <p><strong>🤖 Claude:</strong> Erstellte Theorie-Input mit WIIFM-Prinzip ("What's In It For Me?"), System 1 vs. 2 (Kahneman), Maslow-Bedürfnisse. Formel: Feature + "Das bedeutet für dich" + Benefit. Erweitert um 5 USP-Typen (Feature, Benefit, Zielgruppe, Versprechen, Story).</p>
 
                                 </div>
                             </div>
@@ -7821,28 +7780,6 @@ Basierend auf dem [FRAMEWORK: z.B. AIDA-Modell] als Rahmen, erstelle folgende Ma
                                         </div>
                                     </div>
 
-                                    <h4>💡 Didaktische Prinzipien</h4>
-                                    <ul>
-                                        <li><strong>Authentisches Material:</strong> Echte Werbung/Medien analysieren – nicht künstliche Beispiele</li>
-                                        <li><strong>Kritische Medienkompetenz:</strong> Manipulation erkennen → Selbstschutz entwickeln</li>
-                                        <li><strong>Theorie-Praxis-Verbindung:</strong> Psychologische Konzepte werden direkt anwendbar</li>
-                                        <li><strong>Entdeckendes Lernen:</strong> SuS identifizieren Taktiken selbst, bevor Begriffe eingeführt werden</li>
-                                        <li><strong>Persönlicher Bezug:</strong> Reflexion eigener Erfahrungen macht Thema relevant</li>
-                                    </ul>
-
-                                    <h4>🎯 Anpassungsmöglichkeiten</h4>
-                                    <ul>
-                                        <li><strong>Andere Medien:</strong> Social Media Algorithmen, Clickbait, Fake News, Dark Patterns in Apps, Influencer Marketing</li>
-                                        <li><strong>Andere Frameworks:</strong> Elaboration Likelihood Model, Cialdinis 6 Prinzipien, Nudging-Theorie</li>
-                                        <li><strong>Projektarbeit:</strong> SuS erstellen selbst "manipulative" Werbung und präsentieren die verwendeten Taktiken</li>
-                                        <li><strong>Ethik-Diskussion:</strong> Wann ist Überzeugung legitim, wann manipulativ?</li>
-                                    </ul>
-
-                                    <h4>📎 Empfohlene Anhänge</h4>
-                                    <ul>
-                                        <li>Transkripte/Screenshots echter Werbung (selbst gesammelt – Urheberrecht beachten)</li>
-                                        <li>Bei Video: Timestamps der relevanten Stellen</li>
-                                    </ul>
                                 </div>
                             </div>
                         </div>
