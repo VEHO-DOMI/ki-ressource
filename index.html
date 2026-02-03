@@ -716,6 +716,40 @@
             margin: 0 !important;
         }
 
+        /* Attention explanation table */
+        .attention-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95em;
+        }
+
+        .attention-table th,
+        .attention-table td {
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .attention-table th {
+            background: linear-gradient(180deg,
+                rgba(0, 212, 255, 0.15) 0%,
+                rgba(0, 212, 255, 0.05) 100%);
+            color: var(--cyber-blue);
+            font-weight: 600;
+        }
+
+        .attention-table tr:nth-child(even) {
+            background: rgba(0, 212, 255, 0.03);
+        }
+
+        .attention-table td:first-child {
+            white-space: nowrap;
+            font-family: monospace;
+            color: var(--cyber-blue);
+        }
+
         /* Intro Collapsible - für Einführungstexte */
         .intro-collapsible {
             background: linear-gradient(180deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 212, 255, 0.02) 100%);
@@ -1504,7 +1538,7 @@
                                     <p>Zusätzlich zu diesen semantischen Vektoren erhält jedes Token einen Positionsvektor, der kodiert, an welcher Stelle im Satz es steht. Das ist wichtig, weil dieselben Wörter je nach Position verschiedene Dinge bedeuten können: „Der Hund jagte die Katze" ist etwas anderes als „Die Katze jagte den Hund."</p>
 
                                     <h4>Schritt 2: Attention – Wie Wörter miteinander sprechen</h4>
-                                    <p>Hier kommt die Kerninnovation der Transformer: der <em>Attention-Mechanismus</em>. Das Problem, das er löst, ist fundamental: Wenn ein Modell das nächste Wort vorhersagen will, sind nicht alle vorherigen Wörter gleich relevant. Bei dem Satz „Das Restaurant weigerte sich, mir ein Schinkenbrötchen zu servieren, weil es nur vegetarisches Essen anbietet" muss das Modell verstehen, dass „es" sich auf „Restaurant" bezieht und nicht auf „Schinkenbrötchen".</p>
+                                    <p>Hier kommt die Kerninnovation der Transformer: der <em>Attention-Mechanismus</em>. Das Problem, das er löst, ist fundamental: Wenn ein Modell das nächste Wort vorhersagen will, sind nicht alle vorherigen Wörter gleich relevant. Bei dem Satz „Der Tesla bog in die Garage ein, weil sein Akku fast leer war" muss das Modell verstehen, dass „sein" sich auf „Tesla" bezieht und nicht auf „Garage".</p>
 
                                     <p>Wie funktioniert das konkret? Für jedes Token im Satz berechnet das Modell drei Dinge:</p>
                                     <ul>
@@ -1517,15 +1551,39 @@
 
                                     <div class="formula-block">$$\text{Attention}(Q,K,V) = \text{softmax}\left( \frac{Q \cdot K^{T}}{\sqrt{d_{k}}} \right) \cdot V$$</div>
 
-                                    <p>Was passiert hier Schritt für Schritt? Stell dir eine Klasse vor, in der Schüler:innen ein Gruppenprojekt vorbereiten. Jede:r hat Expertise in einem anderen Bereich, und jetzt muss jede:r herausfinden, wen sie für ihre spezifische Aufgabe fragen sollte:</p>
-                                    <ul>
-                                        <li><strong>Q·Kᵀ</strong> — <em>„Wer kann mir helfen?"</em> Jede:r Schüler:in (Query) schaut sich die Fachgebiete aller anderen (Keys) an und bewertet: „Wie relevant bist du für meine Frage?" Wenn du ein Referat über den Klimawandel vorbereitest und wissen willst, worauf sich „diese Entwicklung" im Text bezieht, schaust du zurück: „CO₂-Anstieg" ist sehr relevant, „Einleitung" weniger.</li>
-                                        <li><strong>÷√d_k</strong> — <em>Faire Bewertung.</em> Stell dir vor, manche Schüler:innen rufen ihre Antworten laut, andere flüstern. Ohne Normalisierung würden die Lauten immer dominieren. Die Division sorgt dafür, dass alle Stimmen fair verglichen werden können.</li>
-                                        <li><strong>softmax(...)</strong> — <em>„Wie verteile ich meine Aufmerksamkeit?"</em> Die Rohbewertungen werden in Prozente umgewandelt. Für dein Klimawandel-Referat fragst du vielleicht zu 70% die Expertin für Naturwissenschaften, zu 20% den Geografie-Kenner, und zu 10% hörst du auch noch der Deutsch-Spezialistin zu (wegen der Formulierung).</li>
-                                        <li><strong>· V</strong> — <em>Wissen einsammeln.</em> Jetzt holst du dir das tatsächliche Wissen (Values) von allen, gewichtet nach deiner Aufmerksamkeitsverteilung. Du bekommst hauptsächlich naturwissenschaftliche Erklärungen, aber auch ein bisschen geografischen Kontext und sprachliche Feinheiten beigemischt.</li>
-                                    </ul>
+                                    <p><strong>Was passiert hier Schritt für Schritt?</strong> Stell dir vor, jedes Wort im Satz ist ein Experte in einem Team. Um seine eigene Bedeutung im Satzkontext zu verstehen, startet es eine Blitz-Umfrage bei den Kollegen.</p>
 
-                                    <p><em>Self-Attention</em> heißt dieser Mechanismus, weil der Text mit sich selbst spricht: Jedes Wort schaut sich alle anderen an und entscheidet dynamisch, welche für seinen aktuellen Job gerade relevant sind – genau wie Schüler:innen in einer Klasse, die je nach Aufgabe unterschiedliche Mitschüler:innen um Rat fragen. Das ist der Grund, warum Transformer so gut darin sind, lange Abhängigkeiten zu verstehen: Ein Pronomen am Satzende kann problemlos auf ein Nomen am Satzanfang verweisen, egal wie viele Wörter dazwischen liegen.</p>
+                                    <p>Zurück zu unserem Beispiel: Das Wort „sein" muss herausfinden, wessen Akku leer ist. Es startet eine Umfrage:</p>
+
+                                    <table class="attention-table">
+                                        <tr>
+                                            <th>Schritt</th>
+                                            <th>Analogie (Experten-Team)</th>
+                                            <th>Was der Transformer tut</th>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Q·Kᵀ</strong></td>
+                                            <td><em>Die Umfrage:</em> „sein" fragt alle anderen Wörter: „Ich suche einen Besitzer – Singular, männlich oder sächlich. Wer von euch passt?"</td>
+                                            <td>Der Query-Vektor von „sein" (die Frage) wird mit dem Key-Vektor jedes anderen Wortes (das Angebot) verglichen. „Tesla" meldet hohe Übereinstimmung, „Garage" niedrige.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>÷√d_k</strong></td>
+                                            <td><em>Faire Moderation:</em> Der Moderator sorgt dafür, dass nicht der Experte, der am lautesten schreit, automatisch gewinnt.</td>
+                                            <td>Die Roh-Scores werden skaliert. Das verhindert, dass Vektoren mit sehr großen Zahlen die Aufmerksamkeit unverhältnismäßig dominieren.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>softmax</strong></td>
+                                            <td><em>Fokus festlegen:</em> „sein" entscheidet: „Okay, 95% Aufmerksamkeit auf ‚Tesla', 3% auf ‚Garage', den Rest ignoriere ich."</td>
+                                            <td>Die skalierten Scores werden in eine Prozentverteilung umgewandelt, die sich zu 100% addiert.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>· V</strong></td>
+                                            <td><em>Wissen übernehmen:</em> „sein" holt sich die Kerninformation von „Tesla" – das Konzept eines Elektroautos mit Akku.</td>
+                                            <td>Der Vektor von „sein" wird mit den Value-Vektoren multipliziert und aufsummiert. Er „saugt" die Bedeutung von „Tesla" auf.</td>
+                                        </tr>
+                                    </table>
+
+                                    <p><strong>Fazit:</strong> Nach der Umfrage weiß „sein" eindeutig: „Ich gehöre zu ‚Tesla'." Dieser Prozess passiert für jedes Wort im Satz gleichzeitig – daher <em>Self-Attention</em>: Das Team von Experten befragt sich permanent gegenseitig, um das Gesamtbild zu verstehen. Das ist der Grund, warum Transformer so gut darin sind, Bezüge über beliebige Distanzen herzustellen: Ein Pronomen am Satzende „recherchiert" zurück und findet sein Bezugswort am Satzanfang, egal wie viele Wörter dazwischen liegen.</p>
 
                                     <h4>Multi-Head Attention: Viele Perspektiven gleichzeitig</h4>
                                     <p>In der Praxis führt das Modell diesen Attention-Prozess nicht nur einmal durch, sondern viele Male parallel, über sogenannte <em>Attention Heads</em>. Jeder Head lernt, auf andere Aspekte zu achten: Ein Head könnte grammatische Beziehungen verfolgen (Subjekt → Verb), ein anderer semantische Zusammenhänge (Tier → Lebensraum), ein dritter kausale Verbindungen (Ursache → Wirkung).</p>
