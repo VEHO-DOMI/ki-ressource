@@ -2489,6 +2489,51 @@ damit wir genau dort weitermachen können, wo wir aufgehört haben.</pre>
                         <div class="warning-box">
                             <strong>Wichtig:</strong> KI-Detektoren (GPTZero, Turnitin etc.) sind bei deutschen Texten wenig zuverlässig. Eine Studie der Ruhr-Universität Bochum zeigte, dass Lehrkräfte mit etwa 70% Genauigkeit KI-Texte erkennen – besser als viele automatische Tools. Der beste Ansatz bleibt: den Schreibprozess kennen, nicht nur das Endprodukt bewerten.
                         </div>
+
+                        <!-- Technischer Hintergrund Ausklapper -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <span>🔬 Technischer Hintergrund: Wie funktionieren KI-Detektoren?</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <div class="sub-collapsible-inner">
+                                    <div class="info-box" style="margin-bottom: 1rem;">
+                                        <p style="margin-bottom: 0;"><em>Transparenzhinweis: Diesen Abschnitt habe ich von der KI recherchieren lassen und mich selbst noch nicht ausreichend mit dem Thema befasst. Ich möchte die Information dennoch zur Verfügung stellen – mit dem Vorbehalt, dass ich sie nicht persönlich verifiziert habe.</em></p>
+                                    </div>
+
+                                    <h4>Die zwei Kernmetriken: Perplexität & Burstiness</h4>
+
+                                    <p><strong>Perplexität</strong> misst, wie vorhersagbar ein Text für ein Sprachmodell ist. Für jedes Wort berechnet das Modell die Wahrscheinlichkeit, dass genau dieses Wort als nächstes kommt. Hat ein Text Perplexität 10, ist das Modell "so verwirrt, als müsste es bei jedem Wort zwischen 10 gleichwahrscheinlichen Optionen würfeln".</p>
+                                    <ul>
+                                        <li>Niedrige Perplexität (Text ist vorhersagbar) → wahrscheinlich KI</li>
+                                        <li>Hohe Perplexität (Text ist überraschend) → wahrscheinlich Mensch</li>
+                                    </ul>
+                                    <p>KI-generierter Text ist "zu glatt" – er wählt tendenziell die statistisch wahrscheinlichsten Wörter.</p>
+
+                                    <p><strong>Burstiness</strong> misst, wie stark die Perplexität über das Dokument variiert. Menschen schreiben mit Rhythmus: mal kurze Sätze, dann komplexe Schachtelsätze. KI-Text ist gleichmäßiger – niedrige Burstiness gilt als "Maschinen-Fingerabdruck".</p>
+
+                                    <h4>Fortgeschrittene Methoden (2025)</h4>
+                                    <ul>
+                                        <li><strong>Semantic Fingerprinting:</strong> Transformer-Modelle mappen Textpassagen in hochdimensionale Vektoren und vergleichen sie per Kosinus-Ähnlichkeit mit bekannten KI-Outputs.</li>
+                                        <li><strong>Observer/Performer-Modelle:</strong> Zwei ähnliche Modelle werden verglichen – der Score ist das Verhältnis zwischen Log-Wahrscheinlichkeit und Cross-Entropy.</li>
+                                        <li><strong>Training auf Bypass-Tools:</strong> Aktuelle Detektoren werden explizit auf Outputs von "KI-Humanizern" trainiert.</li>
+                                    </ul>
+
+                                    <h4>Die massiven Limitationen</h4>
+                                    <table>
+                                        <tr><th>Problem</th><th>Details</th></tr>
+                                        <tr><td>Falsch-Positiv-Raten</td><td>Turnitin behauptet &lt;1%, eine Washington-Post-Studie fand 50%</td></tr>
+                                        <tr><td>Nicht-Muttersprachler</td><td>61% der Essays von Nicht-Muttersprachlern werden fälschlicherweise als KI erkannt (Liang et al. 2023)</td></tr>
+                                        <tr><td>Deutsche Texte</td><td>Deutlich weniger Trainingsdaten, daher weniger zuverlässig</td></tr>
+                                        <tr><td>Paraphrasierung</td><td>Genauigkeit sinkt von 70% auf unter 5% nach Paraphrasierung</td></tr>
+                                        <tr><td>OpenAIs eigener Detektor</td><td>Wurde eingestellt – nur 26% Trefferquote bei 9% False Positives</td></tr>
+                                    </table>
+
+                                    <p style="margin-top: 1rem;"><strong>Fazit:</strong> KI-Detektoren sind keine Beweismittel, sondern bestenfalls Hinweisgeber. Erfahrene Lehrkräfte erreichen vergleichbare oder bessere Genauigkeit als automatische Tools – besonders bei deutschen Texten.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
