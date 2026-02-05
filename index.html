@@ -1873,37 +1873,47 @@
                         </table>
                         <p><strong>Meine Einschätzung:</strong> Die größten Kontextfenster. Interessant für sehr lange Dokumente. Sagt häufiger „Das weiß ich nicht." Sehr gut bei der Analyse von Daten und Graphen.</p>
 
-                        <h4>Open-Source-Modelle</h4>
-                        <p>Neben den kommerziellen Anbietern gibt es eine wachsende Landschaft an Open-Source-Modellen (genauer: Open-Weight-Modellen, da die Gewichte frei verfügbar sind, der Trainingscode aber nicht immer). Der entscheidende Unterschied: Bei Claude, ChatGPT und Gemini nutzt man die Modelle über das Interface des jeweiligen Anbieters. Open-Source-Modelle kann man hingegen herunterladen und auf eigener Hardware betreiben, was volle Kontrolle über Daten und Kosten bedeutet, aber auch entsprechende technische Infrastruktur voraussetzt. (Habe ich persönlich noch nicht getestet)</p>
+                        <!-- Open-Source-Modelle Ausklapper -->
+                        <div class="sub-collapsible">
+                            <div class="sub-collapsible-header" onclick="toggleSubCollapsible(this)">
+                                <span>🔓 Open-Source-Modelle</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="sub-collapsible-content">
+                                <div class="sub-collapsible-inner">
+                                    <p>Neben den kommerziellen Anbietern gibt es eine wachsende Landschaft an Open-Source-Modellen (genauer: Open-Weight-Modellen, da die Gewichte frei verfügbar sind, der Trainingscode aber nicht immer). Der entscheidende Unterschied: Bei Claude, ChatGPT und Gemini nutzt man die Modelle über das Interface des jeweiligen Anbieters. Open-Source-Modelle kann man hingegen herunterladen und auf eigener Hardware betreiben, was volle Kontrolle über Daten und Kosten bedeutet, aber auch entsprechende technische Infrastruktur voraussetzt. (Habe ich persönlich noch nicht getestet)</p>
 
-                        <table>
-                            <tr>
-                                <th>Modell</th>
-                                <th>Herkunft</th>
-                                <th>Stärke</th>
-                            </tr>
-                            <tr>
-                                <td>DeepSeek V3.2</td>
-                                <td>DeepSeek (China)</td>
-                                <td>Reasoning und Coding auf dem Niveau kommerzieller Modelle; MIT-Lizenz</td>
-                            </tr>
-                            <tr>
-                                <td>Llama 4 (Scout/Maverick)</td>
-                                <td>Meta</td>
-                                <td>Multimodal (Text, Bilder, Video); bis zu 10M Token Kontextfenster</td>
-                            </tr>
-                            <tr>
-                                <td>Kimi K2.5</td>
-                                <td>Moonshot AI (China)</td>
-                                <td>1T Parameter MoE-Architektur; stark bei Coding und Agentic Tasks; 256K Kontextfenster</td>
-                            </tr>
-                            <tr>
-                                <td>Qwen 3</td>
-                                <td>Alibaba (China)</td>
-                                <td>Starkes Reasoning; gute mehrsprachige Unterstützung</td>
-                            </tr>
-                        </table>
-                        <p>Für uns sind Open-Source-Modelle derzeit (noch) weniger relevant, da sie technisches Setup erfordern und die Chat-Interfaces der kommerziellen Anbieter deutlich komfortabler sind. Spannend werden sie aber durch Plattformen wie Monica.ai (siehe unten), die den Zugang zu verschiedenen Modellen unter einem Dach bündeln.</p>
+                                    <table>
+                                        <tr>
+                                            <th>Modell</th>
+                                            <th>Herkunft</th>
+                                            <th>Stärke</th>
+                                        </tr>
+                                        <tr>
+                                            <td>DeepSeek V3.2</td>
+                                            <td>DeepSeek (China)</td>
+                                            <td>Reasoning und Coding auf dem Niveau kommerzieller Modelle; MIT-Lizenz</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Llama 4 (Scout/Maverick)</td>
+                                            <td>Meta</td>
+                                            <td>Multimodal (Text, Bilder, Video); bis zu 10M Token Kontextfenster</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Kimi K2.5</td>
+                                            <td>Moonshot AI (China)</td>
+                                            <td>1T Parameter MoE-Architektur; stark bei Coding und Agentic Tasks; 256K Kontextfenster</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Qwen 3</td>
+                                            <td>Alibaba (China)</td>
+                                            <td>Starkes Reasoning; gute mehrsprachige Unterstützung</td>
+                                        </tr>
+                                    </table>
+                                    <p>Für uns sind Open-Source-Modelle derzeit (noch) weniger relevant, da sie technisches Setup erfordern und die Chat-Interfaces der kommerziellen Anbieter deutlich komfortabler sind. Spannend werden sie aber durch Plattformen wie Monica.ai (siehe unten), die den Zugang zu verschiedenen Modellen unter einem Dach bündeln.</p>
+                                </div>
+                            </div>
+                        </div>
 
                         <h4>Multi-Modell-Plattformen</h4>
                         <p>Anbieter wie Monica.ai bieten Zugang zu allen führenden Modellen über ein einziges Interface: Claude, ChatGPT, Gemini, DeepSeek und andere. Das ermöglicht es, bei wichtigen Aufgaben die Outputs verschiedener KIs nebeneinander zu vergleichen. Ich nutze das regelmäßig, vor allem bei High-Stakes-Aufgaben, bei denen ich sichergehen will, dass ein Ergebnis nicht nur von einem Modell so gesehen wird. Wenn drei verschiedene Modelle unabhängig voneinander zum gleichen Schluss kommen, ist die Wahrscheinlichkeit deutlich höher, dass das Ergebnis stimmt.</p>
