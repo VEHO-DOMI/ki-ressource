@@ -1492,26 +1492,22 @@
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
-                        <h4>Die Kurzversion</h4>
-                        <p>Ein Large Language Model (LLM) wie ChatGPT, Claude oder Gemini ist im Kern eine Textvorhersagemaschine. Es wurde mit Milliarden von Texten trainiert und hat dabei gelernt: Welches Wort folgt typischerweise auf welches?</p>
+                        <h4>Das Grundprinzip</h4>
+                        <p>ChatGPT, Claude, Gemini – alle diese Modelle machen im Kern dasselbe: Sie sagen das nächste Wort vorher. Man gibt einen Text ein, und das Modell berechnet, welches Wort am wahrscheinlichsten als nächstes kommt. Dann wird dieses Wort angehängt, und der Prozess wiederholt sich. Eine Antwort mit 500 Wörtern entsteht durch etwa 375 solcher Vorhersagen hintereinander.</p>
 
-                        <p>Das klingt simpel, und ist es konzeptionell auch. Aber die Konsequenzen sind erstaunlich: Ein System, das extrem gut darin ist, das nächste Wort vorherzusagen, muss implizit sehr viel über Sprache, Logik und die Welt verstanden haben.</p>
+                        <p>Das klingt banal, erklärt aber vieles: Warum die Modelle manchmal Unsinn schreiben (das nächste Wort war statistisch plausibel, auch wenn der Inhalt falsch ist), warum sie keine "Meinung" haben (sie optimieren auf wahrscheinliche Fortsetzungen, nicht auf Wahrheit), und warum sie bei manchen Aufgaben verblüffend gut sind (wer Milliarden Texte gelesen hat, weiß, wie gute Texte aussehen).</p>
 
-                        <h4>Wie werden diese Modelle trainiert?</h4>
-                        <p>Das Training verläuft in zwei Phasen. In der ersten Phase, dem <strong>Pre-Training</strong>, wird das Modell mit gigantischen Textmengen gefüttert – Bücher, Wikipedia, Webseiten, Foren, wissenschaftliche Artikel, Programmcode. Die Größenordnungen sind schwer vorstellbar: GPT-4 wurde auf schätzungsweise 13 Billionen Tokens trainiert, Claude auf etwa 10 Billionen. Das Training selbst dauert Monate auf Clustern mit tausenden spezialisierten Chips und kostet dreistellige Millionenbeträge.</p>
+                        <h4>Wie entsteht so ein Modell?</h4>
+                        <p>Das Training hat zwei Phasen. Zuerst das <strong>Pre-Training</strong>: Das Modell liest riesige Mengen Text – Bücher, Wikipedia, Webseiten, Foren, Code. Bei GPT-4 waren es geschätzt 13 Billionen Wortfragmente (Tokens), bei Claude etwa 10 Billionen. Das entspricht mehr Text, als ein Mensch in tausend Leben lesen könnte.</p>
 
-                        <p>Die Aufgabe dabei ist denkbar einfach: Gegeben eine Textsequenz, sage das nächste Wort vorher. Das Modell liest "Der Hund bellte laut, weil er..." und muss vorhersagen, was kommt. Anfangs rät es mehr oder weniger zufällig, aber mit jedem Fehler werden die internen Parameter leicht angepasst. Nach Billionen solcher Anpassungen kann das Modell erstaunlich gut vorhersagen, wie Texte weitergehen – und hat dabei nebenbei Grammatik, Faktenwissen, logische Zusammenhänge und sogar Programmierfähigkeiten entwickelt.</p>
+                        <p>Die Trainingsaufgabe ist simpel: Vorhersagen, welches Wort als nächstes kommt. Das Modell liest „Der Hund bellte, weil..." und muss raten. Am Anfang liegt es meist falsch, aber mit jedem Fehler werden die internen Gewichte minimal angepasst. Nach Billionen solcher Anpassungen – das Training dauert Monate und kostet über 100 Millionen Euro – kann das Modell Texte überzeugend fortsetzen. Nebenbei hat es dabei Grammatik, Faktenwissen und logische Muster aufgeschnappt, ohne dass ihm je jemand Regeln beigebracht hätte.</p>
 
-                        <p>Die zweite Phase heißt <strong>Fine-Tuning</strong>. Das vortrainierte Modell kann zwar Texte vervollständigen, ist aber noch nicht besonders hilfreich. Es würde auf die Frage "Was ist die Hauptstadt von Österreich?" vielleicht mit "Was ist die Hauptstadt von Deutschland?" fortfahren – statistisch plausibel, aber nicht das, was man will. Beim Fine-Tuning wird das Modell mit Beispielen trainiert, wie hilfreiche Antworten aussehen: Frage-Antwort-Paare, Instruktionen mit erwünschten Reaktionen. Zusätzlich kommt oft <strong>RLHF</strong> (Reinforcement Learning from Human Feedback) zum Einsatz: Menschen bewerten Modell-Antworten, und das Modell lernt, Antworten zu produzieren, die bessere Bewertungen bekommen. Das macht die Modelle hilfreicher, höflicher und sicherer – und ist der Grund, warum ChatGPT und Claude sich so anders verhalten als ein reines Text-Vervollständigungsmodell.</p>
+                        <p>Das Problem: Ein so trainiertes Modell vervollständigt Texte, aber es antwortet nicht auf Fragen. Fragt man „Was ist die Hauptstadt von Österreich?", ergänzt es vielleicht „Und welche von Deutschland?" – statistisch plausibel, aber nicht hilfreich. Deshalb folgt das <strong>Fine-Tuning</strong>: Das Modell wird mit Beispielen trainiert, wie gute Antworten aussehen. Zusätzlich bewerten Menschen die Antworten (<strong>RLHF</strong> – Reinforcement Learning from Human Feedback), und das Modell lernt, besser bewertete Antworten zu produzieren. Das ist der Grund, warum ChatGPT höflich antwortet statt einfach Text zu vervollständigen.</p>
 
-                        <h4>Was passiert, wenn man eine Frage stellt?</h4>
-                        <ol>
-                            <li><strong>Die Eingabe wird zerlegt</strong> in kleine Stücke, die <em>Tokens</em> heißen. Das können Wörter sein, Wortteile oder Satzzeichen.</li>
-                            <li><strong>Wahrscheinlichkeiten werden berechnet</strong> – Für jedes mögliche nächste Token wird eine Wahrscheinlichkeit berechnet.</li>
-                            <li><strong>Ein Token wird ausgewählt</strong> – basierend auf diesen Wahrscheinlichkeiten.</li>
-                            <li><strong>Wiederholen</strong> – Das neue Token wird zur Eingabe hinzugefügt, und der Prozess beginnt von vorne.</li>
-                        </ol>
-                        <p>Eine Antwort von 500 Wörtern bedeutet etwa 375 einzelne Vorhersage-Zyklen. Jedes Mal schaut das Modell auf alles Bisherige und entscheidet: Was kommt als Nächstes? Wie mutig oder konservativ diese Auswahl ist, steuert ein Parameter namens <em>Temperatur</em>, dazu mehr in Abschnitt 1.3.</p>
+                        <h4>Was heißt das für die Praxis?</h4>
+                        <p>Wer versteht, dass diese Modelle Wort für Wort generieren, versteht auch ihre Stärken und Schwächen besser. Sie sind gut darin, Texte zu produzieren, die so klingen, wie Texte in ihren Trainingsdaten klangen – das macht sie nützlich für Entwürfe, Umformulierungen, Erklärungen. Sie sind weniger gut darin, Fakten zuverlässig wiederzugeben, weil sie nicht „nachschlagen", sondern vorhersagen, was plausibel klingt.</p>
+
+                        <p>Für uns Lehrkräfte heißt das: Diese Werkzeuge sind wie ein sehr belesener Praktikant, der schnell schreibt und viele Ideen hat, dessen Arbeit man aber gegenlesen sollte. Das ist keine Schwäche des Werkzeugs, sondern folgt direkt aus seiner Funktionsweise.</p>
 
                         <!-- Hinter den Kulissen: Transformer -->
                         <div class="sub-collapsible">
