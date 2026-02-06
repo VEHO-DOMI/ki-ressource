@@ -1555,7 +1555,7 @@
 
                                     <p><strong>Was passiert hier Schritt für Schritt?</strong> Stell dir vor, jedes Wort im Satz ist ein Experte in einem Team. Um seine eigene Bedeutung im Satzkontext zu verstehen, startet es eine Blitz-Umfrage bei den Kollegen.</p>
 
-                                    <p>Zurück zu unserem Beispiel: Das Wort „sein" muss herausfinden, wessen Akku leer ist. Es startet eine Umfrage:</p>
+                                    <p>Zurück zu unserem Beispiel: Das Wort „sie" muss herausfinden, wer die Aussage macht. Es startet eine Umfrage:</p>
 
                                     <table class="attention-table">
                                         <tr>
@@ -1565,8 +1565,8 @@
                                         </tr>
                                         <tr>
                                             <td><strong>Q·Kᵀ</strong></td>
-                                            <td><em>Die Umfrage:</em> „sein" fragt alle anderen Wörter: „Ich suche einen Besitzer – Singular, männlich oder sächlich. Wer von euch passt?"</td>
-                                            <td>Der Query-Vektor von „sein" (die Frage) wird mit dem Key-Vektor jedes anderen Wortes (das Angebot) verglichen. „Tesla" meldet hohe Übereinstimmung, „Garage" niedrige.</td>
+                                            <td><em>Die Umfrage:</em> „sie" fragt alle anderen Wörter: „Ich suche eine Person, die hier eine Aussage machen könnte. Wer von euch passt?"</td>
+                                            <td>Der Query-Vektor von „sie" (die Frage) wird mit dem Key-Vektor jedes anderen Wortes (das Angebot) verglichen. Grammatisch passen beide – „Anwältin" und „Zeugin" sind feminin. Aber semantisch meldet „Zeugin" höhere Übereinstimmung: Zeuginnen machen Aussagen, Anwältinnen stellen Fragen.</td>
                                         </tr>
                                         <tr>
                                             <td><strong>÷√d_k</strong></td>
@@ -1575,17 +1575,17 @@
                                         </tr>
                                         <tr>
                                             <td><strong>softmax</strong></td>
-                                            <td><em>Fokus festlegen:</em> „sein" entscheidet: „Okay, 95% Aufmerksamkeit auf ‚Tesla', 3% auf ‚Garage', den Rest ignoriere ich."</td>
+                                            <td><em>Fokus festlegen:</em> „sie" entscheidet: „Okay, 85% Aufmerksamkeit auf ‚Zeugin', 12% auf ‚Anwältin', den Rest ignoriere ich."</td>
                                             <td>Die skalierten Scores werden in eine Prozentverteilung umgewandelt, die sich zu 100% addiert.</td>
                                         </tr>
                                         <tr>
                                             <td><strong>· V</strong></td>
-                                            <td><em>Wissen übernehmen:</em> „sein" holt sich die Kerninformation von „Tesla" – das Konzept eines Elektroautos mit Akku.</td>
-                                            <td>Der Vektor von „sein" wird mit den Value-Vektoren multipliziert und aufsummiert. Er „saugt" die Bedeutung von „Tesla" auf.</td>
+                                            <td><em>Wissen übernehmen:</em> „sie" holt sich die Kerninformation von „Zeugin" – das Konzept einer Person, die vor Gericht aussagt.</td>
+                                            <td>Der Vektor von „sie" wird mit den Value-Vektoren multipliziert und aufsummiert. Er „saugt" die Bedeutung von „Zeugin" auf.</td>
                                         </tr>
                                     </table>
 
-                                    <p><strong>Fazit:</strong> Nach der Umfrage weiß „sein" eindeutig: „Ich gehöre zu ‚Tesla'." Dieser Prozess passiert für jedes Wort im Satz gleichzeitig – daher <em>Self-Attention</em>: Das Team von Experten befragt sich permanent gegenseitig, um das Gesamtbild zu verstehen. Das ist der Grund, warum Transformer so gut darin sind, Bezüge über beliebige Distanzen herzustellen: Ein Pronomen am Satzende „recherchiert" zurück und findet sein Bezugswort am Satzanfang, egal wie viele Wörter dazwischen liegen.</p>
+                                    <p><strong>Fazit:</strong> Nach der Umfrage weiß „sie" mit hoher Wahrscheinlichkeit: „Ich beziehe mich auf ‚Zeugin'." Dieser Prozess passiert für jedes Wort im Satz gleichzeitig – daher <em>Self-Attention</em>: Das Team von Experten befragt sich permanent gegenseitig, um das Gesamtbild zu verstehen. Das ist der Grund, warum Transformer so gut darin sind, Bezüge über beliebige Distanzen herzustellen: Ein Pronomen am Satzende „recherchiert" zurück und findet sein Bezugswort am Satzanfang, egal wie viele Wörter dazwischen liegen.</p>
 
                                     <h4>Multi-Head Attention: Viele Perspektiven gleichzeitig</h4>
                                     <p>In der Praxis führt das Modell diesen Attention-Prozess nicht nur einmal durch, sondern viele Male parallel, über sogenannte <em>Attention Heads</em>. Jeder Head lernt, auf andere Aspekte zu achten: Ein Head könnte grammatische Beziehungen verfolgen (Subjekt → Verb), ein anderer semantische Zusammenhänge (Tier → Lebensraum), ein dritter kausale Verbindungen (Ursache → Wirkung).</p>
