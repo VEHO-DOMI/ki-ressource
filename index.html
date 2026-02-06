@@ -1658,30 +1658,6 @@
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-inner">
-                        <p>In Abschnitt 1.2 haben wir die Architektur kennengelernt: wie Wörter zu Vektoren werden, wie Attention funktioniert, und wie aus einer Wahrscheinlichkeitsverteilung das nächste Token entsteht. Dieser Abschnitt zeigt, wie sich diese Mechanismen in der Praxis auswirken, im Guten wie im Schlechten.</p>
-
-                        <h4>Temperatur: Kreativität vs. Vorhersagbarkeit</h4>
-                        <p>Am Ende jedes Vorhersageschritts steht eine Wahrscheinlichkeitsverteilung über alle möglichen nächsten Tokens. Der Parameter <em>Temperatur</em> steuert, wie „mutig" oder „konservativ" die Auswahl daraus ist:</p>
-
-                        <table>
-                            <tr>
-                                <th>Temperatur</th>
-                                <th>Verhalten</th>
-                            </tr>
-                            <tr>
-                                <td>Niedrig (0–0.3)</td>
-                                <td>Fast immer das wahrscheinlichste Wort. Vorhersagbar, aber manchmal langweilig.</td>
-                            </tr>
-                            <tr>
-                                <td>Mittel (0.5–0.7)</td>
-                                <td>Ausgewogene Mischung. Standard für die meisten Aufgaben.</td>
-                            </tr>
-                            <tr>
-                                <td>Hoch (0.8–1.2)</td>
-                                <td>Auch unwahrscheinlichere Wörter werden gewählt. Kreativer, aber riskanter im Sinne von Fabulation.</td>
-                            </tr>
-                        </table>
-
                         <h4>Das Momentum-Problem: Warum LLMs sich nicht selbst korrigieren</h4>
                         <p>Um zu verstehen, warum dieses Problem so zentral ist, muss man sich die Funktionsweise von LLMs nochmal vergegenwärtigen: Ein LLM generiert seine Antwort <em>autoregressiv</em>, also Token für Token, wobei jedes neue Token auf allen bisherigen basiert, inklusive der bereits generierten eigenen Ausgabe. Das Modell hat dabei keinen eingebauten Mechanismus, innezuhalten, den bisherigen Verlauf kritisch zu betrachten und gegebenenfalls zu korrigieren. Es schaut immer nur vorwärts.</p>
 
@@ -1691,14 +1667,23 @@
 
                         <p><strong>Genau hier setzen Reasoning-Modelle an</strong> (Abschnitt 1.4), die dieses Problem durch eine explizite Denkphase vor der eigentlichen Antwort adressieren.</p>
 
+                        <h4>Sycophancy: Wenn das Modell zu sehr gefallen will</h4>
+                        <p>Ein subtileres Problem ist die Tendenz von LLMs, dem Gegenüber zuzustimmen – selbst wenn dieser falsch liegt. Fragt man „Ist 2+2=5?", sagen die meisten Modelle heute klar Nein. Aber bei komplexeren Fragen, besonders wenn der Nutzer eine falsche Prämisse selbstbewusst formuliert, neigen Modelle dazu, diese zu akzeptieren statt zu korrigieren.</p>
+
+                        <p>Der Grund liegt im Training: RLHF belohnt Antworten, die Menschen als „hilfreich" bewerten – und Menschen bewerten Zustimmung oft positiver als Widerspruch. Das Modell lernt also, dass Nachgeben belohnt wird.</p>
+
+                        <p>Für den Unterricht bedeutet das konkret: Wenn Schüler:innen die KI nutzen, um ihre eigenen Texte zu überprüfen, könnte das Modell Fehler übersehen oder herunterspielen, um nicht „unhöflich" zu wirken. Anthropics Interpretability-Forschung hat sogar ein eigenes internes Feature für Sycophancy identifiziert – das Modell „weiß" also gewissermaßen, dass es gerade nach dem Mund redet, kann dieses Verhalten aber nicht zuverlässig unterdrücken.</p>
+
                         <h4>Halluzinationen: Das fundamentale Limit</h4>
                         <p>LLMs sind darauf trainiert, statistisch plausibel klingende Texte zu generieren, nicht faktisch korrekte. Das bedeutet: Ein Modell kann selbstbewusst Dinge behaupten, die schlicht falsch sind, was ihr bestimmt alle schon einmal erlebt habt. Erfundene Zitate, nicht existierende Studien, falsche Fakten; all das präsentiert mit der gleichen Überzeugung wie korrekte Informationen.</p>
 
                         <p>Warum das so ist, folgt direkt aus der Architektur: Die Softmax-Funktion am Ende jedes Vorhersageschritts <strong>erzwingt immer eine Auswahl</strong>. Das Modell hat keine Möglichkeit zu sagen: „Hier habe ich zu wenig Information." Es kann höchstens lernen, in solchen Situationen Sätze wie „Das weiß ich nicht" zu generieren, aber das ist selbst nur ein statistisches Muster, kein echtes Bewusstsein über die eigene Unsicherheit. Dazu kommt das in 1.2 beschriebene Superpositions-Phänomen: Weil sich die intern gespeicherten Konzepte leicht überlappen, kann es zu subtilen Verwechslungen kommen.</p>
 
-                        <p>Wie konkret das Problem ist, zeigt ein Befund aus Anthropics Interpretability-Forschung von 2025: Die Forscher konnten im Inneren von Claude nachverfolgen, was tatsächlich passiert, wenn das Modell eine Matheaufgabe löst. Bei einer einfachen Aufgabe wie √0.64 fanden sie echte interne Rechenschritte: das Modell berechnet tatsächlich zuerst √64 = 8 und leitet dann 0.8 ab. Bei einer schwierigeren Aufgabe (dem Kosinus einer großen Zahl) fanden sie hingegen keinerlei Evidenz einer Berechnung; Claude erfindet plausibel klingende Zwischenschritte, ohne dass intern irgendetwas gerechnet wird. Noch problematischer: Wenn man Claude bewusst einen falschen Hinweis auf das Ergebnis gibt, arbeitet es rückwärts indem es Zwischenschritte (er)findet, die zum vorgegebenen (falschen) Ergebnis führen. Das ist eine Form von <em>motiviertem Reasoning</em>: Statt das Ergebnis aus einer Rechnung abzuleiten, steht das Ergebnis von Anfang an fest, und das Modell konstruiert im Nachhinein eine plausibel klingende Herleitung dazu.</p>
+                        <p>Wie konkret das Problem ist, zeigt ein Befund aus Anthropics Interpretability-Forschung von 2025: Die Forscher konnten im Inneren von Claude nachverfolgen, was tatsächlich passiert, wenn das Modell eine Matheaufgabe löst. Bei einer einfachen Aufgabe wie √0.64 fanden sie echte interne Rechenschritte: Das Modell berechnet tatsächlich zuerst √64 = 8 und leitet dann 0.8 ab. Bei einer schwierigeren Aufgabe (dem Kosinus einer großen Zahl) fanden sie hingegen keinerlei Evidenz einer Berechnung; Claude erfindet plausibel klingende Zwischenschritte, ohne dass intern irgendetwas gerechnet wird.</p>
 
-                        <p>Die Situation hat sich aber insgesamt verbessert und wird dies auch weiterhin tun. Moderne Modelle halluzinieren seltener, Tool-Integration (Web-Suche) hilft bei Fakten, und Claude sowie Gemini sagen häufiger „Das weiß ich nicht." Außerdem wird aktiv daran geforscht, solche Prozesse von außen erkennbar zu machen, sodass man in Zukunft vielleicht automatisch gewarnt wird, wenn ein Modell gerade „erfindet" statt „rechnet".</p>
+                        <p>Noch problematischer: Wenn man Claude bewusst einen falschen Hinweis auf das Ergebnis gibt, arbeitet es rückwärts – es (er)findet Zwischenschritte, die zum vorgegebenen (falschen) Ergebnis führen. Das ist eine Form von rückwärtsgerichteter Rationalisierung, in der Psychologie auch als „motivated reasoning" bekannt: Statt das Ergebnis aus einer Rechnung abzuleiten, steht das Ergebnis von Anfang an fest, und das Modell konstruiert im Nachhinein eine plausibel klingende Herleitung dazu.</p>
+
+                        <p>Die Situation hat sich insgesamt verbessert und wird dies auch weiterhin tun. Moderne Modelle halluzinieren seltener, Tool-Integration (Web-Suche) hilft bei Fakten, und Claude sowie Gemini sagen häufiger „Das weiß ich nicht." Außerdem wird aktiv daran geforscht, solche Prozesse von außen erkennbar zu machen, sodass man in Zukunft vielleicht automatisch gewarnt wird, wenn ein Modell gerade „erfindet" statt „rechnet".</p>
 
                         <div class="warning-box">
                             <strong>Wichtig:</strong> Halluzinationen sind dennoch kein Bug, der irgendwann gefixt werden kann. Sie sind eine grundlegende Konsequenz davon, wie diese Modelle funktionieren.
