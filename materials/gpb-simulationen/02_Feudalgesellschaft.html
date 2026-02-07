@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feudalgesellschaft im Mittelalter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1020 50%, #5c1030 100%);
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 12px;
+            padding: 12px;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .panel-title {
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            color: #ffc107;
+            text-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 8px 6px;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 0.65em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: rgba(255, 193, 7, 0.4);
+            border-color: #ffc107;
+            box-shadow: 0 0 12px rgba(255, 193, 7, 0.3);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 193, 7, 0.2);
+        }
+
+        .slider-container {
+            margin-bottom: 8px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65em;
+            margin-bottom: 4px;
+        }
+
+        .slider-value {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 193, 7, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffc107;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffc107;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+        }
+
+        .layers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.65em;
+        }
+
+        .layer-btn {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .layer-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .layer-btn.active {
+            background: rgba(255, 193, 7, 0.2);
+            border-color: #ffc107;
+            box-shadow: 0 0 12px rgba(255, 193, 7, 0.2);
+        }
+
+        .layer-color {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .info-panel {
+            margin-top: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .info-content {
+            font-size: 0.65em;
+            line-height: 1.4;
+        }
+
+        .info-title {
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #ffc107;
+            margin-bottom: 6px;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .info-text {
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 2px;
+        }
+
+        .header {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #ffc107;
+            text-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+            text-align: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 193, 7, 0.2);
+            margin-bottom: 8px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 193, 7, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 193, 7, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="canvas-wrapper">
+            <canvas id="canvas"></canvas>
+        </div>
+        <div class="controls">
+            <div class="header">Feudalgesellschaft</div>
+
+            <div class="control-panel">
+                <div class="panel-title">Flusstrichtung</div>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" data-mode="obligations">↑ Abgaben</button>
+                    <button class="toggle-btn" data-mode="protection">↓ Schutz</button>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="panel-title">Ernteertrag</div>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Ernte</span>
+                        <span class="slider-value"><span id="sliderValue">50</span>%</span>
+                    </div>
+                    <input type="range" id="harvestSlider" min="0" max="100" value="50">
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="panel-title">Schichten</div>
+                <div class="layers-list" id="layersList"></div>
+            </div>
+
+            <div class="control-panel info-panel">
+                <div class="info-content" id="infoContent">
+                    <div class="info-title">Wähle eine Schicht</div>
+                    <div class="info-text" style="margin-top: 6px; color: rgba(255, 255, 255, 0.7);">
+                        Klicke auf eine Schicht in der Pyramide oder in der Liste, um mehr über ihre Rolle, Rechte und Pflichten zu erfahren.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size with devicePixelRatio
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+        }
+
+        // Data structure for feudal layers
+        const layers = [
+            {
+                name: 'König',
+                color: '#FFD700',
+                population: 1,
+                role: 'Oberster Lehnsherr',
+                description: 'Verleiht Land an Adelige und besitzt die höchste Autorität im Reich.',
+                rights: ['Absolute Autorität', 'Kontrolle über Land und Ressourcen', 'Vergebung von Lehen'],
+                obligations: ['Schutz des Reiches', 'Aufrechterhaltung von Ordnung', 'Gerichtsbarkeit']
+            },
+            {
+                name: 'Hoher Adel',
+                color: '#FF6B35',
+                population: 5,
+                role: 'Herzöge, Grafen',
+                description: 'Erhalten Lehen vom König und stellen Ritter auf. Kontrollieren große Landgebiete.',
+                rights: ['Kontrolle über Lehen', 'Besteuerung der Bauern', 'Gerichtsbarkeit über Untertanen'],
+                obligations: ['Kriegsdienst für König', 'Treue zum König', 'Schutz der Bevölkerung']
+            },
+            {
+                name: 'Klerus',
+                color: '#9C27B0',
+                population: 3,
+                role: 'Bischöfe, Äbte',
+                description: 'Geistliche Macht neben weltlicher Autorität. Erheben Zehnten und kontrollieren Wissen.',
+                rights: ['Zehnteinnahmen (10% Ernte)', 'Kirchengerichtsbarkeit', 'Kontrolle über Bildung'],
+                obligations: ['Spirituelle Führung', 'Fürsprache für Arme', 'Schutz von Pilgern']
+            },
+            {
+                name: 'Ritter',
+                color: '#4DB8FF',
+                population: 15,
+                role: 'Vasallen, Kriegsdienst',
+                description: 'Kämpfer und Schutzherren. Vasallen der Adeligen, Schutz der Bauern.',
+                rights: ['Lehen und Einkünfte', 'Kontrolle von Dörfern', 'Adliger Status'],
+                obligations: ['Kriegsdienst', 'Schutz der Bauern', 'Treue gegenüber Herren']
+            },
+            {
+                name: 'Bauern',
+                color: '#8BC34A',
+                population: 76,
+                role: 'Leibeigene, Fronarbeit',
+                description: 'Die Basis der Gesellschaft. Leibeigene oder Hörige, zahlen Abgaben und leisten Fronarbeit.',
+                rights: ['Schutz durch Feudalherren', 'Nutzung von Gemeindeland', 'Religiöse Ausübung'],
+                obligations: ['Fronarbeit', 'Zehnten und Abgaben', 'Kriegsdienst (wenn verlangt)']
+            }
+        ];
+
+        let selectedLayer = null;
+        let currentMode = 'obligations'; // 'obligations' or 'protection'
+        let harvestYield = 50;
+        let particles = [];
+
+        // Particle system
+        class Particle {
+            constructor(x, y, targetX, targetY, color) {
+                this.x = x;
+                this.y = y;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                this.color = color;
+                this.life = 1.0;
+                this.speed = 2 + Math.random() * 1;
+                this.distance = Math.sqrt((targetX - x) ** 2 + (targetY - y) ** 2);
+                this.traveled = 0;
+            }
+
+            update() {
+                if (this.traveled < this.distance) {
+                    const angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+                    this.x += Math.cos(angle) * this.speed;
+                    this.y += Math.sin(angle) * this.speed;
+                    this.traveled += this.speed;
+                } else {
+                    this.life = 0;
+                }
+                this.life -= 0.01;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life * 0.6;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2 + Math.sin(this.traveled / 10) * 1, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        // Canvas setup
+        window.addEventListener('resize', () => {
+            setTimeout(resizeCanvas, 50);
+        });
+        resizeCanvas();
+
+        // Layer button initialization
+        function initLayerButtons() {
+            const layersList = document.getElementById('layersList');
+            layersList.innerHTML = '';
+            layers.forEach((layer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'layer-btn';
+                btn.innerHTML = `<span class="layer-color" style="background-color: ${layer.color}"></span>${layer.name}`;
+                btn.addEventListener('click', () => selectLayer(index));
+                layersList.appendChild(btn);
+            });
+        }
+
+        // Layer selection
+        function selectLayer(index) {
+            selectedLayer = index;
+            updateLayerButtons();
+            updateInfoPanel();
+        }
+
+        function updateLayerButtons() {
+            document.querySelectorAll('.layer-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === selectedLayer);
+            });
+        }
+
+        function updateInfoPanel() {
+            const panel = document.getElementById('infoContent');
+            if (selectedLayer !== null) {
+                const layer = layers[selectedLayer];
+                panel.innerHTML = `
+                    <div class="info-title">${layer.name}</div>
+                    <div class="info-label">Rolle:</div>
+                    <div class="info-text">${layer.role}</div>
+                    <div class="info-label" style="margin-top: 8px;">Beschreibung:</div>
+                    <div class="info-text">${layer.description}</div>
+                    <div class="info-label" style="margin-top: 8px;">Rechte:</div>
+                    <div class="info-text">${layer.rights.map(r => '• ' + r).join('<br>')}</div>
+                    <div class="info-label" style="margin-top: 8px;">Pflichten:</div>
+                    <div class="info-text">${layer.obligations.map(o => '• ' + o).join('<br>')}</div>
+                `;
+            }
+        }
+
+        // Toggle buttons
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentMode = e.target.dataset.mode;
+            });
+        });
+
+        // Harvest slider
+        document.getElementById('harvestSlider').addEventListener('input', (e) => {
+            harvestYield = parseInt(e.target.value);
+            document.getElementById('sliderValue').textContent = harvestYield;
+        });
+
+        // Pyramid drawing
+        function drawPyramid() {
+            const width = canvas.width / (window.devicePixelRatio || 1);
+            const height = canvas.height / (window.devicePixelRatio || 1);
+
+            // Clear canvas
+            ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+            ctx.clearRect(0, 0, width, height);
+
+            const maxWidth = width * 0.7;
+            const maxHeight = height * 0.8;
+            const startY = (height - maxHeight) / 2;
+            const layerHeight = maxHeight / layers.length;
+
+            // Draw layers
+            layers.forEach((layer, index) => {
+                const y = startY + index * layerHeight;
+                const ratio = (layers.length - index) / layers.length;
+                const w = maxWidth * ratio;
+                const x = (width - w) / 2;
+
+                // Layer rectangle
+                ctx.fillStyle = layer.color;
+                ctx.globalAlpha = 0.7;
+                ctx.fillRect(x, y, w, layerHeight);
+
+                // Highlight if selected
+                if (selectedLayer === index) {
+                    ctx.strokeStyle = '#FFD700';
+                    ctx.lineWidth = 3;
+                    ctx.globalAlpha = 1.0;
+                    ctx.strokeRect(x - 2, y - 2, w + 4, layerHeight + 4);
+                }
+
+                ctx.globalAlpha = 1.0;
+
+                // Layer label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 14px Inter';
+                ctx.textAlign = 'center';
+                ctx.globalAlpha = 0.9;
+                ctx.fillText(layer.name, width / 2, y + layerHeight / 2 + 5);
+
+                // Population info
+                ctx.font = '10px Inter';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.fillText(`${layer.population}%`, width / 2, y + layerHeight / 2 + 18);
+            });
+
+            ctx.globalAlpha = 1.0;
+
+            // Draw flow arrows
+            drawFlowArrows(startY, layerHeight, width, height);
+        }
+
+        function drawFlowArrows(startY, layerHeight, width, height) {
+            const arrowX = width * 0.15;
+
+            if (currentMode === 'obligations') {
+                // Arrows pointing UP
+                for (let i = 1; i < layers.length; i++) {
+                    const fromY = startY + i * layerHeight + layerHeight / 2;
+                    const toY = startY + (i - 1) * layerHeight + layerHeight / 2;
+                    drawArrow(arrowX, fromY, arrowX, toY, '#FFD700');
+                }
+            } else {
+                // Arrows pointing DOWN
+                for (let i = 0; i < layers.length - 1; i++) {
+                    const fromY = startY + i * layerHeight + layerHeight / 2;
+                    const toY = startY + (i + 1) * layerHeight + layerHeight / 2;
+                    drawArrow(arrowX, fromY, arrowX, toY, '#4DBFFF');
+                }
+            }
+        }
+
+        function drawArrow(fromX, fromY, toX, toY, color) {
+            const headlen = 12;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+
+            // Arrow head
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+        }
+
+        // Particle generation
+        function generateParticles() {
+            const width = canvas.width / (window.devicePixelRatio || 1);
+            const height = canvas.height / (window.devicePixelRatio || 1);
+
+            const maxWidth = width * 0.7;
+            const maxHeight = height * 0.8;
+            const startY = (height - maxHeight) / 2;
+            const layerHeight = maxHeight / layers.length;
+
+            const particleCount = Math.floor((harvestYield / 100) * 3);
+
+            if (currentMode === 'obligations') {
+                // Particles flow UP
+                for (let i = layers.length - 1; i > 0; i--) {
+                    const fromLayer = i;
+                    const toLayer = i - 1;
+
+                    const fromRatio = (layers.length - fromLayer) / layers.length;
+                    const fromW = maxWidth * fromRatio;
+                    const fromX = (width - fromW) / 2 + Math.random() * fromW;
+                    const fromY = startY + fromLayer * layerHeight;
+
+                    const toRatio = (layers.length - toLayer) / layers.length;
+                    const toW = maxWidth * toRatio;
+                    const toX = (width - toW) / 2 + Math.random() * toW;
+                    const toY = startY + toLayer * layerHeight + layerHeight;
+
+                    for (let j = 0; j < particleCount; j++) {
+                        particles.push(new Particle(fromX, fromY, toX, toY, layers[toLayer].color));
+                    }
+                }
+            } else {
+                // Particles flow DOWN
+                for (let i = 0; i < layers.length - 1; i++) {
+                    const fromLayer = i;
+                    const toLayer = i + 1;
+
+                    const fromRatio = (layers.length - fromLayer) / layers.length;
+                    const fromW = maxWidth * fromRatio;
+                    const fromX = (width - fromW) / 2 + Math.random() * fromW;
+                    const fromY = startY + fromLayer * layerHeight + layerHeight;
+
+                    const toRatio = (layers.length - toLayer) / layers.length;
+                    const toW = maxWidth * toRatio;
+                    const toX = (width - toW) / 2 + Math.random() * toW;
+                    const toY = startY + toLayer * layerHeight;
+
+                    for (let j = 0; j < particleCount; j++) {
+                        particles.push(new Particle(fromX, fromY, toX, toY, layers[fromLayer].color));
+                    }
+                }
+            }
+        }
+
+        // Animation loop
+        let lastParticleTime = 0;
+        function animate() {
+            drawPyramid();
+
+            // Generate new particles periodically
+            const now = Date.now();
+            if (now - lastParticleTime > 200) {
+                generateParticles();
+                lastParticleTime = now;
+            }
+
+            // Update and draw particles
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw(ctx);
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Click handler for pyramid
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            const x = (e.clientX - rect.left) * dpr;
+            const y = (e.clientY - rect.top) * dpr;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const maxWidth = (width / dpr) * 0.7 * dpr;
+            const maxHeight = (height / dpr) * 0.8 * dpr;
+            const startY = ((height / dpr) - maxHeight / dpr) / 2 * dpr;
+            const layerHeight = maxHeight / layers.length;
+
+            for (let i = 0; i < layers.length; i++) {
+                const layerY = startY + i * layerHeight;
+                const ratio = (layers.length - i) / layers.length;
+                const w = maxWidth * ratio;
+                const layerX = (width - w) / 2;
+
+                if (x >= layerX && x <= layerX + w && y >= layerY && y <= layerY + layerHeight) {
+                    selectLayer(i);
+                    break;
+                }
+            }
+        });
+
+        // Initialize
+        initLayerButtons();
+        updateInfoPanel();
+        animate();
+    </script>
+</body>
+</html>
