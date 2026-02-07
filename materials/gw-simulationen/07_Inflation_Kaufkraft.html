@@ -604,26 +604,34 @@
         function drawChart() {
             const w = chartCanvas.width;
             const h = chartCanvas.height;
-            const padding = 40;
-            const graphW = w - padding * 2;
-            const graphH = h - padding * 2;
+            const padLeft = 62;
+            const padRight = 30;
+            const padTop = 30;
+            const padBottom = 36;
+            const graphW = w - padLeft - padRight;
+            const graphH = h - padTop - padBottom;
 
             // Clear
             chartCtx.clearRect(0, 0, w, h);
 
+            // Y-axis tick count: use 5 steps for cleaner labels
+            const ySteps = 5;
+
             // Draw grid
             chartCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
             chartCtx.lineWidth = 1;
-            for (let i = 0; i <= 10; i++) {
-                const x = padding + (graphW / 10) * i;
-                const y = padding + (graphH / 10) * i;
+            for (let i = 0; i <= 6; i++) {
+                const x = padLeft + (graphW / 6) * i;
                 chartCtx.beginPath();
-                chartCtx.moveTo(x, padding);
-                chartCtx.lineTo(x, h - padding);
+                chartCtx.moveTo(x, padTop);
+                chartCtx.lineTo(x, h - padBottom);
                 chartCtx.stroke();
+            }
+            for (let i = 0; i <= ySteps; i++) {
+                const y = padTop + (graphH / ySteps) * i;
                 chartCtx.beginPath();
-                chartCtx.moveTo(padding, y);
-                chartCtx.lineTo(w - padding, y);
+                chartCtx.moveTo(padLeft, y);
+                chartCtx.lineTo(w - padRight, y);
                 chartCtx.stroke();
             }
 
@@ -631,50 +639,56 @@
             chartCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
             chartCtx.lineWidth = 2;
             chartCtx.beginPath();
-            chartCtx.moveTo(padding, padding);
-            chartCtx.lineTo(padding, h - padding);
-            chartCtx.lineTo(w - padding, h - padding);
+            chartCtx.moveTo(padLeft, padTop);
+            chartCtx.lineTo(padLeft, h - padBottom);
+            chartCtx.lineTo(w - padRight, h - padBottom);
             chartCtx.stroke();
 
             // X-axis labels (Jahre)
             chartCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            chartCtx.font = '11px Inter';
+            chartCtx.font = '10px Inter';
             chartCtx.textAlign = 'center';
             for (let i = 0; i <= 30; i += 5) {
-                const x = padding + (i / 30) * graphW;
-                chartCtx.fillText(i, x, h - padding + 18);
+                const x = padLeft + (i / 30) * graphW;
+                chartCtx.fillText(i, x, h - padBottom + 14);
             }
 
-            // Y-axis labels (Kaufkraft)
+            // Y-axis labels — short numeric format (no € symbol, axis title covers unit)
             chartCtx.textAlign = 'right';
-            for (let i = 0; i <= 10; i++) {
-                const y = h - padding - (graphH / 10) * i;
-                const val = Math.round((state.animatedStartAmount / 10) * i);
-                chartCtx.fillText(formatCurrency(val), padding - 8, y + 4);
+            chartCtx.font = '10px Inter';
+            for (let i = 0; i <= ySteps; i++) {
+                const y = h - padBottom - (graphH / ySteps) * i;
+                const val = (state.animatedStartAmount / ySteps) * i;
+                // Short format: "0", "200", "1.000" etc.
+                const label = val < 1 ? '0' : val.toLocaleString('de-AT', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+                chartCtx.fillText(label, padLeft - 6, y + 3);
             }
 
             // Draw axis labels
             chartCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            chartCtx.font = '600 12px Inter';
+            chartCtx.font = '600 11px Inter';
             chartCtx.textAlign = 'center';
-            chartCtx.fillText('Jahre', w / 2, h - 8);
+            chartCtx.fillText('Jahre', padLeft + graphW / 2, h - 4);
             chartCtx.save();
-            chartCtx.translate(12, h / 2);
+            chartCtx.translate(14, padTop + graphH / 2);
             chartCtx.rotate(-Math.PI / 2);
-            chartCtx.fillText('Kaufkraft in €', 0, 0);
+            chartCtx.fillText('Kaufkraft (€)', 0, 0);
             chartCtx.restore();
 
             // Draw purchasing power curve
             const points = [];
             for (let i = 0; i <= 30; i++) {
                 const pp = calculatePurchasingPower(state.animatedStartAmount, state.animatedInflation, i);
-                const x = padding + (i / 30) * graphW;
-                const y = h - padding - (pp / state.animatedStartAmount) * graphH;
+                const x = padLeft + (i / 30) * graphW;
+                const y = h - padBottom - (pp / state.animatedStartAmount) * graphH;
                 points.push({ x, y, pp });
             }
 
             // Fill area under curve
-            const gradient = chartCtx.createLinearGradient(0, padding, 0, h - padding);
+            const gradient = chartCtx.createLinearGradient(0, padTop, 0, h - padBottom);
             gradient.addColorStop(0, 'rgba(255, 107, 166, 0.3)');
             gradient.addColorStop(1, 'rgba(255, 107, 166, 0)');
 
@@ -684,8 +698,8 @@
             for (let i = 1; i < points.length; i++) {
                 chartCtx.lineTo(points[i].x, points[i].y);
             }
-            chartCtx.lineTo(points[points.length - 1].x, h - padding);
-            chartCtx.lineTo(points[0].x, h - padding);
+            chartCtx.lineTo(points[points.length - 1].x, h - padBottom);
+            chartCtx.lineTo(points[0].x, h - padBottom);
             chartCtx.closePath();
             chartCtx.fill();
 
@@ -702,16 +716,16 @@
             // Draw halving point
             const halvingTime = calculateHalvingTime(state.animatedInflation);
             if (halvingTime < 30) {
-                const hx = padding + (halvingTime / 30) * graphW;
-                const hy = h - padding - (0.5 * graphH);
+                const hx = padLeft + (halvingTime / 30) * graphW;
+                const hy = h - padBottom - (0.5 * graphH);
 
                 // Dashed line
                 chartCtx.strokeStyle = 'rgba(0, 217, 255, 0.5)';
                 chartCtx.lineWidth = 1;
                 chartCtx.setLineDash([5, 5]);
                 chartCtx.beginPath();
-                chartCtx.moveTo(hx, padding);
-                chartCtx.lineTo(hx, h - padding);
+                chartCtx.moveTo(hx, padTop);
+                chartCtx.lineTo(hx, h - padBottom);
                 chartCtx.stroke();
                 chartCtx.setLineDash([]);
 
@@ -719,9 +733,9 @@
                 chartCtx.fillStyle = '#00d9ff';
                 chartCtx.font = '600 10px Inter';
                 chartCtx.textAlign = 'center';
-                chartCtx.fillText('Halbierung', hx, padding - 8);
+                chartCtx.fillText('Halbierung', hx, padTop - 8);
                 chartCtx.fillStyle = 'rgba(0, 217, 255, 0.8)';
-                chartCtx.fillText(halvingTime.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + 'a', hx, padding + 8);
+                chartCtx.fillText(halvingTime.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + 'a', hx, padTop + 10);
             }
 
             // Draw wage growth line if enabled
@@ -730,8 +744,8 @@
                 for (let i = 0; i <= 30; i++) {
                     const realWageMultiplier = Math.pow(1 + state.animatedWageGrowth / 100, i) / Math.pow(1 + state.animatedInflation / 100, i);
                     const pp = state.animatedStartAmount * realWageMultiplier;
-                    const x = padding + (i / 30) * graphW;
-                    const y = h - padding - (pp / state.animatedStartAmount) * graphH;
+                    const x = padLeft + (i / 30) * graphW;
+                    const y = h - padBottom - (pp / state.animatedStartAmount) * graphH;
                     wagePoints.push({ x, y });
                 }
 
@@ -748,16 +762,16 @@
 
                 // Legend
                 chartCtx.fillStyle = '#ff6ba6';
-                chartCtx.fillRect(w - padding - 150, padding + 8, 12, 12);
+                chartCtx.fillRect(w - padRight - 150, padTop + 8, 12, 12);
                 chartCtx.fillStyle = '#00d9ff';
-                chartCtx.font = '11px Inter';
+                chartCtx.font = '10px Inter';
                 chartCtx.textAlign = 'left';
-                chartCtx.fillText('Kaufkraft', w - padding - 132, padding + 17);
+                chartCtx.fillText('Kaufkraft', w - padRight - 132, padTop + 17);
 
                 chartCtx.fillStyle = '#00d9ff';
-                chartCtx.fillRect(w - padding - 150, padding + 28, 12, 12);
+                chartCtx.fillRect(w - padRight - 150, padTop + 28, 12, 12);
                 chartCtx.fillStyle = '#00d9ff';
-                chartCtx.fillText('Mit Lohnwachstum', w - padding - 132, padding + 37);
+                chartCtx.fillText('Mit Lohnwachstum', w - padRight - 132, padTop + 37);
             }
         }
 
