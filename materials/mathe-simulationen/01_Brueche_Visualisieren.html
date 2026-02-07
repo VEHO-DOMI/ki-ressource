@@ -566,39 +566,40 @@
                 // Single fraction mode
                 const canvasCenter = w / 2;
 
-                // Section 1: Pie Chart
+                // Section 1: Pie Chart (top 45%)
                 let y = padding;
                 ctx.fillStyle = CONFIG.colors.textLight;
-                ctx.font = `500 10px 'Inter', sans-serif`;
+                ctx.font = `600 13px 'Inter', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText('Tortendiagramm', canvasCenter, y);
-                y += 16;
+                y += 20;
 
-                const pieRadius = Math.min(w - 2 * padding, sectionHeight - 40) * 0.35;
+                const pieSection = h * 0.45;
+                const pieRadius = Math.min((w - 2 * padding) / 2, pieSection - 50) * 0.75;
                 drawPieChart(canvasCenter, y + pieRadius, pieRadius, state.numerator1, state.denominator1, CONFIG.colors.primary);
-                y += sectionHeight;
+                y = padding + pieSection;
 
-                // Section 2: Fraction Bar
+                // Section 2: Fraction Bar (next 25%)
                 ctx.fillStyle = CONFIG.colors.textLight;
-                ctx.font = `500 10px 'Inter', sans-serif`;
+                ctx.font = `600 13px 'Inter', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText('Bruchbalken', canvasCenter, y);
-                y += 16;
+                y += 20;
 
-                const barWidth = Math.min(w - 2 * padding, sectionHeight - 60) * 0.7;
-                const barHeight = 24;
+                const barWidth = (w - 2 * padding) * 0.85;
+                const barHeight = 36;
                 const barX = canvasCenter - barWidth / 2;
                 drawFractionBar(barX, y, barWidth, barHeight, state.numerator1, state.denominator1, CONFIG.colors.primary);
-                y += sectionHeight;
+                y = padding + pieSection + h * 0.25;
 
-                // Section 3: Number Line
+                // Section 3: Number Line (bottom 30%)
                 ctx.fillStyle = CONFIG.colors.textLight;
-                ctx.font = `500 10px 'Inter', sans-serif`;
+                ctx.font = `600 13px 'Inter', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText('Zahlenstrahl', canvasCenter, y);
-                y += 16;
+                y += 20;
 
-                const lineWidth = Math.min(w - 2 * padding, sectionHeight - 60) * 0.7;
+                const lineWidth = (w - 2 * padding) * 0.85;
                 const lineX = canvasCenter - lineWidth / 2;
                 drawNumberLine(lineX, y, lineWidth, state.numerator1, state.denominator1, CONFIG.colors.primary);
             } else {
@@ -608,17 +609,18 @@
 
                 // Title
                 ctx.fillStyle = CONFIG.colors.textLight;
-                ctx.font = `500 11px 'Inter', sans-serif`;
+                ctx.font = `600 13px 'Inter', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText('1. Bruch', col1X, padding);
                 ctx.fillText('2. Bruch', col2X, padding);
                 let y = padding + 22;
 
-                const chartRadius = Math.min(sectionHeight - 40, (w / 2) - padding) * 0.3;
+                const pieSection = h * 0.42;
+                const chartRadius = Math.min(pieSection - 50, (w / 2) - padding - 10) * 0.55;
 
                 // Section 1: Pie Charts
                 ctx.fillStyle = CONFIG.colors.textLight;
-                ctx.font = `500 10px 'Inter', sans-serif`;
+                ctx.font = `500 11px 'Inter', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText('Tortendiagramm', col1X, y);
                 ctx.fillText('Tortendiagramm', col2X, y);
@@ -626,25 +628,25 @@
 
                 drawPieChart(col1X, y + chartRadius, chartRadius, state.numerator1, state.denominator1, CONFIG.colors.primary);
                 drawPieChart(col2X, y + chartRadius, chartRadius, state.numerator2, state.denominator2, CONFIG.colors.secondary);
-                y += sectionHeight;
+                y = padding + 22 + pieSection;
 
                 // Section 2: Fraction Bars
                 ctx.fillStyle = CONFIG.colors.textLight;
-                ctx.font = `500 10px 'Inter', sans-serif`;
+                ctx.font = `500 11px 'Inter', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText('Bruchbalken', col1X, y);
                 ctx.fillText('Bruchbalken', col2X, y);
-                y += 16;
+                y += 18;
 
-                const opBarWidth = Math.min((w / 2) - padding, sectionHeight - 60) * 0.6;
-                const opBarHeight = 20;
+                const opBarWidth = ((w / 2) - padding * 1.5) * 0.85;
+                const opBarHeight = 30;
                 drawFractionBar(col1X - opBarWidth / 2, y, opBarWidth, opBarHeight, state.numerator1, state.denominator1, CONFIG.colors.primary);
                 drawFractionBar(col2X - opBarWidth / 2, y, opBarWidth, opBarHeight, state.numerator2, state.denominator2, CONFIG.colors.secondary);
-                y += sectionHeight;
+                y = padding + 22 + pieSection + h * 0.2 + 10;
 
                 // Section 3: Result
                 ctx.fillStyle = CONFIG.colors.textLight;
-                ctx.font = `500 11px 'Inter', sans-serif`;
+                ctx.font = `600 13px 'Inter', sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.fillText('Ergebnis', w / 2, y);
                 y += 22;
@@ -660,14 +662,14 @@
                     resultDen = lcm;
                 }
 
-                const resultBarWidth = Math.min(w - 2 * padding, sectionHeight - 60) * 0.6;
-                const resultBarHeight = 24;
+                const resultBarWidth = (w - 2 * padding) * 0.7;
+                const resultBarHeight = 32;
                 const resultBarX = w / 2 - resultBarWidth / 2;
                 drawFractionBar(resultBarX, y, resultBarWidth, resultBarHeight, Math.abs(resultNum), resultDen, CONFIG.colors.result);
-                y += 40;
+                y += 46;
 
                 ctx.fillStyle = CONFIG.colors.result;
-                ctx.font = `600 14px 'Courier New', monospace`;
+                ctx.font = `700 16px 'Courier New', monospace`;
                 ctx.textAlign = 'center';
                 ctx.fillText(`${resultNum}/${resultDen}`, w / 2, y);
             }
