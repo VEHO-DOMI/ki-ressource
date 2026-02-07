@@ -26,9 +26,9 @@
             margin: 0 auto;
             padding: 12px;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 280px;
             gap: 12px;
-            height: calc(100vh - 24px);
+            height: calc(100vh - 70px);
         }
 
         .header {
@@ -526,16 +526,16 @@
         // State
         const state = {
             points: {
-                m1: { x: 150, y: 450, label: 'Rohstoff 1' },
-                m2: { x: 750, y: 150, label: 'Rohstoff 2' },
-                market: { x: 450, y: 600, label: 'Markt' }
+                m1: { x: 0, y: 0, label: 'Rohstoff 1' },
+                m2: { x: 0, y: 0, label: 'Rohstoff 2' },
+                market: { x: 0, y: 0, label: 'Markt' }
             },
             weights: {
                 w1: 5,
                 w2: 3,
                 w3: 2
             },
-            optimal: { x: 350, y: 350 },
+            optimal: { x: 0, y: 0 },
             dragging: null,
             showIsolines: true,
             showHeatmap: false,
@@ -577,11 +577,19 @@
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
+
+            // Initialize points relative to canvas size
+            if (state.points.m1.x === 0 && state.points.m1.y === 0) {
+                state.points.m1 = { x: canvas.width * 0.2, y: canvas.height * 0.75, label: 'Rohstoff 1' };
+                state.points.m2 = { x: canvas.width * 0.8, y: canvas.height * 0.25, label: 'Rohstoff 2' };
+                state.points.market = { x: canvas.width * 0.5, y: canvas.height * 0.85, label: 'Markt' };
+            }
+
             render();
         }
 
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        setTimeout(() => resizeCanvas(), 50);
 
         // Weiszfeld algorithm for Weber point
         function calculateWeberPoint(p1, p2, p3, w1, w2, w3, iterations = 50) {
@@ -679,16 +687,19 @@
             ctx.lineWidth = 1;
             ctx.globalAlpha = 0.3;
 
+            const maxCanvasSize = Math.max(canvas.width, canvas.height);
+            const isolineStep = maxCanvasSize / 10;
+
             // Isolines around M1 (orange)
             ctx.strokeStyle = '#ffa500';
-            for (let r = 20; r < 300; r += 40) {
+            for (let r = isolineStep; r < maxCanvasSize; r += isolineStep) {
                 ctx.beginPath();
                 ctx.arc(p1.x, p1.y, r, 0, Math.PI * 2);
                 ctx.stroke();
             }
 
             // Isolines around M2 (orange)
-            for (let r = 20; r < 300; r += 40) {
+            for (let r = isolineStep; r < maxCanvasSize; r += isolineStep) {
                 ctx.beginPath();
                 ctx.arc(p2.x, p2.y, r, 0, Math.PI * 2);
                 ctx.stroke();
@@ -696,7 +707,7 @@
 
             // Isolines around Market (blue)
             ctx.strokeStyle = '#4db8ff';
-            for (let r = 20; r < 300; r += 40) {
+            for (let r = isolineStep; r < maxCanvasSize; r += isolineStep) {
                 ctx.beginPath();
                 ctx.arc(p3.x, p3.y, r, 0, Math.PI * 2);
                 ctx.stroke();
@@ -948,9 +959,9 @@
         document.getElementById('reset-btn').addEventListener('click', () => {
             state.weights = { w1: 5, w2: 3, w3: 2 };
             state.points = {
-                m1: { x: 150, y: 450, label: 'Rohstoff 1' },
-                m2: { x: 750, y: 150, label: 'Rohstoff 2' },
-                market: { x: 450, y: 600, label: 'Markt' }
+                m1: { x: canvas.width * 0.2, y: canvas.height * 0.75, label: 'Rohstoff 1' },
+                m2: { x: canvas.width * 0.8, y: canvas.height * 0.25, label: 'Rohstoff 2' },
+                market: { x: canvas.width * 0.5, y: canvas.height * 0.85, label: 'Markt' }
             };
             document.getElementById('weight1').value = 5;
             document.getElementById('weight2').value = 3;

@@ -27,7 +27,7 @@
             max-width: 100%;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 280px;
             gap: 12px;
             height: calc(100vh - 24px);
             padding: 12px;
@@ -70,6 +70,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            overflow-y: auto;
         }
 
         .controls-panel h1 {
@@ -535,59 +536,136 @@
         function drawContinent(name, x1, y1, x2, y2, w, h) {
             ctx.fillStyle = '#2a2a3e';
             const x1p = x1 * w, y1p = y1 * h, x2p = x2 * w, y2p = y2 * h;
+            const dw = x2p - x1p, dh = y2p - y1p;
 
             ctx.beginPath();
             if (name === 'northAmerica') {
-                ctx.moveTo(x1p + (x2p - x1p) * 0.2, y1p);
-                ctx.bezierCurveTo(x1p + (x2p - x1p) * 0.3, y1p + (y2p - y1p) * 0.2,
-                    x2p - (x2p - x1p) * 0.2, y1p + (y2p - y1p) * 0.2,
-                    x2p - (x2p - x1p) * 0.1, y1p + (y2p - y1p) * 0.4);
-                ctx.bezierCurveTo(x2p, y1p + (y2p - y1p) * 0.6,
-                    x2p - (x2p - x1p) * 0.1, y2p - (y2p - y1p) * 0.2,
-                    x1p + (x2p - x1p) * 0.3, y2p - (y2p - y1p) * 0.2);
-                ctx.bezierCurveTo(x1p + (x2p - x1p) * 0.1, y1p + (y2p - y1p) * 0.5,
-                    x1p + (x2p - x1p) * 0.15, y1p + (y2p - y1p) * 0.3,
-                    x1p + (x2p - x1p) * 0.2, y1p);
+                // Alaska peninsula
+                ctx.moveTo(x1p + dw * 0.15, y1p);
+                ctx.quadraticCurveTo(x1p + dw * 0.1, y1p + dh * 0.08, x1p + dw * 0.08, y1p + dh * 0.15);
+                // Canadian Arctic
+                ctx.quadraticCurveTo(x1p + dw * 0.25, y1p + dh * 0.12, x1p + dw * 0.35, y1p);
+                // Hudson Bay inlet
+                ctx.quadraticCurveTo(x1p + dw * 0.45, y1p + dh * 0.1, x1p + dw * 0.5, y1p + dh * 0.05);
+                // North eastern coast
+                ctx.quadraticCurveTo(x1p + dw * 0.65, y1p + dh * 0.1, x1p + dw * 0.7, y1p + dh * 0.25);
+                // Great Lakes region
+                ctx.quadraticCurveTo(x1p + dw * 0.72, y1p + dh * 0.35, x1p + dw * 0.75, y1p + dh * 0.45);
+                // Atlantic coast curves
+                ctx.quadraticCurveTo(x1p + dw * 0.78, y1p + dh * 0.55, x1p + dw * 0.77, y1p + dh * 0.65);
+                // Florida peninsula
+                ctx.quadraticCurveTo(x1p + dw * 0.75, y1p + dh * 0.75, x1p + dw * 0.72, y1p + dh * 0.85);
+                // Gulf of Mexico coast
+                ctx.quadraticCurveTo(x1p + dw * 0.55, y1p + dh * 0.88, x1p + dw * 0.35, y1p + dh * 0.82);
+                // Texas and southern coast
+                ctx.quadraticCurveTo(x1p + dw * 0.25, y1p + dh * 0.75, x1p + dw * 0.2, y1p + dh * 0.65);
+                // Western coast curves (California)
+                ctx.quadraticCurveTo(x1p + dw * 0.15, y1p + dh * 0.5, x1p + dw * 0.12, y1p + dh * 0.35);
+                // Back to Alaska
+                ctx.quadraticCurveTo(x1p + dw * 0.1, y1p + dh * 0.2, x1p + dw * 0.15, y1p);
             } else if (name === 'southAmerica') {
-                ctx.moveTo(x1p + (x2p - x1p) * 0.3, y1p);
-                ctx.bezierCurveTo(x2p - (x2p - x1p) * 0.1, y1p + (y2p - y1p) * 0.15,
-                    x2p - (x2p - x1p) * 0.05, y1p + (y2p - y1p) * 0.4,
-                    x2p - (x2p - x1p) * 0.15, y1p + (y2p - y1p) * 0.6);
-                ctx.bezierCurveTo(x2p - (x2p - x1p) * 0.2, y2p,
-                    x1p + (x2p - x1p) * 0.2, y2p,
-                    x1p + (x2p - x1p) * 0.15, y1p + (y2p - y1p) * 0.6);
-                ctx.bezierCurveTo(x1p + (x2p - x1p) * 0.1, y1p + (y2p - y1p) * 0.4,
-                    x1p + (x2p - x1p) * 0.15, y1p + (y2p - y1p) * 0.2,
-                    x1p + (x2p - x1p) * 0.3, y1p);
+                // Northern coast (Venezuela, Colombia)
+                ctx.moveTo(x1p + dw * 0.25, y1p);
+                ctx.quadraticCurveTo(x1p + dw * 0.35, y1p + dh * 0.05, x1p + dw * 0.45, y1p + dh * 0.08);
+                // Northern coast to Amazon mouth
+                ctx.quadraticCurveTo(x1p + dw * 0.58, y1p + dh * 0.12, x1p + dw * 0.72, y1p + dh * 0.2);
+                // Brazil bulge - most prominent feature
+                ctx.quadraticCurveTo(x1p + dw * 0.78, y1p + dh * 0.35, x1p + dw * 0.82, y1p + dh * 0.5);
+                ctx.quadraticCurveTo(x1p + dw * 0.8, y1p + dh * 0.65, x1p + dw * 0.72, y1p + dh * 0.75);
+                // Southern bulge
+                ctx.quadraticCurveTo(x1p + dw * 0.65, y1p + dh * 0.82, x1p + dw * 0.55, y1p + dh * 0.88);
+                // Argentina - narrow southern tip
+                ctx.quadraticCurveTo(x1p + dw * 0.4, y1p + dh * 0.92, x1p + dw * 0.3, y1p + dh * 0.95);
+                ctx.quadraticCurveTo(x1p + dw * 0.28, y1p + dh * 0.88, x1p + dw * 0.27, y1p + dh * 0.75);
+                // Western coast (Andes)
+                ctx.quadraticCurveTo(x1p + dw * 0.22, y1p + dh * 0.6, x1p + dw * 0.18, y1p + dh * 0.4);
+                // Peru and western coast
+                ctx.quadraticCurveTo(x1p + dw * 0.15, y1p + dh * 0.25, x1p + dw * 0.18, y1p + dh * 0.1);
+                ctx.quadraticCurveTo(x1p + dw * 0.2, y1p + dh * 0.02, x1p + dw * 0.25, y1p);
             } else if (name === 'europe') {
-                ctx.moveTo(x1p + (x2p - x1p) * 0.2, y1p);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.2, y1p + (y2p - y1p) * 0.1);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.1, y1p + (y2p - y1p) * 0.3);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.2, y2p - (y2p - y1p) * 0.1);
-                ctx.lineTo(x1p + (x2p - x1p) * 0.3, y2p);
-                ctx.lineTo(x1p, y1p + (y2p - y1p) * 0.6);
-                ctx.lineTo(x1p + (x2p - x1p) * 0.1, y1p + (y2p - y1p) * 0.2);
+                // Scandinavian peninsula
+                ctx.moveTo(x1p + dw * 0.35, y1p);
+                ctx.quadraticCurveTo(x1p + dw * 0.45, y1p + dh * 0.08, x1p + dw * 0.5, y1p + dh * 0.18);
+                // Eastern Europe
+                ctx.quadraticCurveTo(x1p + dw * 0.65, y1p + dh * 0.2, x1p + dw * 0.75, y1p + dh * 0.28);
+                // Balkans and Black Sea
+                ctx.quadraticCurveTo(x1p + dw * 0.8, y1p + dh * 0.38, x1p + dw * 0.78, y1p + dh * 0.5);
+                // Mediterranean southern coast
+                ctx.quadraticCurveTo(x1p + dw * 0.7, y1p + dh * 0.58, x1p + dw * 0.58, y1p + dh * 0.62);
+                // Italy peninsula
+                ctx.quadraticCurveTo(x1p + dw * 0.52, y1p + dh * 0.65, x1p + dw * 0.5, y1p + dh * 0.72);
+                // Iberian peninsula
+                ctx.quadraticCurveTo(x1p + dw * 0.38, y1p + dh * 0.68, x1p + dw * 0.32, y1p + dh * 0.62);
+                // Western coast
+                ctx.quadraticCurveTo(x1p + dw * 0.28, y1p + dh * 0.5, x1p + dw * 0.27, y1p + dh * 0.35);
+                // British Isles
+                ctx.quadraticCurveTo(x1p + dw * 0.25, y1p + dh * 0.22, x1p + dw * 0.32, y1p + dh * 0.12);
+                ctx.quadraticCurveTo(x1p + dw * 0.35, y1p + dh * 0.02, x1p + dw * 0.35, y1p);
             } else if (name === 'africa') {
-                ctx.moveTo(x1p + (x2p - x1p) * 0.3, y1p);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.1, y1p + (y2p - y1p) * 0.1);
-                ctx.lineTo(x2p, y1p + (y2p - y1p) * 0.3);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.15, y2p - (y2p - y1p) * 0.1);
-                ctx.lineTo(x1p + (x2p - x1p) * 0.2, y2p);
-                ctx.lineTo(x1p, y1p + (y2p - y1p) * 0.7);
+                // Northern coast (Maghreb)
+                ctx.moveTo(x1p + dw * 0.25, y1p);
+                ctx.quadraticCurveTo(x1p + dw * 0.42, y1p + dh * 0.05, x1p + dw * 0.58, y1p + dh * 0.08);
+                // Mediterranean coast to Egypt
+                ctx.quadraticCurveTo(x1p + dw * 0.75, y1p + dh * 0.1, x1p + dw * 0.88, y1p + dh * 0.15);
+                // Red Sea coast
+                ctx.quadraticCurveTo(x1p + dw * 0.92, y1p + dh * 0.25, x1p + dw * 0.95, y1p + dh * 0.4);
+                // Horn of Africa (very distinctive)
+                ctx.quadraticCurveTo(x1p + dw * 0.98, y1p + dh * 0.52, x1p + dw * 0.92, y1p + dh * 0.62);
+                ctx.quadraticCurveTo(x1p + dw * 0.85, y1p + dh * 0.68, x1p + dw * 0.78, y1p + dh * 0.65);
+                // East African coast
+                ctx.quadraticCurveTo(x1p + dw * 0.82, y1p + dh * 0.78, x1p + dw * 0.78, y1p + dh * 0.88);
+                // Southern tip
+                ctx.quadraticCurveTo(x1p + dw * 0.68, y1p + dh * 0.95, x1p + dw * 0.48, y1p + dh * 0.98);
+                // Western side - Gulf of Guinea bulge
+                ctx.quadraticCurveTo(x1p + dw * 0.35, y1p + dh * 0.95, x1p + dw * 0.28, y1p + dh * 0.88);
+                // West African coast
+                ctx.quadraticCurveTo(x1p + dw * 0.22, y1p + dh * 0.75, x1p + dw * 0.18, y1p + dh * 0.6);
+                // Sahara coast
+                ctx.quadraticCurveTo(x1p + dw * 0.15, y1p + dh * 0.4, x1p + dw * 0.18, y1p + dh * 0.2);
+                ctx.quadraticCurveTo(x1p + dw * 0.2, y1p + dh * 0.08, x1p + dw * 0.25, y1p);
             } else if (name === 'asia') {
-                ctx.moveTo(x1p, y1p + (y2p - y1p) * 0.2);
-                ctx.lineTo(x1p + (x2p - x1p) * 0.3, y1p);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.1, y1p + (y2p - y1p) * 0.1);
-                ctx.lineTo(x2p, y1p + (y2p - y1p) * 0.4);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.15, y2p - (y2p - y1p) * 0.05);
-                ctx.lineTo(x1p + (x2p - x1p) * 0.2, y2p);
-                ctx.lineTo(x1p, y2p - (y2p - y1p) * 0.3);
+                // Western coast (Arabian Peninsula)
+                ctx.moveTo(x1p + dw * 0.1, y1p + dh * 0.15);
+                ctx.quadraticCurveTo(x1p + dw * 0.15, y1p + dh * 0.25, x1p + dw * 0.18, y1p + dh * 0.4);
+                // Arabian Sea coast
+                ctx.quadraticCurveTo(x1p + dw * 0.2, y1p + dh * 0.52, x1p + dw * 0.22, y1p + dh * 0.6);
+                // Indian subcontinent - distinctive triangular shape
+                ctx.quadraticCurveTo(x1p + dw * 0.28, y1p + dh * 0.65, x1p + dw * 0.35, y1p + dh * 0.72);
+                ctx.quadraticCurveTo(x1p + dw * 0.38, y1p + dh * 0.78, x1p + dw * 0.35, y1p + dh * 0.88);
+                // Southeast Asian peninsula
+                ctx.quadraticCurveTo(x1p + dw * 0.42, y1p + dh * 0.85, x1p + dw * 0.5, y1p + dh * 0.88);
+                ctx.quadraticCurveTo(x1p + dw * 0.58, y1p + dh * 0.82, x1p + dw * 0.62, y1p + dh * 0.72);
+                // Philippines and Indonesian islands (simplified)
+                ctx.quadraticCurveTo(x1p + dw * 0.68, y1p + dh * 0.75, x1p + dw * 0.72, y1p + dh * 0.68);
+                // Eastern Asia coast (China, Korea, Japan)
+                ctx.quadraticCurveTo(x1p + dw * 0.75, y1p + dh * 0.52, x1p + dw * 0.78, y1p + dh * 0.38);
+                // China northeastern coast
+                ctx.quadraticCurveTo(x1p + dw * 0.8, y1p + dh * 0.25, x1p + dw * 0.78, y1p + dh * 0.12);
+                // Russian far east
+                ctx.quadraticCurveTo(x1p + dw * 0.75, y1p + dh * 0.08, x1p + dw * 0.65, y1p + dh * 0.05);
+                // Northern Siberia coast
+                ctx.quadraticCurveTo(x1p + dw * 0.5, y1p + dh * 0.02, x1p + dw * 0.35, y1p + dh * 0.08);
+                // Western Russia
+                ctx.quadraticCurveTo(x1p + dw * 0.25, y1p + dh * 0.1, x1p + dw * 0.15, y1p + dh * 0.15);
+                // Caucasus region
+                ctx.quadraticCurveTo(x1p + dw * 0.1, y1p + dh * 0.22, x1p + dw * 0.1, y1p + dh * 0.15);
             } else if (name === 'australia') {
-                ctx.moveTo(x1p + (x2p - x1p) * 0.3, y1p);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.2, y1p + (y2p - y1p) * 0.2);
-                ctx.lineTo(x2p - (x2p - x1p) * 0.1, y2p - (y2p - y1p) * 0.1);
-                ctx.lineTo(x1p + (x2p - x1p) * 0.2, y2p);
-                ctx.lineTo(x1p, y1p + (y2p - y1p) * 0.6);
+                // Northern coast (Timor strait)
+                ctx.moveTo(x1p + dw * 0.15, y1p);
+                ctx.quadraticCurveTo(x1p + dw * 0.35, y1p + dh * 0.08, x1p + dw * 0.5, y1p + dh * 0.05);
+                // Northeast coast
+                ctx.quadraticCurveTo(x1p + dw * 0.65, y1p + dh * 0.08, x1p + dw * 0.75, y1p + dh * 0.2);
+                // Eastern coast (Great Barrier Reef area)
+                ctx.quadraticCurveTo(x1p + dw * 0.8, y1p + dh * 0.4, x1p + dw * 0.78, y1p + dh * 0.6);
+                // Southeastern coast
+                ctx.quadraticCurveTo(x1p + dw * 0.72, y1p + dh * 0.75, x1p + dw * 0.6, y1p + dh * 0.82);
+                // Southern coast
+                ctx.quadraticCurveTo(x1p + dw * 0.45, y1p + dh * 0.85, x1p + dw * 0.3, y1p + dh * 0.82);
+                // Southwestern coast
+                ctx.quadraticCurveTo(x1p + dw * 0.15, y1p + dh * 0.75, x1p + dw * 0.08, y1p + dh * 0.6);
+                // Western coast
+                ctx.quadraticCurveTo(x1p + dw * 0.05, y1p + dh * 0.4, x1p + dw * 0.08, y1p + dh * 0.2);
+                ctx.quadraticCurveTo(x1p + dw * 0.1, y1p + dh * 0.05, x1p + dw * 0.15, y1p);
             }
             ctx.closePath();
             ctx.fill();

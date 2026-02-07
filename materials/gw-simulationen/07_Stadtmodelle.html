@@ -23,10 +23,10 @@
 
         .container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 280px;
             gap: 12px;
             padding: 12px;
-            height: calc(100vh - 24px);
+            height: calc(100vh - 70px);
         }
 
         @media (max-width: 900px) {
@@ -387,10 +387,18 @@
             const container = canvas.parentElement;
             canvas.width = container.offsetWidth;
             canvas.height = container.offsetHeight;
-            draw();
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+
+        // Initial resize after layout is ready
+        setTimeout(() => {
+            resizeCanvas();
+            draw();
+        }, 100);
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            draw();
+        });
 
         // State
         const state = {
@@ -745,9 +753,8 @@
 
             if (state.showCommuters) {
                 drawCommuterFlows();
+                requestAnimationFrame(draw);
             }
-
-            requestAnimationFrame(draw);
         }
 
         // Mouse handling

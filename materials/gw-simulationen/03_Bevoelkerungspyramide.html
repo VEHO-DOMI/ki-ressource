@@ -24,10 +24,10 @@
             max-width: 100%;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 280px;
             gap: 12px;
             align-items: start;
-            height: calc(100vh - 24px);
+            height: calc(100vh - 70px);
             padding: 12px;
         }
 
@@ -106,7 +106,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .country-btn {
@@ -129,7 +129,7 @@
 
         .country-btn.active {
             background: rgba(0, 180, 180, 0.6);
-            border-color rgba(0, 180, 180, 0.8);
+            border-color: rgba(0, 180, 180, 0.8);
             box-shadow: 0 0 15px rgba(0, 180, 180, 0.4);
         }
 
@@ -407,7 +407,6 @@
                     <button class="country-btn" data-country="Nigeria">Nigeria</button>
                     <button class="country-btn" data-country="Japan">Japan</button>
                     <button class="country-btn" data-country="USA">USA</button>
-                    <button class="country-btn" data-country="Indien">Indien</button>
                 </div>
             </div>
 
@@ -417,7 +416,7 @@
                     Geburtenrate
                     <span class="control-value"><span id="birthRateValue">9.5</span>/1000</span>
                 </label>
-                <input type="range" id="birthRateSlider" min="5" max="45" value="9.5" step="0.5">
+                <input type="range" id="birthRateSlider" min="5" max="50" value="9.5" step="0.5">
             </div>
 
             <!-- Death Rate Slider -->
@@ -426,7 +425,7 @@
                     Sterberate
                     <span class="control-value"><span id="deathRateValue">10.2</span>/1000</span>
                 </label>
-                <input type="range" id="deathRateSlider" min="5" max="25" value="10.2" step="0.5">
+                <input type="range" id="deathRateSlider" min="5" max="30" value="10.2" step="0.5">
             </div>
 
             <!-- Net Migration Slider -->
@@ -482,61 +481,69 @@
     </div>
 
     <script>
-        // Country Data
-        const countryData = {
+        // Country Data - 20 age groups (0-4, 5-9, ..., 95+)
+        const countryPresets = {
             "Österreich": {
-                year: 2024, pop: 9100000, type: "urnenförmig",
-                male: [2.2, 2.3, 2.5, 2.6, 2.8, 3.2, 3.5, 3.8, 3.6, 3.3, 3.0, 3.5, 3.8, 3.5, 2.8, 2.0, 1.3, 0.7, 0.3, 0.1],
-                female: [2.1, 2.2, 2.4, 2.5, 2.7, 3.1, 3.4, 3.7, 3.5, 3.2, 3.0, 3.5, 3.9, 3.7, 3.1, 2.4, 1.8, 1.1, 0.5, 0.2],
-                phase: 5, birthRate: 9.5, deathRate: 10.2
+                year: 2024,
+                totalPopulation: 9100000,
+                type: "urnenförmig",
+                males: [38000, 39000, 41000, 42000, 45000, 52000, 57000, 62000, 59000, 54000, 49000, 57000, 62000, 57000, 46000, 33000, 21000, 11000, 5000, 2000],
+                females: [36000, 37000, 39000, 41000, 44000, 50000, 55000, 60000, 57000, 52000, 49000, 57000, 64000, 60000, 51000, 39000, 29000, 18000, 8000, 3000],
+                phase: 5,
+                birthRate: 9.5,
+                deathRate: 10.2
             },
             "Nigeria": {
-                year: 2024, pop: 224000000, type: "pyramidenförmig",
-                male: [8.5, 7.5, 6.8, 6.0, 5.2, 4.5, 3.8, 3.2, 2.6, 2.1, 1.6, 1.2, 0.8, 0.5, 0.3, 0.15, 0.08, 0.03, 0.01, 0.005],
-                female: [8.2, 7.3, 6.6, 5.8, 5.1, 4.4, 3.7, 3.1, 2.6, 2.1, 1.7, 1.3, 0.9, 0.6, 0.35, 0.2, 0.1, 0.05, 0.02, 0.01],
-                phase: 2, birthRate: 36.0, deathRate: 11.5
+                year: 2024,
+                totalPopulation: 224000000,
+                type: "pyramidenförmig",
+                males: [19040000, 16800000, 15232000, 13440000, 11648000, 10080000, 8512000, 7168000, 5824000, 4704000, 3584000, 2688000, 1792000, 1120000, 672000, 336000, 179200, 67200, 22400, 11200],
+                females: [18368000, 16352000, 14784000, 12992000, 11424000, 9856000, 8288000, 6944000, 5824000, 4704000, 3808000, 2912000, 2016000, 1344000, 784000, 448000, 224000, 112000, 44800, 22400],
+                phase: 2,
+                birthRate: 36.0,
+                deathRate: 11.5
             },
             "Japan": {
-                year: 2024, pop: 123000000, type: "urnenförmig",
-                male: [1.8, 2.0, 2.2, 2.3, 2.5, 2.8, 3.0, 3.2, 3.5, 3.8, 3.5, 3.2, 3.8, 4.0, 3.2, 2.5, 1.8, 1.0, 0.4, 0.1],
-                female: [1.7, 1.9, 2.1, 2.2, 2.4, 2.7, 2.9, 3.1, 3.4, 3.7, 3.4, 3.2, 3.9, 4.2, 3.5, 2.9, 2.3, 1.5, 0.7, 0.3],
-                phase: 5, birthRate: 6.8, deathRate: 12.0
+                year: 2024,
+                totalPopulation: 123000000,
+                type: "urnenförmig",
+                males: [2214000, 2460000, 2706000, 2829000, 3075000, 3444000, 3690000, 3936000, 4305000, 4674000, 4305000, 3936000, 4674000, 4920000, 3936000, 3075000, 2214000, 1230000, 492000, 123000],
+                females: [2091000, 2337000, 2583000, 2706000, 2952000, 3321000, 3567000, 3813000, 4182000, 4551000, 4182000, 3936000, 4797000, 5166000, 4305000, 3567000, 2829000, 1845000, 861000, 369000],
+                phase: 5,
+                birthRate: 6.8,
+                deathRate: 12.0
             },
             "USA": {
-                year: 2024, pop: 335000000, type: "glockenförmig",
-                male: [3.0, 3.1, 3.2, 3.1, 3.0, 3.3, 3.5, 3.4, 3.2, 3.0, 3.3, 3.5, 3.3, 2.8, 2.2, 1.6, 1.0, 0.5, 0.2, 0.05],
-                female: [2.9, 3.0, 3.1, 3.0, 2.9, 3.2, 3.4, 3.3, 3.1, 3.0, 3.3, 3.6, 3.4, 2.9, 2.4, 1.9, 1.3, 0.7, 0.3, 0.1],
-                phase: 4, birthRate: 11.0, deathRate: 10.2
-            },
-            "Indien": {
-                year: 2024, pop: 1440000000, type: "bienenkorb",
-                male: [4.3, 4.5, 4.7, 4.8, 4.6, 4.3, 4.0, 3.6, 3.2, 2.8, 2.3, 1.8, 1.3, 0.9, 0.5, 0.3, 0.15, 0.05, 0.02, 0.005],
-                female: [4.0, 4.2, 4.4, 4.6, 4.4, 4.1, 3.8, 3.5, 3.1, 2.7, 2.3, 1.8, 1.4, 1.0, 0.6, 0.35, 0.2, 0.08, 0.03, 0.01],
-                phase: 3, birthRate: 17.0, deathRate: 7.3
+                year: 2024,
+                totalPopulation: 335000000,
+                type: "glockenförmig",
+                males: [10050000, 10385000, 10720000, 10385000, 10050000, 11055000, 11725000, 11390000, 10720000, 10050000, 11055000, 11725000, 11055000, 9380000, 7370000, 5360000, 3350000, 1675000, 670000, 167500],
+                females: [9745000, 10080000, 10415000, 10080000, 9745000, 10720000, 11390000, 11055000, 10415000, 10050000, 11055000, 12060000, 11390000, 9745000, 8040000, 6370000, 4355000, 2345000, 1005000, 335000],
+                phase: 4,
+                birthRate: 11.0,
+                deathRate: 10.2
             }
         };
 
-        // DTM Phase Descriptions
-        const dtmPhases = {
-            1: { name: "Prätransformativ", color: "#ff6b6b" },
-            2: { name: "Frühtransformativ", color: "#ffa534" },
-            3: { name: "Mitteltransformativ", color: "#4ecdc4" },
-            4: { name: "Spättransformativ", color: "#95e1d3" },
-            5: { name: "Posttransformativ", color: "#6bcf7f" }
-        };
+        // Age groups
+        const ageGroups = ["0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39",
+                          "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74",
+                          "75-79", "80-84", "85-89", "90-94", "95+"];
 
         // Application State
         let state = {
             country: "Österreich",
             year: 2024,
-            data: JSON.parse(JSON.stringify(countryData["Österreich"])),
+            males: JSON.parse(JSON.stringify(countryPresets["Österreich"].males)),
+            females: JSON.parse(JSON.stringify(countryPresets["Österreich"].females)),
+            totalPopulation: countryPresets["Österreich"].totalPopulation,
             birthRate: 9.5,
             deathRate: 10.2,
             migration: 0,
             phase: 5,
             playing: false,
             speed: 1,
-            animationProgress: 0
+            updateTicker: 0
         };
 
         // Canvas Setup
@@ -559,22 +566,68 @@
         resizeCanvases();
         window.addEventListener("resize", resizeCanvases);
 
-        // Age groups
-        const ageGroups = ["0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39",
-                          "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74",
-                          "75-79", "80-84", "85-89", "90-94", "95+"];
-
-        // Update pyramid form classification
+        // Classify pyramid form based on age distribution
         function classifyPyramidForm() {
-            const youngRatio = (state.data.male.slice(0, 3).reduce((a, b) => a + b) +
-                               state.data.female.slice(0, 3).reduce((a, b) => a + b)) / 6;
-            const oldRatio = (state.data.male.slice(-3).reduce((a, b) => a + b) +
-                             state.data.female.slice(-3).reduce((a, b) => a + b)) / 6;
+            const young = state.males.slice(0, 3).reduce((a, b) => a + b, 0) +
+                         state.females.slice(0, 3).reduce((a, b) => a + b, 0);
+            const old = state.males.slice(-3).reduce((a, b) => a + b, 0) +
+                       state.females.slice(-3).reduce((a, b) => a + b, 0);
+            const total = state.totalPopulation;
 
-            if (youngRatio > 5) return "bienenkorb";
-            if (youngRatio > 3) return "pyramidenförmig";
-            if (oldRatio > youngRatio) return "urnenförmig";
+            const youngPct = (young / total) * 100;
+            const oldPct = (old / total) * 100;
+
+            if (youngPct > 25) return "pyramidenförmig";
+            if (oldPct > youngPct * 2) return "urnenförmig";
             return "glockenförmig";
+        }
+
+        // Simulate population changes for one year
+        function simulateYear() {
+            // Calculate births
+            const birthsPerCapita = state.birthRate / 1000;
+            const newBirths = Math.round(state.totalPopulation * birthsPerCapita);
+            const maleNewborns = Math.round(newBirths * 0.51);
+            const femaleNewborns = Math.round(newBirths * 0.49);
+
+            // Age the population: shift everyone up one age group
+            const newMales = [...state.males];
+            const newFemales = [...state.females];
+
+            // Shift age groups (everyone ages by 1 year, move into next group over 5 years)
+            // For simplicity, we shift proportionally each year
+            for (let i = 19; i > 0; i--) {
+                newMales[i] = newMales[i - 1] * 0.98; // slight mortality
+                newFemales[i] = newFemales[i - 1] * 0.98;
+            }
+
+            newMales[0] = maleNewborns;
+            newFemales[0] = femaleNewborns;
+
+            // Apply mortality by age group (higher in elderly)
+            const mortalityRates = [0.01, 0.005, 0.003, 0.003, 0.004, 0.005, 0.006, 0.008,
+                                   0.012, 0.018, 0.028, 0.04, 0.06, 0.09, 0.12, 0.16, 0.20, 0.25, 0.30, 0.40];
+
+            for (let i = 0; i < 20; i++) {
+                newMales[i] *= (1 - mortalityRates[i]);
+                newFemales[i] *= (1 - mortalityRates[i]);
+            }
+
+            // Apply net migration (concentrated in working-age groups 20-40)
+            const migrationPerCapita = state.migration / 1000;
+            const netMigration = Math.round(state.totalPopulation * migrationPerCapita);
+            const migrationPerGroup = netMigration / 4; // distribute across 4 age groups
+
+            for (let i = 4; i < 8; i++) {
+                newMales[i] += migrationPerGroup * 0.5;
+                newFemales[i] += migrationPerGroup * 0.5;
+            }
+
+            state.males = newMales.map(m => Math.max(0, Math.round(m)));
+            state.females = newFemales.map(f => Math.max(0, Math.round(f)));
+
+            state.totalPopulation = state.males.reduce((a, b) => a + b, 0) +
+                                   state.females.reduce((a, b) => a + b, 0);
         }
 
         // Draw Population Pyramid
@@ -605,10 +658,11 @@
                 pyramidCtx.stroke();
             }
 
-            // Draw age groups and bars
-            const maxValue = Math.max(...state.data.male, ...state.data.female) * 1.1;
-            const scale = (width / 2 - padding - 30) / maxValue;
+            // Calculate max percentage for scaling
+            const maxPop = Math.max(...state.males, ...state.females);
+            const scale = (width / 2 - padding - 30) / maxPop;
 
+            // Draw age groups and bars
             pyramidCtx.font = "11px Inter";
             pyramidCtx.fillStyle = "rgba(255, 255, 255, 0.6)";
             pyramidCtx.textAlign = "right";
@@ -620,7 +674,7 @@
                 pyramidCtx.fillText(ageGroups[i], centerX - 10, y + 4);
 
                 // Male bar (left)
-                const maleWidth = state.data.male[i] * scale;
+                const maleWidth = state.males[i] * scale;
                 const maleGradient = pyramidCtx.createLinearGradient(centerX - maleWidth, y - barHeight / 2, centerX, y - barHeight / 2);
                 maleGradient.addColorStop(0, "#0080c0");
                 maleGradient.addColorStop(1, "#00b4d4");
@@ -628,7 +682,7 @@
                 pyramidCtx.fillRect(centerX - maleWidth, y - barHeight / 3, maleWidth, barHeight / 1.5);
 
                 // Female bar (right)
-                const femaleWidth = state.data.female[i] * scale;
+                const femaleWidth = state.females[i] * scale;
                 const femaleGradient = pyramidCtx.createLinearGradient(centerX, y - barHeight / 2, centerX + femaleWidth, y - barHeight / 2);
                 femaleGradient.addColorStop(0, "#c41b8f");
                 femaleGradient.addColorStop(1, "#ff4d94");
@@ -636,7 +690,7 @@
                 pyramidCtx.fillRect(centerX, y - barHeight / 3, femaleWidth, barHeight / 1.5);
             }
 
-            // Draw axes
+            // Draw center axis
             pyramidCtx.strokeStyle = "rgba(255, 255, 255, 0.2)";
             pyramidCtx.lineWidth = 2;
             pyramidCtx.beginPath();
@@ -644,7 +698,7 @@
             pyramidCtx.lineTo(centerX, height - padding);
             pyramidCtx.stroke();
 
-            // X-axis labels
+            // X-axis labels (percentages)
             pyramidCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
             pyramidCtx.textAlign = "center";
             pyramidCtx.font = "10px Inter";
@@ -688,15 +742,15 @@
             dtmCtx.lineCap = "round";
             dtmCtx.lineJoin = "round";
 
+            const birthRate = Math.max(1, Math.min(50, state.birthRate));
+            const deathRate = Math.max(1, Math.min(30, state.deathRate));
+
             // Draw birth rate line (green)
             dtmCtx.strokeStyle = "#76ff03";
             dtmCtx.beginPath();
-            const birthRate = Math.max(1, Math.min(45, state.birthRate));
-            const deathRate = Math.max(1, Math.min(25, state.deathRate));
-
             for (let p = 0; p < 5; p++) {
                 const x = padding + (p + 0.5) * phaseWidth;
-                const y = height - padding - ((birthRate - 5) / 40) * graphHeight;
+                const y = height - padding - ((birthRate - 5) / 45) * graphHeight;
                 if (p === 0) dtmCtx.moveTo(x, y);
                 else dtmCtx.lineTo(x, y);
             }
@@ -707,29 +761,11 @@
             dtmCtx.beginPath();
             for (let p = 0; p < 5; p++) {
                 const x = padding + (p + 0.5) * phaseWidth;
-                const y = height - padding - ((deathRate - 5) / 20) * graphHeight;
+                const y = height - padding - ((deathRate - 5) / 25) * graphHeight;
                 if (p === 0) dtmCtx.moveTo(x, y);
                 else dtmCtx.lineTo(x, y);
             }
             dtmCtx.stroke();
-
-            // Growth area (between curves)
-            dtmCtx.fillStyle = "rgba(118, 255, 3, 0.1)";
-            dtmCtx.beginPath();
-            for (let p = 0; p < 5; p++) {
-                const x = padding + (p + 0.5) * phaseWidth;
-                const birthY = height - padding - ((birthRate - 5) / 40) * graphHeight;
-                const deathY = height - padding - ((deathRate - 5) / 20) * graphHeight;
-                if (p === 0) dtmCtx.moveTo(x, birthY);
-                else dtmCtx.lineTo(x, birthY);
-            }
-            for (let p = 4; p >= 0; p--) {
-                const x = padding + (p + 0.5) * phaseWidth;
-                const deathY = height - padding - ((deathRate - 5) / 20) * graphHeight;
-                dtmCtx.lineTo(x, deathY);
-            }
-            dtmCtx.closePath();
-            dtmCtx.fill();
 
             // Phase labels
             dtmCtx.fillStyle = "rgba(255, 255, 255, 0.6)";
@@ -767,7 +803,7 @@
         function updateDisplay() {
             const form = classifyPyramidForm();
             const naturalGrowth = state.birthRate - state.deathRate;
-            const popM = (state.data.pop / 1000000).toFixed(1);
+            const popM = (state.totalPopulation / 1000000).toFixed(1);
 
             document.getElementById("yearDisplay").textContent = state.year;
             document.getElementById("populationCounter").textContent = `Bevölkerung: ${popM} Mio.`;
@@ -784,20 +820,23 @@
             drawDTM();
         }
 
-        // Event Listeners
+        // Event Listeners - Country Buttons
         document.querySelectorAll(".country-btn").forEach(btn => {
             btn.addEventListener("click", function() {
                 document.querySelectorAll(".country-btn").forEach(b => b.classList.remove("active"));
                 this.classList.add("active");
 
                 const country = this.dataset.country;
-                const data = countryData[country];
+                const preset = countryPresets[country];
+
                 state.country = country;
-                state.data = JSON.parse(JSON.stringify(data));
-                state.year = data.year;
-                state.birthRate = data.birthRate;
-                state.deathRate = data.deathRate;
-                state.phase = data.phase;
+                state.year = preset.year;
+                state.males = JSON.parse(JSON.stringify(preset.males));
+                state.females = JSON.parse(JSON.stringify(preset.females));
+                state.totalPopulation = preset.totalPopulation;
+                state.birthRate = preset.birthRate;
+                state.deathRate = preset.deathRate;
+                state.phase = preset.phase;
 
                 document.getElementById("birthRateSlider").value = state.birthRate;
                 document.getElementById("deathRateSlider").value = state.deathRate;
@@ -807,25 +846,30 @@
             });
         });
 
+        // Birth rate slider
         document.getElementById("birthRateSlider").addEventListener("input", function() {
             state.birthRate = parseFloat(this.value);
             updateDisplay();
         });
 
+        // Death rate slider
         document.getElementById("deathRateSlider").addEventListener("input", function() {
             state.deathRate = parseFloat(this.value);
             updateDisplay();
         });
 
+        // Migration slider
         document.getElementById("migrationSlider").addEventListener("input", function() {
             state.migration = parseFloat(this.value);
             updateDisplay();
         });
 
+        // Speed slider
         document.getElementById("speedSlider").addEventListener("input", function() {
             state.speed = parseFloat(this.value);
         });
 
+        // Update phase buttons
         function updatePhaseButtons() {
             document.querySelectorAll(".phase-btn").forEach(btn => {
                 btn.classList.remove("active");
@@ -835,15 +879,16 @@
             });
         }
 
+        // Phase buttons
         document.querySelectorAll(".phase-btn").forEach(btn => {
             btn.addEventListener("click", function() {
                 state.phase = parseInt(this.dataset.phase);
 
                 // Auto-adjust rates based on phase
                 const phaseRates = {
-                    1: { birth: 30, death: 30 },
-                    2: { birth: 35, death: 15 },
-                    3: { birth: 20, death: 10 },
+                    1: { birth: 40, death: 40 },
+                    2: { birth: 40, death: 15 },
+                    3: { birth: 25, death: 10 },
                     4: { birth: 15, death: 10 },
                     5: { birth: 10, death: 12 }
                 };
@@ -860,6 +905,7 @@
             });
         });
 
+        // Play/Pause button
         const playBtn = document.getElementById("playBtn");
         playBtn.addEventListener("click", function() {
             state.playing = !state.playing;
@@ -870,8 +916,23 @@
         // Animation loop
         function animate() {
             if (state.playing) {
-                state.year += state.speed * 0.1;
-                if (state.year > 2100) state.year = 2024;
+                state.updateTicker += state.speed;
+
+                // Advance one year every time ticker reaches 1
+                if (state.updateTicker >= 1) {
+                    state.year += 1;
+                    simulateYear();
+                    state.updateTicker -= 1;
+
+                    // Reset to start year if we go past 2100
+                    if (state.year > 2100) {
+                        state.year = 2024;
+                        const preset = countryPresets[state.country];
+                        state.males = JSON.parse(JSON.stringify(preset.males));
+                        state.females = JSON.parse(JSON.stringify(preset.females));
+                        state.totalPopulation = preset.totalPopulation;
+                    }
+                }
             }
 
             updateDisplay();

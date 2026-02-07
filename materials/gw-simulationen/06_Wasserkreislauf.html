@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wasserkreislauf - Simulation</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Wasserkreislauf Simulation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -16,898 +14,949 @@
 
         html, body {
             width: 100%;
-            height: 100%;
+            height: 100vh;
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0a1520 0%, #0d2137 50%, #0a3055 100%);
-            color: #ffffff;
+            color: #fff;
             overflow: hidden;
-            padding: 0;
-            margin: 0;
         }
 
         .container {
             display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            height: 100vh;
+            grid-template-columns: 1fr 280px;
             gap: 12px;
+            height: calc(100vh - 24px);
             padding: 12px;
         }
 
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-                gap: 16px;
-                padding: 16px;
-                height: auto;
-                min-height: 100vh;
-            }
-        }
-
-        .canvas-section {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            min-height: 0;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 30%, #c8e6f5 100%);
-            border-radius: 12px;
+        .canvas-wrapper {
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        @media (max-width: 900px) {
-            canvas {
-                height: 400px;
-            }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
-        .controls-section {
+        .controls {
+            background: rgba(10, 21, 32, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 100%;
-            overflow-y: auto;
-            min-height: 0;
-        }
-
-        .panel {
-            background: rgba(255, 255, 255, 0.05);
+            gap: 14px;
+            max-width: 280px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
-        .header {
-            margin-bottom: 6px;
+        .controls::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .header h1 {
-            font-size: 1.5em;
+        .controls::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .controls::-webkit-scrollbar-thumb {
+            background: rgba(100, 200, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .controls::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 200, 255, 0.5);
+        }
+
+        .control-header {
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 2px;
             letter-spacing: -0.5px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #64c8ff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
         }
 
-        .header p {
-            font-size: 0.75em;
+        .subtitle {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
             letter-spacing: 0.5px;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(100, 200, 255, 0.3), transparent);
+            margin: 4px 0 8px 0;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
+            gap: 8px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
             gap: 6px;
-            margin-bottom: 0;
         }
 
-        .control-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .control-label {
+        .label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.8);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.75em;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.85);
         }
 
-        .control-value {
-            font-weight: 600;
-            color: #ffffff;
+        .value {
+            font-size: 11px;
+            color: rgba(100, 200, 255, 0.9);
+            font-weight: 400;
         }
 
         input[type="range"] {
             width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(255, 255, 255, 0.1);
+            height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, rgba(100, 200, 255, 0.3), rgba(100, 200, 255, 0.6));
             outline: none;
             -webkit-appearance: none;
             appearance: none;
-            cursor: pointer;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4dd0e1, #00bcd4);
+            background: linear-gradient(135deg, #64c8ff, #00d4ff);
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(77, 208, 225, 0.4);
-            transition: all 0.2s ease;
-        }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            box-shadow: 0 2px 12px rgba(77, 208, 225, 0.6);
+            box-shadow: 0 0 8px rgba(100, 200, 255, 0.6);
         }
 
         input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4dd0e1, #00bcd4);
+            background: linear-gradient(135deg, #64c8ff, #00d4ff);
             cursor: pointer;
             border: none;
-            box-shadow: 0 2px 8px rgba(77, 208, 225, 0.4);
-            transition: all 0.2s ease;
-        }
-
-        input[type="range"]::-moz-range-thumb:hover {
-            transform: scale(1.2);
-            box-shadow: 0 2px 12px rgba(77, 208, 225, 0.6);
+            box-shadow: 0 0 8px rgba(100, 200, 255, 0.6);
         }
 
         .toggle-group {
             display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
         }
 
-        .toggle-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 6px 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.7);
-            border-radius: 8px;
-            font-size: 0.7em;
-            font-weight: 500;
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            background: rgba(100, 200, 255, 0.2);
+            border-radius: 11px;
             cursor: pointer;
+            border: 1px solid rgba(100, 200, 255, 0.3);
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
         }
 
-        .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
+        .toggle.active {
+            background: rgba(100, 200, 255, 0.6);
+            border-color: rgba(100, 200, 255, 0.8);
         }
 
-        .toggle-btn.active {
-            background: linear-gradient(135deg, #4dd0e1, #00bcd4);
-            color: #ffffff;
-            border-color: rgba(77, 208, 225, 0.5);
-            box-shadow: 0 4px 12px rgba(77, 208, 225, 0.3);
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
+        .toggle.active::after {
+            left: 20px;
         }
 
-        .info-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px;
-            border-radius: 8px;
-            border-left: 3px solid rgba(77, 208, 225, 0.5);
-            font-size: 0.7em;
+        .toggle-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+        }
+
+        .info-box {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 11px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
         }
 
         .info-label {
             color: rgba(255, 255, 255, 0.6);
-            font-weight: 400;
-            display: block;
-            margin-bottom: 1px;
-            font-size: 0.7em;
         }
 
         .info-value {
-            font-weight: 700;
-            font-size: 1.1em;
-            color: #4dd0e1;
-        }
-
-        .legend {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            font-size: 0.7em;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .legend-label {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(77, 208, 225, 0.3);
-            border-radius: 3px;
-        }
-
-        .scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(77, 208, 225, 0.5);
-        }
-
-        .controls-section {
-            scrollbar-color: rgba(77, 208, 225, 0.3) transparent;
-            scrollbar-width: thin;
-        }
-
-        @media (max-width: 900px) {
-            .controls-section {
-                max-height: none;
-                overflow-y: visible;
-            }
+            color: rgba(100, 200, 255, 0.9);
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="canvas-section">
+        <div class="canvas-wrapper">
             <canvas id="waterCycleCanvas"></canvas>
         </div>
 
-        <div class="controls-section scrollbar">
-            <div class="panel header">
-                <h1>Wasserkreislauf</h1>
-                <p>Der Kreislauf des Wassers</p>
-            </div>
+        <div class="controls">
+            <div class="control-header">Wasserkreislauf</div>
+            <div class="subtitle">Der Kreislauf des Wassers</div>
+            <div class="divider"></div>
 
-            <div class="panel">
-                <div class="control-group">
-                    <div class="control-label">
+            <div class="control-group">
+                <div class="slider-group">
+                    <div class="label">
                         <span>Temperatur</span>
-                        <span class="control-value"><span id="tempValue">20</span>°C</span>
+                        <span class="value" id="tempValue">15°C</span>
                     </div>
-                    <input type="range" id="temperatureSlider" min="-5" max="40" value="20">
+                    <input type="range" id="temperatureSlider" min="-5" max="40" value="15">
                 </div>
             </div>
 
-            <div class="panel">
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Niederschlagsintensität</span>
-                        <span class="control-value" id="precipValue">Mittel</span>
+            <div class="control-group">
+                <div class="slider-group">
+                    <div class="label">
+                        <span>Niederschlag</span>
+                        <span class="value" id="precipValue">Mittel</span>
                     </div>
-                    <input type="range" id="precipitationSlider" min="0" max="100" value="50">
+                    <input type="range" id="precipitationSlider" min="0" max="2" value="1" step="1">
                 </div>
             </div>
 
-            <div class="panel">
-                <div class="control-group">
-                    <div class="control-label">
-                        <span>Partikel-Dichte</span>
-                        <span class="control-value"><span id="densityValue">100</span></span>
-                    </div>
-                    <input type="range" id="densitySlider" min="30" max="200" value="100">
+            <div class="divider"></div>
+
+            <div class="control-group">
+                <div class="toggle-group">
+                    <div class="toggle active" id="labelToggle"></div>
+                    <label class="toggle-label" for="labelToggle">Beschriftungen</label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle active" id="groundwaterToggle"></div>
+                    <label class="toggle-label" for="groundwaterToggle">Grundwasser</label>
+                </div>
+                <div class="toggle-group">
+                    <div class="toggle" id="impactToggle"></div>
+                    <label class="toggle-label" for="impactToggle">Menschl. Einfluss</label>
                 </div>
             </div>
 
-            <div class="panel">
-                <div class="control-group">
-                    <div class="control-label">Anzeige-Optionen</div>
-                    <div class="toggle-group">
-                        <button class="toggle-btn active" data-toggle="labels">Beschriftungen</button>
-                        <button class="toggle-btn active" data-toggle="groundwater">Grundwasser</button>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="toggle-group">
-                        <button class="toggle-btn" data-toggle="humanImpact">Menschlicher Einfluss</button>
-                    </div>
-                </div>
-            </div>
+            <div class="divider"></div>
 
-            <div class="panel">
-                <div class="control-group">
-                    <div class="control-label">Partikel nach Phase</div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label">Verdunstung</span>
-                            <span class="info-value" id="infoEvaporation">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Wolken</span>
-                            <span class="info-value" id="infoClouds">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Niederschlag</span>
-                            <span class="info-value" id="infoPrecipitation">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Oberflächenabfluss</span>
-                            <span class="info-value" id="infoRunoff">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Grundwasser</span>
-                            <span class="info-value" id="infoGroundwater">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Transpiration</span>
-                            <span class="info-value" id="infoTranspiration">0</span>
-                        </div>
-                    </div>
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="info-label">Verdunstung:</span>
+                    <span class="info-value" id="evaporationCount">0</span>
                 </div>
-            </div>
-
-            <div class="panel">
-                <div class="control-group">
-                    <div class="control-label">Legende</div>
-                    <div class="legend">
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: rgba(100, 180, 255, 0.7);"></div>
-                            <span class="legend-label">Verdunstung</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: #ffffff;"></div>
-                            <span class="legend-label">Wolken</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: #2196F3;"></div>
-                            <span class="legend-label">Niederschlag</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: #1976D2;"></div>
-                            <span class="legend-label">Oberflächenabfluss</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: rgba(50, 130, 200, 0.6);"></div>
-                            <span class="legend-label">Grundwasser</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: #4CAF50;"></div>
-                            <span class="legend-label">Transpiration</span>
-                        </div>
-                    </div>
+                <div class="info-row">
+                    <span class="info-label">Transpiration:</span>
+                    <span class="info-value" id="transpirationCount">0</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Wolken:</span>
+                    <span class="info-value" id="condensationCount">0</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Niederschlag:</span>
+                    <span class="info-value" id="precipitationCount">0</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Abfluss:</span>
+                    <span class="info-value" id="runoffCount">0</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Grundwasser:</span>
+                    <span class="info-value" id="groundwaterCount">0</span>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Canvas setup
         const canvas = document.getElementById('waterCycleCanvas');
         const ctx = canvas.getContext('2d');
 
-        let resizeTimer;
+        // Handle canvas resizing
         function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+            const wrapper = canvas.parentElement;
+            canvas.width = wrapper.clientWidth;
+            canvas.height = wrapper.clientHeight;
         }
         resizeCanvas();
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(resizeCanvas, 150);
-        });
+        window.addEventListener('resize', resizeCanvas);
 
-        // State management
-        const state = {
-            temperature: 20,
-            precipitationIntensity: 50,
-            particleDensity: 100,
+        // Control elements
+        const temperatureSlider = document.getElementById('temperatureSlider');
+        const precipitationSlider = document.getElementById('precipitationSlider');
+        const labelToggle = document.getElementById('labelToggle');
+        const groundwaterToggle = document.getElementById('groundwaterToggle');
+        const impactToggle = document.getElementById('impactToggle');
+        const tempValue = document.getElementById('tempValue');
+        const precipValue = document.getElementById('precipValue');
+
+        // State
+        let state = {
+            temperature: 15,
+            precipitation: 1,
             showLabels: true,
             showGroundwater: true,
             showHumanImpact: false,
             particles: [],
-            clouds: [],
-            factories: [],
             time: 0
         };
 
-        // Particle class
+        // Particle counts for info display
+        let particleCounts = {
+            evaporation: 0,
+            transpiration: 0,
+            condensation: 0,
+            precipitation: 0,
+            runoff: 0,
+            groundwater: 0
+        };
+
+        // Toggle handlers
+        labelToggle.addEventListener('click', () => {
+            state.showLabels = !state.showLabels;
+            labelToggle.classList.toggle('active');
+        });
+
+        groundwaterToggle.addEventListener('click', () => {
+            state.showGroundwater = !state.showGroundwater;
+            groundwaterToggle.classList.toggle('active');
+        });
+
+        impactToggle.addEventListener('click', () => {
+            state.showHumanImpact = !state.showHumanImpact;
+            impactToggle.classList.toggle('active');
+        });
+
+        // Slider handlers
+        temperatureSlider.addEventListener('input', (e) => {
+            state.temperature = parseInt(e.target.value);
+            tempValue.textContent = `${state.temperature}°C`;
+        });
+
+        precipitationSlider.addEventListener('input', (e) => {
+            state.precipitation = parseInt(e.target.value);
+            const precipLabels = ['Gering', 'Mittel', 'Stark'];
+            precipValue.textContent = precipLabels[state.precipitation];
+        });
+
+        // Water particle class
         class Particle {
-            constructor(x, y, phase = 'evaporation') {
+            constructor(x, y, phase = 'ocean') {
                 this.x = x;
                 this.y = y;
-                this.phase = phase; // evaporation, cloud, precipitation, runoff, groundwater, transpiration
+                this.phase = phase;
                 this.vx = 0;
                 this.vy = 0;
                 this.age = 0;
-                this.size = 3 + Math.random() * 2;
-                this.opacity = 1;
+                this.life = Math.random() * 200 + 200;
+                this.size = Math.random() * 2 + 1;
+                this.opacity = 0.7;
             }
 
-            update(dt, canvasWidth, canvasHeight) {
-                this.age += dt;
-                const oceanRight = canvasWidth * 0.9;
-                const oceanLeft = canvasWidth * 0.7;
-                const groundLevel = canvasHeight * 0.65;
-                const groundwaterLevel = canvasHeight * 0.8;
+            update(canvas, temp, precipitation) {
+                this.age++;
 
-                switch (this.phase) {
-                    case 'evaporation':
-                        // Rise from ocean
-                        this.vy = -1 - (state.temperature / 20) * 0.5;
-                        this.vx = (Math.random() - 0.5) * 0.5;
-                        this.opacity = 0.6 + Math.sin(this.age * 0.05) * 0.2;
+                if (this.phase === 'ocean') {
+                    this.x += Math.sin(this.age * 0.05) * 0.5;
+                    this.y += Math.cos(this.age * 0.05) * 0.2;
 
-                        if (this.y < canvasHeight * 0.15) {
-                            this.phase = 'cloud';
-                            this.age = 0;
-                        }
-                        break;
+                    if (Math.random() < (temp + 5) / 50) {
+                        this.phase = 'evaporation';
+                        this.vy = -Math.random() * 2 - 1;
+                    }
+                } else if (this.phase === 'evaporation') {
+                    this.vy = -Math.random() * 1.5 - 0.5 - (temp / 20);
+                    this.vx = (Math.random() - 0.5) * 1;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.opacity = Math.max(0.3, 1 - this.age / this.life);
+                    this.size = Math.random() * 1.5 + 0.5;
 
-                    case 'cloud':
-                        // Drift horizontally in clouds
-                        this.vy = (Math.random() - 0.5) * 0.1;
-                        this.vx = -0.3;
-                        this.opacity = 0.8;
-
-                        // Precipitation chance increases with intensity
-                        if (Math.random() < (state.precipitationIntensity / 100) * 0.02) {
-                            this.phase = 'precipitation';
-                            this.age = 0;
-                        }
-
-                        if (this.x < oceanLeft) {
-                            this.phase = 'precipitation';
-                            this.age = 0;
-                        }
-                        break;
-
-                    case 'precipitation':
-                        // Fall as rain/snow
-                        this.vy = 1.5 + Math.random() * 0.5;
-                        this.vx = (Math.random() - 0.5) * 0.2;
-                        this.opacity = 0.9;
-
-                        // Check altitude for snow
-                        const mountainX = canvasWidth * 0.45;
-                        const distToMountain = Math.abs(this.x - mountainX);
-                        const snowAltitude = canvasHeight * 0.2 + (distToMountain / 100);
-
-                        if (this.y > groundLevel) {
-                            // Hit ground
-                            if (Math.random() < 0.6) {
-                                // Surface runoff
-                                this.phase = 'runoff';
-                            } else {
-                                // Infiltration
-                                this.phase = 'groundwater';
-                            }
-                            this.age = 0;
-                        }
-                        break;
-
-                    case 'runoff':
-                        // Flow downhill to ocean
-                        this.vy = 0.3;
-                        this.vx = 0.5;
-                        this.opacity = 0.8;
-
-                        if (this.x > oceanLeft && this.y > groundLevel) {
-                            this.phase = 'evaporation';
-                            this.x = oceanRight - Math.random() * 50;
-                            this.y = groundLevel + Math.random() * 20;
-                            this.age = 0;
-                        }
-                        break;
-
-                    case 'groundwater':
-                        // Slow flow through groundwater
-                        this.vy = 0.1;
-                        this.vx = 0.2;
-                        this.opacity = 0.5;
-
-                        if (this.x > oceanLeft && this.y > groundwaterLevel) {
-                            this.phase = 'evaporation';
-                            this.x = oceanRight - Math.random() * 50;
-                            this.y = groundLevel + Math.random() * 20;
-                            this.age = 0;
-                        }
-                        break;
-
-                    case 'transpiration':
-                        // Rise from vegetation
-                        this.vy = -0.8;
+                    if (this.y < canvas.height * 0.25) {
+                        this.phase = 'condensation';
+                        this.vy = 0;
                         this.vx = (Math.random() - 0.5) * 0.3;
-                        this.opacity = 0.7;
+                    }
+                } else if (this.phase === 'transpiration') {
+                    this.vy = -Math.random() * 1.5 - 0.5 - (temp / 20);
+                    this.vx = (Math.random() - 0.5) * 0.8;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.opacity = Math.max(0.3, 1 - this.age / this.life);
+                    this.size = Math.random() * 1.5 + 0.5;
 
-                        if (this.y < canvasHeight * 0.2) {
-                            this.phase = 'cloud';
-                            this.age = 0;
+                    if (this.y < canvas.height * 0.25) {
+                        this.phase = 'condensation';
+                        this.vy = 0;
+                        this.vx = (Math.random() - 0.5) * 0.3;
+                    }
+                } else if (this.phase === 'condensation') {
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.x += this.vx;
+                    this.x = Math.max(0, Math.min(canvas.width, this.x));
+
+                    if (Math.random() < (precipitation + 1) / 100) {
+                        this.phase = 'precipitation';
+                    }
+                } else if (this.phase === 'precipitation') {
+                    this.vy = 2 + (precipitation * 0.5);
+                    this.vx = (Math.random() - 0.5) * 0.3;
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    const snowLine = canvas.height * 0.35 - (state.temperature - 0) * 2;
+
+                    if (this.x < canvas.width * 0.25 && this.y > snowLine) {
+                        this.phase = 'snow';
+                    } else if (this.y > canvas.height * 0.65) {
+                        if (Math.random() < 0.6) {
+                            this.phase = 'runoff';
+                        } else {
+                            this.phase = 'infiltration';
                         }
-                        break;
+                    }
+                } else if (this.phase === 'runoff') {
+                    this.vy = 0.5;
+                    this.vx = 1.5;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.size = Math.random() * 1.5 + 1;
+
+                    if (this.x > canvas.width * 0.85) {
+                        this.phase = 'ocean';
+                        this.vx = 0;
+                        this.vy = 0;
+                        this.y = canvas.height * 0.8;
+                    }
+                } else if (this.phase === 'infiltration') {
+                    this.vy = 0.5;
+                    this.vx = 0.3 + Math.random() * 0.3;
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.y > canvas.height * 0.8) {
+                        this.phase = 'groundwater';
+                    }
+                } else if (this.phase === 'groundwater') {
+                    this.vx = 0.5;
+                    this.vy = 0;
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x > canvas.width * 0.85) {
+                        this.phase = 'ocean';
+                        this.vx = 0;
+                        this.vy = 0;
+                        this.y = canvas.height * 0.8;
+                    }
                 }
 
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // Boundary checking
-                if (this.x < 0) this.x = 0;
-                if (this.x > canvasWidth) {
-                    this.phase = 'evaporation';
-                    this.x = canvasWidth * 0.85;
-                    this.y = groundLevel;
-                }
-                if (this.y < 0) this.y = 0;
-                if (this.y > canvasHeight) this.y = canvasHeight;
+                this.x = Math.max(0, Math.min(canvas.width, this.x));
+                this.y = Math.max(0, Math.min(canvas.height, this.y));
             }
 
             draw(ctx) {
-                ctx.fillStyle = this.getColor();
-                ctx.globalAlpha = this.opacity;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            }
+                ctx.save();
 
-            getColor() {
+                let color;
+                let size = this.size;
+
                 switch (this.phase) {
                     case 'evaporation':
-                        return 'rgba(100, 180, 255, 0.7)';
-                    case 'cloud':
-                        return '#ffffff';
-                    case 'precipitation':
-                        return '#2196F3';
-                    case 'runoff':
-                        return '#1976D2';
-                    case 'groundwater':
-                        return 'rgba(50, 130, 200, 0.6)';
+                        color = `rgba(100, 180, 255, ${this.opacity * 0.6})`;
+                        size = Math.random() * 1 + 0.5;
+                        break;
                     case 'transpiration':
-                        return '#4CAF50';
+                        color = `rgba(100, 200, 150, ${this.opacity * 0.6})`;
+                        size = Math.random() * 1 + 0.5;
+                        break;
+                    case 'condensation':
+                        color = `rgba(255, 255, 255, ${this.opacity * 0.8})`;
+                        size = Math.random() * 2 + 1.5;
+                        break;
+                    case 'precipitation':
+                        color = `rgba(100, 150, 255, ${this.opacity})`;
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(this.x, this.y);
+                        ctx.lineTo(this.x, this.y + 6);
+                        ctx.stroke();
+                        ctx.restore();
+                        return;
+                    case 'snow':
+                        color = `rgba(255, 255, 255, ${this.opacity})`;
+                        size = Math.random() * 1.5 + 1;
+                        break;
+                    case 'runoff':
+                        color = `rgba(100, 150, 255, ${this.opacity * 0.7})`;
+                        break;
+                    case 'infiltration':
+                        color = `rgba(150, 100, 80, ${this.opacity * 0.5})`;
+                        size = Math.random() * 1 + 0.5;
+                        break;
+                    case 'groundwater':
+                        color = `rgba(100, 150, 200, ${this.opacity * 0.5})`;
+                        size = Math.random() * 0.8 + 0.5;
+                        break;
+                    case 'ocean':
+                        color = `rgba(100, 150, 200, ${this.opacity * 0.4})`;
+                        size = Math.random() * 1 + 0.5;
+                        break;
                     default:
-                        return '#4dd0e1';
+                        color = 'rgba(100, 150, 200, 0.5)';
+                }
+
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        // Landscape drawing
+        function drawLandscape(canvas, ctx, temp) {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Sky gradient
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, h * 0.3);
+            skyGradient.addColorStop(0, '#1a3a5c');
+            skyGradient.addColorStop(1, '#4a7c9f');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, w, h * 0.3);
+
+            // Horizon line
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, h * 0.3);
+            ctx.lineTo(w, h * 0.3);
+            ctx.stroke();
+
+            // Ocean water
+            ctx.fillStyle = '#0d3b6b';
+            ctx.fillRect(w * 0.75, h * 0.3, w * 0.25, h * 0.7);
+
+            // Wave animation
+            ctx.strokeStyle = 'rgba(100, 180, 255, 0.3)';
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                const waveY = h * 0.3 + i * 12 + Math.sin(state.time * 0.02 + i) * 2;
+                ctx.moveTo(w * 0.75, waveY);
+                ctx.quadraticCurveTo(w * 0.8, waveY - 3, w * 0.85, waveY);
+                ctx.quadraticCurveTo(w * 0.9, waveY + 3, w * 0.95, waveY);
+                ctx.stroke();
+            }
+
+            // Beach/Sand
+            ctx.fillStyle = '#d4a574';
+            ctx.fillRect(w * 0.65, h * 0.65, w * 0.15, h * 0.35);
+
+            // Flat terrain
+            ctx.fillStyle = '#3a6b2f';
+            ctx.fillRect(w * 0.35, h * 0.65, w * 0.3, h * 0.35);
+
+            // River (winding)
+            ctx.strokeStyle = '#0d5a9e';
+            ctx.lineWidth = 12;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.2, h * 0.45);
+            ctx.quadraticCurveTo(w * 0.3, h * 0.55, w * 0.4, h * 0.65);
+            ctx.quadraticCurveTo(w * 0.5, h * 0.72, w * 0.65, h * 0.8);
+            ctx.stroke();
+
+            // River highlights
+            ctx.strokeStyle = 'rgba(100, 180, 255, 0.4)';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.2, h * 0.45);
+            ctx.quadraticCurveTo(w * 0.3, h * 0.55, w * 0.4, h * 0.65);
+            ctx.quadraticCurveTo(w * 0.5, h * 0.72, w * 0.65, h * 0.8);
+            ctx.stroke();
+
+            // Snow line based on temperature
+            const snowLine = h * 0.35 - (temp - 0) * 2;
+
+            // Mountain (left side) - detailed
+            ctx.fillStyle = '#5a5a5a';
+            ctx.beginPath();
+            ctx.moveTo(0, h * 0.65);
+            ctx.quadraticCurveTo(w * 0.08, h * 0.45, w * 0.12, h * 0.3);
+            ctx.quadraticCurveTo(w * 0.15, h * 0.35, w * 0.2, h * 0.65);
+            ctx.fill();
+
+            // Mountain detail - rocky slopes
+            ctx.strokeStyle = 'rgba(100, 100, 100, 0.4)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 8; i++) {
+                const x = Math.random() * w * 0.2;
+                const y = h * 0.3 + Math.random() * (h * 0.35);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + Math.random() * 20, y + Math.random() * 20);
+                ctx.stroke();
+            }
+
+            // Snow cap on mountain
+            ctx.fillStyle = '#f0f0f0';
+            ctx.beginPath();
+            ctx.moveTo(w * 0.08, snowLine);
+            ctx.quadraticCurveTo(w * 0.12, h * 0.3, w * 0.15, snowLine);
+            ctx.fill();
+
+            // Glacier
+            ctx.fillStyle = 'rgba(180, 220, 255, 0.6)';
+            ctx.beginPath();
+            ctx.moveTo(w * 0.1, snowLine);
+            ctx.lineTo(w * 0.14, snowLine);
+            ctx.lineTo(w * 0.16, h * 0.55);
+            ctx.lineTo(w * 0.08, h * 0.55);
+            ctx.fill();
+
+            // Forest on mountain
+            drawTrees(ctx, w * 0, h * 0.5, w * 0.2, h * 0.65, snowLine);
+
+            // Hills and forest
+            ctx.fillStyle = '#2d5a1f';
+            ctx.beginPath();
+            ctx.moveTo(w * 0.2, h * 0.65);
+            ctx.quadraticCurveTo(w * 0.3, h * 0.52, w * 0.4, h * 0.65);
+            ctx.fill();
+
+            drawTrees(ctx, w * 0.2, h * 0.45, w * 0.4, h * 0.65);
+
+            // City (right side of flat terrain)
+            drawCity(ctx, w * 0.5, h * 0.6, w * 0.15, h * 0.15);
+
+            // Underground layers
+            if (state.showGroundwater) {
+                // Topsoil
+                ctx.fillStyle = '#4a3a2a';
+                ctx.fillRect(0, h * 0.65, w, h * 0.1);
+
+                // Subsoil
+                ctx.fillStyle = '#6b5a4a';
+                ctx.fillRect(0, h * 0.75, w, h * 0.1);
+
+                // Bedrock
+                ctx.fillStyle = '#7a7a7a';
+                ctx.fillRect(0, h * 0.85, w, h * 0.15);
+
+                // Groundwater table
+                ctx.fillStyle = 'rgba(100, 150, 200, 0.15)';
+                ctx.fillRect(0, h * 0.8, w, h * 0.1);
+
+                // Groundwater flow arrows
+                ctx.strokeStyle = 'rgba(100, 150, 200, 0.4)';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 4; i++) {
+                    const x = w * (0.2 + i * 0.2);
+                    const y = h * 0.85;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + 30, y);
+                    ctx.stroke();
+
+                    // Arrow head
+                    ctx.beginPath();
+                    ctx.moveTo(x + 30, y);
+                    ctx.lineTo(x + 25, y - 4);
+                    ctx.lineTo(x + 25, y + 4);
+                    ctx.fill();
                 }
             }
+        }
+
+        function drawTrees(ctx, startX, startY, endX, endY, snowLine) {
+            const count = Math.floor((endX - startX) / 25);
+            for (let i = 0; i < count; i++) {
+                const x = startX + (i / count) * (endX - startX);
+                const y = startY + (Math.sin(i * 0.3) * 20);
+
+                if (y < snowLine) continue;
+
+                if (Math.random() > 0.3) {
+                    // Conifer (triangle)
+                    ctx.fillStyle = '#1a3a1a';
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - 20);
+                    ctx.lineTo(x - 10, y);
+                    ctx.lineTo(x + 10, y);
+                    ctx.fill();
+
+                    // Trunk
+                    ctx.fillStyle = '#5a4a3a';
+                    ctx.fillRect(x - 2, y, 4, 8);
+                } else {
+                    // Deciduous (circle)
+                    ctx.fillStyle = '#2d5a1f';
+                    ctx.beginPath();
+                    ctx.arc(x, y - 8, 8, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Trunk
+                    ctx.fillStyle = '#6a5a4a';
+                    ctx.fillRect(x - 2, y - 8, 4, 12);
+                }
+            }
+        }
+
+        function drawCity(ctx, x, y, w, h) {
+            const buildingColor = state.showHumanImpact ? '#8a6a5a' : '#6a7a8a';
+
+            // Draw buildings
+            for (let i = 0; i < 4; i++) {
+                const bx = x + i * 30;
+                const by = y - 30 - Math.random() * 20;
+                const bw = 25;
+                const bh = 35 + Math.random() * 15;
+
+                ctx.fillStyle = buildingColor;
+                ctx.fillRect(bx, by, bw, bh);
+
+                // Windows
+                ctx.fillStyle = '#ffff99';
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 2; col++) {
+                        ctx.fillRect(bx + 4 + col * 12, by + 5 + row * 8, 4, 4);
+                    }
+                }
+            }
+
+            // Roads
+            ctx.fillStyle = '#5a5a5a';
+            ctx.fillRect(x - 10, y + 10, w + 20, 6);
+            ctx.fillRect(x + w / 2 - 3, y - 50, 6, 60);
+
+            if (state.showHumanImpact) {
+                // Pollution (gray runoff)
+                ctx.strokeStyle = 'rgba(150, 150, 150, 0.5)';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(x + w / 2, y + 16);
+                ctx.lineTo(x + w / 2 + 30, y + 30);
+                ctx.stroke();
+
+                // Smoke from buildings
+                ctx.fillStyle = 'rgba(100, 100, 100, 0.3)';
+                for (let i = 0; i < 4; i++) {
+                    const sx = x + 12 + i * 30;
+                    const sy = y - 50 - Math.random() * 20;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, 4 + Math.random() * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Process labels
+        function drawLabels(ctx, canvas) {
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillStyle = 'rgba(100, 200, 255, 0.8)';
+            ctx.textAlign = 'center';
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Verdunstung (Evaporation from ocean)
+            ctx.fillText('Verdunstung', w * 0.85, h * 0.5);
+            drawArrow(ctx, w * 0.85, h * 0.75, w * 0.85, h * 0.4);
+
+            // Transpiration from trees
+            ctx.fillText('Transpiration', w * 0.25, h * 0.35);
+            drawArrow(ctx, w * 0.25, h * 0.65, w * 0.25, h * 0.4);
+
+            // Kondensation
+            ctx.fillText('Kondensation', w * 0.5, h * 0.2);
+
+            // Niederschlag
+            ctx.fillText('Niederschlag', w * 0.4, h * 0.55);
+            drawArrow(ctx, w * 0.4, h * 0.25, w * 0.4, h * 0.6);
+
+            // Oberflächenabfluss
+            ctx.fillText('Oberflächenabfluss', w * 0.35, h * 0.72);
+            drawArrow(ctx, w * 0.2, h * 0.65, w * 0.65, h * 0.8);
+
+            // Infiltration
+            ctx.fillText('Infiltration', w * 0.3, h * 0.75);
+            drawArrow(ctx, w * 0.3, h * 0.65, w * 0.3, h * 0.8);
+
+            // Grundwasserstrom (if showing underground)
+            if (state.showGroundwater) {
+                ctx.fillText('Grundwasserstrom', w * 0.5, h * 0.88);
+            }
+        }
+
+        function drawArrow(ctx, fromX, fromY, toX, toY, curved = false) {
+            const headlen = 8;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+
+            ctx.strokeStyle = 'rgba(100, 200, 255, 0.5)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+
+            if (curved) {
+                const cpX = (fromX + toX) / 2 + 30;
+                const cpY = (fromY + toY) / 2;
+                ctx.moveTo(fromX, fromY);
+                ctx.quadraticCurveTo(cpX, cpY, toX, toY);
+            } else {
+                ctx.moveTo(fromX, fromY);
+                ctx.lineTo(toX, toY);
+            }
+            ctx.stroke();
+
+            // Arrow head
+            ctx.fillStyle = 'rgba(100, 200, 255, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
         }
 
         // Initialize particles
         function initializeParticles() {
             state.particles = [];
-            const targetCount = Math.floor(state.particleDensity);
-            for (let i = 0; i < targetCount; i++) {
-                const phase = ['evaporation', 'cloud', 'precipitation', 'runoff', 'groundwater'].sort(() => Math.random() - 0.5)[0];
-                let x, y;
 
-                if (phase === 'evaporation') {
-                    x = canvas.width * (0.7 + Math.random() * 0.2);
-                    y = canvas.height * (0.65 + Math.random() * 0.15);
-                } else if (phase === 'cloud') {
-                    x = canvas.width * (0.3 + Math.random() * 0.5);
-                    y = canvas.height * (0.1 + Math.random() * 0.1);
-                } else if (phase === 'precipitation') {
-                    x = canvas.width * (0.3 + Math.random() * 0.4);
-                    y = canvas.height * (0.2 + Math.random() * 0.3);
-                } else if (phase === 'runoff') {
-                    x = canvas.width * (0.4 + Math.random() * 0.3);
-                    y = canvas.height * (0.6 + Math.random() * 0.1);
-                } else {
-                    x = canvas.width * (0.3 + Math.random() * 0.5);
-                    y = canvas.height * (0.75 + Math.random() * 0.15);
-                }
+            // Ocean particles
+            for (let i = 0; i < 80; i++) {
+                state.particles.push(new Particle(
+                    Math.random() * (canvas.width * 0.25) + canvas.width * 0.75,
+                    Math.random() * (canvas.height * 0.35) + canvas.height * 0.65,
+                    'ocean'
+                ));
+            }
 
-                state.particles.push(new Particle(x, y, phase));
+            // River particles
+            for (let i = 0; i < 20; i++) {
+                state.particles.push(new Particle(
+                    Math.random() * (canvas.width * 0.45) + canvas.width * 0.2,
+                    Math.random() * (canvas.height * 0.35) + canvas.height * 0.45,
+                    'ocean'
+                ));
             }
         }
 
-        // Drawing functions
-        function drawLandscape() {
-            const w = canvas.width;
-            const h = canvas.height;
-            const groundLevel = h * 0.65;
-            const groundwaterLevel = h * 0.8;
-
-            // Ocean
-            ctx.fillStyle = '#1e88e5';
-            ctx.fillRect(w * 0.7, groundLevel, w * 0.3, h * 0.35);
-
-            // Ocean waves
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < 5; i++) {
-                ctx.beginPath();
-                const waveY = groundLevel + 10 + i * 8 + Math.sin(state.time * 0.03 + i) * 2;
-                for (let x = w * 0.7; x < w; x += 20) {
-                    const y = waveY + Math.sin(x * 0.01 + state.time * 0.02) * 3;
-                    if (x === w * 0.7) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.stroke();
-            }
-
-            // Ground/soil
-            ctx.fillStyle = '#8b7355';
-            ctx.fillRect(0, groundLevel, w, h - groundLevel);
-
-            // Soil layers
-            const soilGradient = ctx.createLinearGradient(0, groundLevel, 0, groundwaterLevel);
-            soilGradient.addColorStop(0, '#a0826d');
-            soilGradient.addColorStop(0.5, '#8b7355');
-            soilGradient.addColorStop(1, '#6b5344');
-            ctx.fillStyle = soilGradient;
-            ctx.fillRect(0, groundLevel, w, groundwaterLevel - groundLevel);
-
-            // Groundwater layer
-            if (state.showGroundwater) {
-                ctx.fillStyle = 'rgba(100, 150, 220, 0.3)';
-                ctx.fillRect(0, groundwaterLevel, w, h - groundwaterLevel);
-            }
-
-            // Bedrock
-            ctx.fillStyle = '#4a4a4a';
-            ctx.fillRect(0, h * 0.9, w, h * 0.1);
-
-            // Buildings in city (left side)
-            ctx.fillStyle = '#c0c0c0';
-            ctx.fillRect(w * 0.1, groundLevel - 30, 15, 30);
-            ctx.fillRect(w * 0.15, groundLevel - 25, 12, 25);
-            ctx.fillRect(w * 0.22, groundLevel - 20, 10, 20);
-            ctx.fillRect(w * 0.28, groundLevel - 25, 12, 25);
-
-            // Windows
-            ctx.fillStyle = '#ffeb3b';
-            for (let x = w * 0.1; x < w * 0.35; x += 8) {
-                for (let y = groundLevel - 25; y > groundLevel - 50; y -= 7) {
-                    ctx.fillRect(x, y, 3, 3);
-                }
-            }
-
-            // Trees in forest (center-left)
-            drawTrees(w * 0.35, groundLevel, 8);
-
-            // Hills
-            ctx.fillStyle = '#7cb342';
-            ctx.beginPath();
-            ctx.moveTo(w * 0.45, groundLevel);
-            ctx.quadraticCurveTo(w * 0.52, groundLevel - 80, w * 0.55, groundLevel);
-            ctx.lineTo(w * 0.55, groundLevel);
-            ctx.fill();
-
-            // Mountain
-            ctx.fillStyle = '#795548';
-            ctx.beginPath();
-            ctx.moveTo(w * 0.45, groundLevel);
-            ctx.lineTo(w * 0.55, groundLevel - 150);
-            ctx.lineTo(w * 0.65, groundLevel);
-            ctx.fill();
-
-            // Snow cap
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.moveTo(w * 0.55, groundLevel - 150);
-            ctx.lineTo(w * 0.52, groundLevel - 100);
-            ctx.lineTo(w * 0.58, groundLevel - 100);
-            ctx.fill();
-
-            // Beach
-            ctx.fillStyle = '#deb887';
-            ctx.fillRect(w * 0.65, groundLevel, w * 0.05, 20);
-
-            // Labels
-            if (state.showLabels) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-                ctx.font = 'bold 11px Inter';
-                ctx.textAlign = 'center';
-
-                ctx.fillText('Stadt', w * 0.2, groundLevel - 40);
-                ctx.fillText('Wald', w * 0.35, groundLevel - 40);
-                ctx.fillText('Berg', w * 0.55, groundLevel - 160);
-                ctx.fillText('Ozean', w * 0.8, groundLevel + 30);
-
-                // Process labels
-                ctx.font = '10px Inter';
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-                ctx.fillText('Verdunstung', w * 0.8, h * 0.4);
-                ctx.fillText('Kondensation', w * 0.4, h * 0.15);
-                ctx.fillText('Niederschlag', w * 0.45, h * 0.35);
-                ctx.fillText('Oberflächenabfluss', w * 0.5, groundLevel + 15);
-                if (state.showGroundwater) {
-                    ctx.fillText('Grundwasserstrom', w * 0.5, h * 0.85);
-                }
-            }
-        }
-
-        function drawTrees(x, groundLevel, count) {
-            for (let i = 0; i < count; i++) {
-                const treeX = x + i * 15;
-
-                // Trunk
-                ctx.fillStyle = '#6d4c41';
-                ctx.fillRect(treeX - 2, groundLevel - 20, 4, 20);
-
-                // Foliage
-                ctx.fillStyle = '#7cb342';
-                ctx.beginPath();
-                ctx.arc(treeX, groundLevel - 20, 12, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(treeX - 5, groundLevel - 28, 8, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(treeX + 5, groundLevel - 28, 8, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function drawHumanImpact() {
-            if (!state.showHumanImpact) return;
-
-            const w = canvas.width;
-            const h = canvas.height;
-            const groundLevel = h * 0.65;
-
-            // Factory
-            ctx.fillStyle = '#9e9e9e';
-            ctx.fillRect(w * 0.25, groundLevel - 40, 25, 40);
-
-            // Chimney
-            ctx.fillStyle = '#666666';
-            ctx.fillRect(w * 0.3, groundLevel - 60, 5, 20);
-
-            // Smoke
-            ctx.fillStyle = 'rgba(150, 150, 150, 0.6)';
-            for (let i = 0; i < 3; i++) {
-                const offsetY = Math.sin(state.time * 0.02 + i) * 10;
-                ctx.beginPath();
-                ctx.arc(w * 0.325 + i * 8, groundLevel - 60 + offsetY, 4 + i, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            // Dam on river
-            ctx.fillStyle = '#455a64';
-            ctx.fillRect(w * 0.5, groundLevel - 5, 30, 20);
-
-            // Irrigation pump
-            ctx.fillStyle = '#ff9800';
-            ctx.fillRect(w * 0.35, groundLevel - 15, 8, 15);
-
-            // Label
-            if (state.showLabels) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-                ctx.font = '9px Inter';
-                ctx.textAlign = 'center';
-                ctx.fillText('Fabrik', w * 0.325, groundLevel - 50);
-                ctx.fillText('Damm', w * 0.515, groundLevel - 10);
-            }
-        }
-
-        function countParticlePhases() {
-            const counts = {
+        // Update info display
+        function updateInfo() {
+            particleCounts = {
                 evaporation: 0,
-                cloud: 0,
+                transpiration: 0,
+                condensation: 0,
                 precipitation: 0,
                 runoff: 0,
-                groundwater: 0,
-                transpiration: 0
+                groundwater: 0
             };
 
             state.particles.forEach(p => {
-                if (counts.hasOwnProperty(p.phase)) {
-                    counts[p.phase]++;
-                }
+                if (p.phase === 'evaporation') particleCounts.evaporation++;
+                else if (p.phase === 'transpiration') particleCounts.transpiration++;
+                else if (p.phase === 'condensation') particleCounts.condensation++;
+                else if (p.phase === 'precipitation' || p.phase === 'snow') particleCounts.precipitation++;
+                else if (p.phase === 'runoff') particleCounts.runoff++;
+                else if (p.phase === 'groundwater') particleCounts.groundwater++;
             });
 
-            return counts;
+            document.getElementById('evaporationCount').textContent = particleCounts.evaporation;
+            document.getElementById('transpirationCount').textContent = particleCounts.transpiration;
+            document.getElementById('condensationCount').textContent = particleCounts.condensation;
+            document.getElementById('precipitationCount').textContent = particleCounts.precipitation;
+            document.getElementById('runoffCount').textContent = particleCounts.runoff;
+            document.getElementById('groundwaterCount').textContent = particleCounts.groundwater;
         }
 
-        function updateUI() {
-            const counts = countParticlePhases();
-            document.getElementById('infoEvaporation').textContent = counts.evaporation;
-            document.getElementById('infoClouds').textContent = counts.cloud;
-            document.getElementById('infoPrecipitation').textContent = counts.precipitation;
-            document.getElementById('infoRunoff').textContent = counts.runoff;
-            document.getElementById('infoGroundwater').textContent = counts.groundwater;
-            document.getElementById('infoTranspiration').textContent = counts.transpiration;
-        }
-
+        // Animation loop
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Clear canvas
+            ctx.fillStyle = 'rgba(10, 20, 40, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw landscape
-            drawLandscape();
-            drawHumanImpact();
+            drawLandscape(canvas, ctx, state.temperature);
 
             // Update and draw particles
-            state.particles.forEach(particle => {
-                particle.update(1, canvas.width, canvas.height);
-                particle.draw(ctx);
+            state.particles.forEach(p => {
+                p.update(canvas, state.temperature, state.precipitation);
+                p.draw(ctx);
             });
 
-            // Adjust particle count based on density
-            const targetCount = Math.floor(state.particleDensity);
-            if (state.particles.length < targetCount) {
-                state.particles.push(new Particle(
-                    canvas.width * (0.7 + Math.random() * 0.2),
-                    canvas.height * 0.7,
-                    'evaporation'
-                ));
-            } else if (state.particles.length > targetCount) {
-                state.particles.pop();
+            // Add new transpiration particles from trees
+            if (Math.random() < 0.1) {
+                const treeX = canvas.width * (0.15 + Math.random() * 0.35);
+                const treeY = canvas.height * (0.5 + Math.random() * 0.15);
+                state.particles.push(new Particle(treeX, treeY, 'transpiration'));
             }
 
-            // Add some transpiration particles from trees
-            if (Math.random() < 0.1 && state.particles.length < targetCount) {
-                state.particles.push(new Particle(
-                    canvas.width * (0.35 + Math.random() * 0.1),
-                    canvas.height * 0.65 - 20,
-                    'transpiration'
-                ));
+            // Draw labels
+            if (state.showLabels) {
+                drawLabels(ctx, canvas);
             }
+
+            // Update info display
+            updateInfo();
 
             state.time++;
-            updateUI();
             requestAnimationFrame(animate);
         }
 
-        // Control listeners
-        document.getElementById('temperatureSlider').addEventListener('input', (e) => {
-            state.temperature = parseInt(e.target.value);
-            document.getElementById('tempValue').textContent = state.temperature;
-        });
-
-        document.getElementById('precipitationSlider').addEventListener('input', (e) => {
-            state.precipitationIntensity = parseInt(e.target.value);
-            const values = ['Niedrig', 'Mittel', 'Hoch'];
-            let valueText = values[Math.floor(state.precipitationIntensity / 50)];
-            if (valueText === undefined) valueText = 'Hoch';
-            document.getElementById('precipValue').textContent = valueText;
-        });
-
-        document.getElementById('densitySlider').addEventListener('input', (e) => {
-            state.particleDensity = parseInt(e.target.value);
-            document.getElementById('densityValue').textContent = state.particleDensity;
-        });
-
-        document.querySelectorAll('[data-toggle]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const toggle = e.target.dataset.toggle;
-                if (toggle === 'labels') {
-                    state.showLabels = !state.showLabels;
-                } else if (toggle === 'groundwater') {
-                    state.showGroundwater = !state.showGroundwater;
-                } else if (toggle === 'humanImpact') {
-                    state.showHumanImpact = !state.showHumanImpact;
-                }
-                e.target.classList.toggle('active');
-            });
-        });
-
-        // Initialize
+        // Start animation
         initializeParticles();
         animate();
     </script>

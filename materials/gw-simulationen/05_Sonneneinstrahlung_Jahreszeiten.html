@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sonneneinstrahlung & Jahreszeiten</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <style>
         * {
             margin: 0;
@@ -17,220 +14,188 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a30 50%, #2d1b69 100%);
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1000 50%, #2a1800 100%);
             color: #e0e0e0;
-            min-height: 100vh;
-            padding: 0;
-            overflow-x: hidden;
+            overflow: hidden;
+            height: 100vh;
         }
 
         .container {
-            max-width: 100%;
-            margin: 0;
+            padding: 12px;
+            height: 100vh;
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr 280px;
             gap: 12px;
-            height: calc(100vh - 24px);
-            padding: 12px;
         }
 
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-                height: auto;
-                gap: 15px;
-            }
-        }
-
-        .canvas-area {
-            display: flex;
-            flex-direction: column;
+        .canvas-section {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
             gap: 12px;
-            min-height: 0;
-        }
-
-        .canvas-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 0;
+            height: calc(100vh - 70px);
+            overflow: hidden;
         }
 
         canvas {
-            max-width: 100%;
-            max-height: 100%;
+            background: rgba(10, 10, 26, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 200, 100, 0.15);
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
         .controls-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 100%;
+            background: rgba(26, 16, 0, 0.7);
+            border: 1px solid rgba(255, 200, 100, 0.15);
+            border-radius: 8px;
+            padding: 16px;
             overflow-y: auto;
-            min-height: 0;
+            max-width: 280px;
+            height: calc(100vh - 70px);
         }
 
-        @media (max-width: 900px) {
-            .controls-panel {
-                max-height: none;
-            }
-        }
-
-        .panel-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 6px;
-            margin-bottom: 6px;
-        }
-
-        .panel-title {
-            font-size: 1.2em;
+        .controls-panel h2 {
+            font-size: 16px;
             font-weight: 700;
-            color: #ffd700;
-            margin-bottom: 2px;
-        }
-
-        .panel-subtitle {
-            font-size: 0.75em;
-            color: #b0b0b0;
-            font-weight: 300;
+            margin-bottom: 16px;
+            color: #ffd966;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 0;
+            margin-bottom: 18px;
         }
 
-        .control-label {
-            font-size: 0.75em;
+        .control-group label {
+            display: block;
+            font-size: 12px;
             font-weight: 600;
-            color: #d0d0d0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 8px;
+            color: #ffb366;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
-        .control-value {
-            font-size: 0.75em;
-            color: #ffd700;
-            font-weight: 600;
-        }
-
-        input[type="range"] {
+        .control-group input[type="range"] {
             width: 100%;
             height: 6px;
-            border-radius: 5px;
-            background: linear-gradient(to right, #ff6b00, #ffd700);
+            border-radius: 3px;
+            background: rgba(255, 200, 100, 0.1);
             outline: none;
             -webkit-appearance: none;
             appearance: none;
+            cursor: pointer;
         }
 
-        input[type="range"]::-webkit-slider-thumb {
+        .control-group input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: #ffd700;
+            background: linear-gradient(135deg, #ffd966, #ffb366);
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 8px rgba(255, 200, 100, 0.5);
         }
 
-        input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: #ffd700;
+            background: linear-gradient(135deg, #ffd966, #ffb366);
             cursor: pointer;
             border: none;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 8px rgba(255, 200, 100, 0.5);
         }
 
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-        }
-
-        button {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            color: #ffd700;
-            padding: 6px 8px;
-            border-radius: 8px;
-            font-size: 0.7em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Inter', sans-serif;
-        }
-
-        button:hover {
-            background: rgba(255, 215, 0, 0.2);
-            border-color: rgba(255, 215, 0, 0.5);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-
-        button.active {
-            background: rgba(255, 215, 0, 0.3);
-            border-color: rgba(255, 215, 0, 0.7);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #b0a080;
+            margin-top: 6px;
         }
 
         .preset-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4px;
+            gap: 6px;
+            margin-top: 8px;
         }
 
-        .preset-buttons button {
-            font-size: 0.65em;
-            padding: 4px 6px;
+        .preset-btn {
+            padding: 8px 10px;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(255, 200, 100, 0.1);
+            border: 1px solid rgba(255, 200, 100, 0.2);
+            border-radius: 4px;
+            color: #ffb366;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
         }
 
-        .toggle-buttons {
+        .preset-btn:hover {
+            background: rgba(255, 200, 100, 0.2);
+            border-color: rgba(255, 200, 100, 0.4);
+            box-shadow: 0 0 8px rgba(255, 200, 100, 0.2);
+        }
+
+        .preset-btn:active {
+            background: rgba(255, 200, 100, 0.3);
+            transform: scale(0.98);
+        }
+
+        .toggle-group {
             display: flex;
-            flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
 
-        .toggle-buttons button {
-            text-align: left;
-            padding: 4px 6px;
-            font-size: 0.7em;
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(255, 200, 100, 0.1);
+            border: 1px solid rgba(255, 200, 100, 0.2);
+            border-radius: 4px;
+            color: #ffb366;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
         }
 
-        .toggle-buttons button.active {
-            background: rgba(255, 107, 0, 0.2);
-            border-color: rgba(255, 107, 0, 0.5);
+        .toggle-btn.active {
+            background: rgba(255, 200, 100, 0.3);
+            border-color: rgba(255, 200, 100, 0.5);
+            color: #ffd966;
+            box-shadow: 0 0 12px rgba(255, 200, 100, 0.3);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 200, 100, 0.15);
+            border-color: rgba(255, 200, 100, 0.3);
         }
 
         .info-panel {
-            background: rgba(255, 107, 0, 0.05);
-            border: 1px solid rgba(255, 107, 0, 0.2);
-            border-radius: 8px;
-            padding: 8px;
-            font-size: 0.75em;
+            background: rgba(255, 200, 100, 0.05);
+            border: 1px solid rgba(255, 200, 100, 0.15);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 12px;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 200, 100, 0.1);
         }
 
         .info-row:last-child {
@@ -238,499 +203,513 @@
         }
 
         .info-label {
-            color: #b0b0b0;
-            font-weight: 500;
-        }
-
-        .info-value {
-            color: #ffd700;
+            color: #b0a080;
             font-weight: 600;
         }
 
-        .speed-control {
-            display: flex;
-            gap: 8px;
-            align-items: center;
+        .info-value {
+            color: #ffd966;
+            font-weight: 700;
         }
 
-        .speed-button {
-            flex: 1;
-            padding: 4px;
-            font-size: 0.7em;
+        .season-indicator {
+            padding: 8px;
+            background: rgba(255, 200, 100, 0.1);
+            border-left: 3px solid #ffd966;
+            border-radius: 2px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #ffd966;
+            font-weight: 600;
         }
 
-        .view-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
+        .controls-panel::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .view-tabs button {
-            padding: 6px;
-            font-size: 0.7em;
+        .controls-panel::-webkit-scrollbar-track {
+            background: rgba(255, 200, 100, 0.05);
+            border-radius: 3px;
+        }
+
+        .controls-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 200, 100, 0.2);
+            border-radius: 3px;
+        }
+
+        .controls-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 200, 100, 0.3);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="canvas-area">
-            <div class="canvas-panel">
-                <canvas id="mainCanvas"></canvas>
-            </div>
+        <div class="canvas-section">
+            <canvas id="orbitalCanvas"></canvas>
+            <canvas id="sunAngleCanvas"></canvas>
         </div>
 
         <div class="controls-panel">
-            <div class="panel-header">
-                <div class="panel-title">Sonneneinstrahlung</div>
-                <div class="panel-subtitle">Warum gibt es Jahreszeiten?</div>
-            </div>
+            <h2>Sonneneinstrahlung</h2>
 
             <div class="control-group">
-                <div class="view-tabs">
-                    <button id="viewOrbital" class="view-tab active">Orbitale Ansicht</button>
-                    <button id="viewAngle" class="view-tab">Sonnehöhe</button>
+                <label for="monthSlider">Monat</label>
+                <input type="range" id="monthSlider" min="0" max="365" value="0">
+                <div class="slider-label">
+                    <span id="dateLabel">1. Januar</span>
                 </div>
             </div>
 
             <div class="control-group">
-                <div class="control-label">
-                    <span>Jahrestag (0-365)</span>
-                    <span class="control-value" id="dayValue">80</span>
-                </div>
-                <input type="range" id="daySlider" min="0" max="365" value="80">
-                <div style="font-size: 0.8em; color: #999; text-align: center;" id="monthLabel">20. März</div>
-            </div>
-
-            <div class="control-group">
-                <div class="speed-control">
-                    <button id="playBtn" style="flex: 0;">▶</button>
-                    <button id="speedBtn" style="flex: 0;">1x</button>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <div class="control-label">
-                    <span>Breitengrad</span>
-                    <span class="control-value" id="latValue">48°N</span>
-                </div>
+                <label for="latSlider">Breitengrad</label>
                 <input type="range" id="latSlider" min="-90" max="90" value="48">
+                <div class="slider-label">
+                    <span>-90°S</span>
+                    <span id="latLabel">48°N</span>
+                    <span>90°N</span>
+                </div>
                 <div class="preset-buttons">
-                    <button onclick="setLatitude(48)">Wien (48°)</button>
-                    <button onclick="setLatitude(0)">Äquator (0°)</button>
-                    <button onclick="setLatitude(90)">Nordpol (90°)</button>
-                    <button onclick="setLatitude(23.5)">Wendekreis</button>
+                    <button class="preset-btn" data-lat="90">Nordpol</button>
+                    <button class="preset-btn" data-lat="48">Wien</button>
+                    <button class="preset-btn" data-lat="0">Äquator</button>
+                    <button class="preset-btn" data-lat="-90">Südpol</button>
+                    <button class="preset-btn" data-lat="23.44">Wendekreis N</button>
+                    <button class="preset-btn" data-lat="-23.44">Wendekreis S</button>
                 </div>
             </div>
 
             <div class="control-group">
-                <div class="toggle-buttons">
-                    <button id="showAxisBtn" class="active" onclick="toggleShowAxis()">✓ Erdachse anzeigen</button>
-                    <button id="showRaysBtn" class="active" onclick="toggleShowRays()">✓ Sonnenstrahlen zeigen</button>
-                    <button id="showTerminatorBtn" onclick="toggleShowTerminator()">☐ Tag/Nacht Grenze</button>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" id="terminatorToggle">Tag-Nacht-Grenze</button>
+                    <button class="toggle-btn active" id="raysToggle">Sonnenstrahlen</button>
                 </div>
             </div>
 
             <div class="info-panel">
                 <div class="info-row">
-                    <span class="info-label">Datum:</span>
-                    <span class="info-value" id="infoDate">20. März</span>
+                    <span class="info-label">Datum</span>
+                    <span class="info-value" id="infoDate">1. Jan</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Jahreszeit (N):</span>
-                    <span class="info-value" id="infoSeason">Frühjahr</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Sonnenhöhe:</span>
-                    <span class="info-value" id="infoAngle">42°</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Tageslänge:</span>
-                    <span class="info-value" id="infoDayLength">12h</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Deklination:</span>
+                    <span class="info-label">Deklination</span>
                     <span class="info-value" id="infoDeclination">0.0°</span>
                 </div>
+                <div class="info-row">
+                    <span class="info-label">Sonnenhöhe</span>
+                    <span class="info-value" id="infoElevation">42.0°</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Tageslänge</span>
+                    <span class="info-value" id="infoDayLength">12.0 h</span>
+                </div>
+                <div class="season-indicator" id="seasonIndicator">Frühling</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Canvas and context
-        const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d');
+        const ECLIPTIC_TILT = 23.44;
+        const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+        const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        const SEASON_NAMES_NORTH = ["Winter", "Frühling", "Sommer", "Herbst"];
+        const SEASON_NAMES_SOUTH = ["Sommer", "Herbst", "Winter", "Frühling"];
 
-        // Resize canvas
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = Math.min(rect.width - 40, 800);
-            canvas.height = Math.min(rect.height - 40, 600);
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        // State
         let state = {
-            dayOfYear: 80,
+            dayOfYear: 0,
             latitude: 48,
-            speed: 1,
-            isPlaying: false,
-            showAxis: true,
+            showTerminator: true,
             showRays: true,
-            showTerminator: false,
-            viewMode: 'orbital' // 'orbital' or 'angle'
+            declination: 0,
+            elevation: 0,
+            dayLength: 12
         };
 
-        // Months for reference
-        const months = [
-            'Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'
-        ];
+        const orbitalCanvas = document.getElementById("orbitalCanvas");
+        const sunAngleCanvas = document.getElementById("sunAngleCanvas");
+        const monthSlider = document.getElementById("monthSlider");
+        const latSlider = document.getElementById("latSlider");
+        const dateLabel = document.getElementById("dateLabel");
+        const latLabel = document.getElementById("latLabel");
+        const terminatorToggle = document.getElementById("terminatorToggle");
+        const raysToggle = document.getElementById("raysToggle");
+        const infoDate = document.getElementById("infoDate");
+        const infoDeclination = document.getElementById("infoDeclination");
+        const infoElevation = document.getElementById("infoElevation");
+        const infoDayLength = document.getElementById("infoDayLength");
+        const seasonIndicator = document.getElementById("seasonIndicator");
 
-        const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        const orbitalCtx = orbitalCanvas.getContext("2d");
+        const sunAngleCtx = sunAngleCanvas.getContext("2d");
 
-        // Get formatted date
-        function getDateFromDay(day) {
-            day = Math.floor(day) % 365;
-            let d = day;
-            for (let i = 0; i < 12; i++) {
-                if (d < monthDays[i]) {
-                    return `${d + 1}. ${months[i]}`;
+        function calculateDeclination(dayOfYear) {
+            const angle = (360 / 365) * (dayOfYear - 81);
+            return 23.44 * Math.sin((angle * Math.PI) / 180);
+        }
+
+        function calculateSolarElevation(latitude, declination) {
+            const lat = latitude;
+            const decl = declination;
+            const elevationRad = Math.asin(
+                Math.sin((lat * Math.PI) / 180) * Math.sin((decl * Math.PI) / 180) +
+                Math.cos((lat * Math.PI) / 180) * Math.cos((decl * Math.PI) / 180)
+            );
+            return (elevationRad * 180) / Math.PI;
+        }
+
+        function calculateDayLength(latitude, declination) {
+            const lat = (latitude * Math.PI) / 180;
+            const decl = (declination * Math.PI) / 180;
+            const cosH = -Math.tan(lat) * Math.tan(decl);
+            let hourAngle;
+            if (cosH >= 1) {
+                hourAngle = 0;
+            } else if (cosH <= -1) {
+                hourAngle = Math.PI;
+            } else {
+                hourAngle = Math.acos(cosH);
+            }
+            return (2 * hourAngle * 180) / (Math.PI * 15);
+        }
+
+        function getDateFromDayOfYear(dayOfYear) {
+            let days = dayOfYear;
+            for (let month = 0; month < 12; month++) {
+                if (days < MONTH_DAYS[month]) {
+                    return `${days + 1}. ${MONTHS[month]}`;
                 }
-                d -= monthDays[i];
+                days -= MONTH_DAYS[month];
             }
-            return '1. Jan';
+            return "31. Dezember";
         }
 
-        // Calculate solar declination
-        function getSolarDeclination(day) {
-            return 23.5 * Math.sin((day - 80) * Math.PI * 2 / 365);
+        function getSeason(dayOfYear, isNorthernHemisphere) {
+            const seasons = isNorthernHemisphere ? SEASON_NAMES_NORTH : SEASON_NAMES_SOUTH;
+            if (dayOfYear < 80) return seasons[0];
+            if (dayOfYear < 172) return seasons[1];
+            if (dayOfYear < 265) return seasons[2];
+            if (dayOfYear < 355) return seasons[3];
+            return seasons[0];
         }
 
-        // Calculate solar altitude
-        function getSolarAltitude(latitude, declination) {
-            const latRad = latitude * Math.PI / 180;
-            const decRad = declination * Math.PI / 180;
-            // Simplified: assuming solar noon
-            const h = Math.sin(latRad) * Math.sin(decRad) +
-                      Math.cos(latRad) * Math.cos(decRad);
-            return Math.asin(Math.max(-1, Math.min(1, h))) * 180 / Math.PI;
+        function resizeCanvas(canvas) {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            const ctx = canvas.getContext("2d");
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            return rect;
         }
 
-        // Calculate day length
-        function getDayLength(latitude, declination) {
-            const latRad = latitude * Math.PI / 180;
-            const decRad = declination * Math.PI / 180;
-            const x = -Math.tan(latRad) * Math.tan(decRad);
-
-            if (x >= 1) return 0; // Polar night
-            if (x <= -1) return 24; // Polar day
-
-            const h = Math.acos(x) * 180 / Math.PI;
-            return (h / 15) * 2;
-        }
-
-        // Get season
-        function getSeason(latitude, day) {
-            const decl = getSolarDeclination(day);
-
-            if (latitude > 0) { // Northern hemisphere
-                if (day >= 80 && day < 172) return 'Frühjahr';
-                if (day >= 172 && day < 264) return 'Sommer';
-                if (day >= 264 && day < 356) return 'Herbst';
-                return 'Winter';
-            } else { // Southern hemisphere
-                if (day >= 80 && day < 172) return 'Herbst';
-                if (day >= 172 && day < 264) return 'Winter';
-                if (day >= 264 && day < 356) return 'Frühling';
-                return 'Sommer';
-            }
-        }
-
-        // Draw orbital view
         function drawOrbitalView() {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const orbitRadius = Math.min(canvas.width, canvas.height) / 2.5;
+            const rect = resizeCanvas(orbitalCanvas);
+            orbitalCtx.clearRect(0, 0, rect.width, rect.height);
 
-            // Background
-            ctx.fillStyle = 'rgba(10, 10, 26, 0.5)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const orbitRadius = Math.min(rect.width, rect.height) * 0.35;
 
-            // Orbit
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.setLineDash([5, 5]);
-            ctx.beginPath();
-            ctx.ellipse(centerX, centerY, orbitRadius * 1.05, orbitRadius * 0.95, 0, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Sun with glow
-            const sunGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 25);
-            sunGradient.addColorStop(0, 'rgba(255, 215, 0, 1)');
-            sunGradient.addColorStop(0.3, 'rgba(255, 140, 0, 0.8)');
-            sunGradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
-            ctx.fillStyle = sunGradient;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 25, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Sun core
-            ctx.fillStyle = '#FFD700';
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Earth position on orbit
-            const dayAngle = (state.dayOfYear / 365) * Math.PI * 2;
-            const earthX = centerX + Math.cos(dayAngle - Math.PI / 2) * orbitRadius * 1.05;
-            const earthY = centerY + Math.sin(dayAngle - Math.PI / 2) * orbitRadius * 0.95;
-
-            // Draw Earth
-            ctx.fillStyle = '#4CAF50';
-            ctx.beginPath();
-            ctx.arc(earthX, earthY, 8, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Northern hemisphere highlight
-            ctx.fillStyle = 'rgba(76, 175, 80, 0.6)';
-            const tiltRad = (state.dayOfYear / 365) * Math.PI * 2;
-            ctx.beginPath();
-            ctx.arc(earthX, earthY - 4, 4, 0, Math.PI);
-            ctx.fill();
-
-            // Draw Earth axis if enabled
-            if (state.showAxis) {
-                ctx.strokeStyle = 'rgba(255, 100, 100, 0.6)';
-                ctx.lineWidth = 2;
-                const axisAngle = -Math.PI / 2; // Axis always points toward Polaris
-                const axisLen = 12;
-                ctx.beginPath();
-                ctx.moveTo(earthX - Math.sin(axisAngle) * axisLen, earthY - Math.cos(axisAngle) * axisLen);
-                ctx.lineTo(earthX + Math.sin(axisAngle) * axisLen, earthY + Math.cos(axisAngle) * axisLen);
-                ctx.stroke();
+            orbitalCtx.strokeStyle = "rgba(255, 200, 100, 0.05)";
+            orbitalCtx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const r = (orbitRadius * (i + 1)) / 5;
+                orbitalCtx.beginPath();
+                orbitalCtx.arc(centerX, centerY, r, 0, Math.PI * 2);
+                orbitalCtx.stroke();
             }
 
-            // Label key positions
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.font = 'bold 11px Inter';
-            ctx.textAlign = 'center';
+            orbitalCtx.strokeStyle = "rgba(255, 200, 100, 0.3)";
+            orbitalCtx.lineWidth = 2;
+            orbitalCtx.setLineDash([5, 5]);
+            orbitalCtx.beginPath();
+            orbitalCtx.ellipse(centerX, centerY, orbitRadius, orbitRadius * 0.97, 0, 0, Math.PI * 2);
+            orbitalCtx.stroke();
+            orbitalCtx.setLineDash([]);
 
-            const positions = [
-                { angle: 0, label: 'Sommers.\n21. Juni' },
-                { angle: Math.PI, label: 'Winters.\n21. Dez' },
-                { angle: Math.PI / 2, label: 'Herbst\n22. Sept' },
-                { angle: -Math.PI / 2, label: 'Frühjahr\n20. März' }
+            const sunGradient = orbitalCtx.createRadialGradient(
+                centerX, centerY, 0,
+                centerX, centerY, 20
+            );
+            sunGradient.addColorStop(0, "rgba(255, 220, 100, 1)");
+            sunGradient.addColorStop(0.4, "rgba(255, 200, 0, 0.6)");
+            sunGradient.addColorStop(1, "rgba(255, 100, 0, 0)");
+            orbitalCtx.fillStyle = sunGradient;
+            orbitalCtx.beginPath();
+            orbitalCtx.arc(centerX, centerY, 20, 0, Math.PI * 2);
+            orbitalCtx.fill();
+
+            orbitalCtx.fillStyle = "#ffd966";
+            orbitalCtx.beginPath();
+            orbitalCtx.arc(centerX, centerY, 10, 0, Math.PI * 2);
+            orbitalCtx.fill();
+
+            const angle = (state.dayOfYear / 365) * Math.PI * 2 - Math.PI / 2;
+            const earthX = centerX + orbitRadius * Math.cos(angle);
+            const earthY = centerY + orbitRadius * Math.sin(angle);
+
+            const seasonPositions = [
+                { angle: -Math.PI / 2, label: "Sommersonnenwende\n21.6.", pos: "bottom" },
+                { angle: 0, label: "Wintersonnenwende\n21.12.", pos: "right" },
+                { angle: Math.PI / 2, label: "Herbst-Tagundnachtgleiche\n23.9.", pos: "top" },
+                { angle: Math.PI, label: "Frühlings-Tagundnachtgleiche\n21.3.", pos: "left" }
             ];
 
-            positions.forEach(pos => {
-                const x = centerX + Math.cos(pos.angle - Math.PI / 2) * orbitRadius * 1.3;
-                const y = centerY + Math.sin(pos.angle - Math.PI / 2) * orbitRadius * 1.15;
-                ctx.fillText(pos.label, x, y);
+            seasonPositions.forEach(season => {
+                const x = centerX + (orbitRadius + 40) * Math.cos(season.angle);
+                const y = centerY + (orbitRadius + 40) * Math.sin(season.angle);
+                orbitalCtx.fillStyle = "rgba(255, 200, 100, 0.4)";
+                orbitalCtx.font = "11px Inter";
+                orbitalCtx.textAlign = "center";
+                orbitalCtx.textBaseline = "middle";
+                orbitalCtx.fillText(season.label, x, y);
             });
 
-            // Info text
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.9)';
-            ctx.font = '600 12px Inter';
-            ctx.textAlign = 'left';
-            ctx.fillText(`Tag ${state.dayOfYear.toFixed(0)}: ${getDateFromDay(state.dayOfYear)}`, 15, 25);
+            const earthGradient = orbitalCtx.createRadialGradient(
+                earthX - 3, earthY - 3, 0,
+                earthX, earthY, 8
+            );
+            earthGradient.addColorStop(0, "#6ba3d9");
+            earthGradient.addColorStop(1, "#1a5a7f");
+            orbitalCtx.fillStyle = earthGradient;
+            orbitalCtx.beginPath();
+            orbitalCtx.arc(earthX, earthY, 8, 0, Math.PI * 2);
+            orbitalCtx.fill();
+
+            orbitalCtx.strokeStyle = "#ffd966";
+            orbitalCtx.lineWidth = 2;
+            orbitalCtx.beginPath();
+            orbitalCtx.moveTo(earthX, earthY - 12);
+            orbitalCtx.lineTo(earthX, earthY + 12);
+            orbitalCtx.stroke();
+
+            orbitalCtx.fillStyle = "#ffd966";
+            orbitalCtx.font = "bold 10px Inter";
+            orbitalCtx.textAlign = "left";
+            orbitalCtx.textBaseline = "middle";
+            orbitalCtx.fillText("N", earthX + 15, earthY - 12);
+
+            if (state.showTerminator) {
+                const sunDeclination = state.declination;
+                const terminatorX = earthX;
+                const terminatorRadius = 8;
+                const tiltAngle = (sunDeclination * Math.PI) / 180;
+
+                orbitalCtx.strokeStyle = "rgba(255, 150, 0, 0.6)";
+                orbitalCtx.lineWidth = 2;
+                orbitalCtx.beginPath();
+                for (let i = -Math.PI / 2; i <= Math.PI / 2; i += 0.05) {
+                    const x = terminatorX + terminatorRadius * Math.cos(i);
+                    const y = earthY + terminatorRadius * Math.sin(i) * Math.cos(tiltAngle);
+                    if (i === -Math.PI / 2) {
+                        orbitalCtx.moveTo(x, y);
+                    } else {
+                        orbitalCtx.lineTo(x, y);
+                    }
+                }
+                orbitalCtx.stroke();
+            }
+
+            const arrowAngle = angle + 0.3;
+            const arrowX = centerX + (orbitRadius - 15) * Math.cos(arrowAngle);
+            const arrowY = centerY + (orbitRadius - 15) * Math.sin(arrowAngle);
+            orbitalCtx.fillStyle = "rgba(255, 200, 100, 0.5)";
+            orbitalCtx.beginPath();
+            orbitalCtx.moveTo(arrowX, arrowY);
+            orbitalCtx.lineTo(
+                arrowX - 4 * Math.cos(arrowAngle - 0.3),
+                arrowY - 4 * Math.sin(arrowAngle - 0.3)
+            );
+            orbitalCtx.lineTo(
+                arrowX - 4 * Math.cos(arrowAngle + 0.3),
+                arrowY - 4 * Math.sin(arrowAngle + 0.3)
+            );
+            orbitalCtx.closePath();
+            orbitalCtx.fill();
         }
 
-        // Draw angle view
-        function drawAngleView() {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
+        function drawSunAngleDiagram() {
+            const rect = resizeCanvas(sunAngleCanvas);
+            sunAngleCtx.clearRect(0, 0, rect.width, rect.height);
 
-            // Background
-            ctx.fillStyle = 'rgba(10, 10, 26, 0.5)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const padding = 40;
+            const groundY = rect.height - padding;
+            const diagWidth = rect.width - 2 * padding;
+            const maxHeight = rect.height - 2 * padding;
 
-            const declination = getSolarDeclination(state.dayOfYear);
-            const altitude = getSolarAltitude(state.latitude, declination);
+            sunAngleCtx.strokeStyle = "rgba(200, 150, 100, 0.5)";
+            sunAngleCtx.lineWidth = 3;
+            sunAngleCtx.beginPath();
+            sunAngleCtx.moveTo(padding, groundY);
+            sunAngleCtx.lineTo(rect.width - padding, groundY);
+            sunAngleCtx.stroke();
 
-            // Ground line
-            const groundY = centerY + 60;
-            ctx.strokeStyle = 'rgba(139, 90, 43, 0.8)';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(50, groundY);
-            ctx.lineTo(canvas.width - 50, groundY);
-            ctx.stroke();
+            sunAngleCtx.strokeStyle = "rgba(255, 200, 100, 0.2)";
+            sunAngleCtx.lineWidth = 1;
+            sunAngleCtx.beginPath();
+            sunAngleCtx.arc(
+                rect.width / 2,
+                groundY,
+                diagWidth / 2,
+                Math.PI,
+                Math.PI * 2
+            );
+            sunAngleCtx.stroke();
 
-            // Draw sun rays if enabled
-            if (state.showRays) {
-                ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
-                ctx.lineWidth = 2;
-                const rayCount = 8;
-                const altRad = Math.max(0, altitude) * Math.PI / 180;
-
-                for (let i = 0; i < rayCount; i++) {
-                    const x = 150 + i * 60;
-                    const rayEndX = x + 100 * Math.cos(altRad);
-                    const rayEndY = centerY - 100 * Math.sin(altRad);
-
-                    ctx.beginPath();
-                    ctx.moveTo(x, centerY - 150);
-                    ctx.lineTo(rayEndX, rayEndY);
-                    ctx.stroke();
+            sunAngleCtx.strokeStyle = "rgba(255, 200, 100, 0.1)";
+            sunAngleCtx.lineWidth = 1;
+            for (let i = 10; i <= 80; i += 10) {
+                const angle = (i * Math.PI) / 180;
+                const x = rect.width / 2 + (diagWidth / 2) * Math.cos(angle);
+                const y = groundY - (diagWidth / 2) * Math.sin(angle);
+                sunAngleCtx.beginPath();
+                sunAngleCtx.arc(x, y, 2, 0, Math.PI * 2);
+                sunAngleCtx.stroke();
+                if (i % 30 === 0) {
+                    sunAngleCtx.fillStyle = "rgba(255, 200, 100, 0.3)";
+                    sunAngleCtx.font = "11px Inter";
+                    sunAngleCtx.textAlign = "center";
+                    sunAngleCtx.textBaseline = "bottom";
+                    sunAngleCtx.fillText(i + "°", x, y - 8);
                 }
             }
 
-            // Angle arc
-            if (altitude > 0) {
-                ctx.strokeStyle = 'rgba(255, 100, 100, 0.7)';
-                ctx.lineWidth = 2;
-                const arcRadius = 40;
-                const altRad = altitude * Math.PI / 180;
+            const elevation = Math.max(0, Math.min(90, state.elevation));
+            const elevationRad = (elevation * Math.PI) / 180;
+            const sunX = rect.width / 2 + (diagWidth / 2) * Math.cos(elevationRad);
+            const sunY = groundY - (diagWidth / 2) * Math.sin(elevationRad);
 
-                ctx.beginPath();
-                ctx.arc(150, groundY, arcRadius, -Math.PI / 2, -Math.PI / 2 + altRad, false);
-                ctx.stroke();
-
-                // Angle label
-                ctx.fillStyle = 'rgba(255, 100, 100, 0.9)';
-                ctx.font = 'bold 14px Inter';
-                ctx.fillText(`${altitude.toFixed(1)}°`, 150, groundY - 60);
+            if (state.showRays) {
+                sunAngleCtx.strokeStyle = "rgba(255, 200, 100, 0.3)";
+                sunAngleCtx.lineWidth = 1;
+                for (let i = -3; i <= 3; i++) {
+                    const rayX = sunX + i * 4;
+                    sunAngleCtx.beginPath();
+                    sunAngleCtx.moveTo(rayX, sunY);
+                    const groundX = rect.width / 2 + Math.tan(elevationRad) * (groundY - sunY);
+                    sunAngleCtx.lineTo(groundX, groundY);
+                    sunAngleCtx.stroke();
+                }
             }
 
-            // Labels
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.font = '500 12px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText(`Breitengrad: ${state.latitude > 0 ? state.latitude + '°N' : state.latitude + '°S'}`, centerX, 30);
-            ctx.fillText(getDateFromDay(state.dayOfYear), centerX, 55);
+            const sunGradient = sunAngleCtx.createRadialGradient(
+                sunX - 2, sunY - 2, 0,
+                sunX, sunY, 12
+            );
+            sunGradient.addColorStop(0, "rgba(255, 220, 100, 1)");
+            sunGradient.addColorStop(0.5, "rgba(255, 200, 0, 0.7)");
+            sunGradient.addColorStop(1, "rgba(255, 100, 0, 0)");
+            sunAngleCtx.fillStyle = sunGradient;
+            sunAngleCtx.beginPath();
+            sunAngleCtx.arc(sunX, sunY, 12, 0, Math.PI * 2);
+            sunAngleCtx.fill();
 
-            // Energy density visualization
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
-            const spreadWidth = Math.max(20, 100 / Math.max(0.2, Math.cos(altitude * Math.PI / 180)));
-            ctx.fillRect(150 - spreadWidth / 2, groundY, spreadWidth, 20);
+            sunAngleCtx.fillStyle = "#ffd966";
+            sunAngleCtx.beginPath();
+            sunAngleCtx.arc(sunX, sunY, 6, 0, Math.PI * 2);
+            sunAngleCtx.fill();
 
-            // Day length bar
-            const dayLength = getDayLength(state.latitude, declination);
-            const barWidth = 200;
-            const hourWidth = barWidth / 24;
+            sunAngleCtx.strokeStyle = "rgba(255, 200, 100, 0.6)";
+            sunAngleCtx.lineWidth = 2;
+            sunAngleCtx.beginPath();
+            sunAngleCtx.arc(
+                rect.width / 2,
+                groundY,
+                40,
+                Math.PI,
+                Math.PI + elevationRad
+            );
+            sunAngleCtx.stroke();
 
-            ctx.fillStyle = 'rgba(100, 150, 255, 0.3)';
-            ctx.fillRect(centerX - barWidth / 2, groundY + 60, hourWidth * dayLength, 15);
+            sunAngleCtx.fillStyle = "#ffd966";
+            sunAngleCtx.font = "bold 16px Inter";
+            sunAngleCtx.textAlign = "center";
+            sunAngleCtx.textBaseline = "middle";
+            sunAngleCtx.fillText(elevation.toFixed(1) + "°", rect.width / 2 + 60, groundY - 30);
 
-            ctx.strokeStyle = 'rgba(100, 150, 255, 0.6)';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(centerX - barWidth / 2, groundY + 60, barWidth, 15);
+            const hourAngle = Math.acos(
+                -Math.tan((state.latitude * Math.PI) / 180) *
+                Math.tan((state.declination * Math.PI) / 180)
+            );
+            sunAngleCtx.strokeStyle = "rgba(150, 200, 255, 0.4)";
+            sunAngleCtx.lineWidth = 3;
+            sunAngleCtx.beginPath();
+            sunAngleCtx.arc(
+                rect.width / 2,
+                groundY,
+                diagWidth / 2,
+                Math.PI - hourAngle,
+                Math.PI + hourAngle
+            );
+            sunAngleCtx.stroke();
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.font = '10px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText(`${dayLength.toFixed(1)}h Tageslicht`, centerX, groundY + 80);
+            sunAngleCtx.fillStyle = "rgba(255, 200, 100, 0.7)";
+            sunAngleCtx.font = "12px Inter";
+            sunAngleCtx.textAlign = "left";
+            sunAngleCtx.textBaseline = "bottom";
+            sunAngleCtx.fillText("Sonnenhöhe Diagramm", padding, padding - 5);
+
+            sunAngleCtx.fillStyle = "rgba(150, 200, 255, 0.6)";
+            sunAngleCtx.font = "11px Inter";
+            sunAngleCtx.textAlign = "center";
+            sunAngleCtx.fillText(
+                `Tageslänge: ${state.dayLength.toFixed(1)} Stunden`,
+                rect.width / 2,
+                padding + 15
+            );
         }
 
-        // Update display
-        function updateDisplay() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function updateState() {
+            state.declination = calculateDeclination(state.dayOfYear);
+            state.elevation = calculateSolarElevation(state.latitude, state.declination);
+            state.dayLength = calculateDayLength(state.latitude, state.declination);
 
-            if (state.viewMode === 'orbital') {
-                drawOrbitalView();
-            } else {
-                drawAngleView();
-            }
+            dateLabel.textContent = getDateFromDayOfYear(state.dayOfYear);
+            latLabel.textContent = state.latitude >= 0 ? state.latitude.toFixed(1) + "°N" : Math.abs(state.latitude).toFixed(1) + "°S";
 
-            // Update info panel
-            const declination = getSolarDeclination(state.dayOfYear);
-            const altitude = getSolarAltitude(state.latitude, declination);
-            const dayLength = getDayLength(state.latitude, declination);
+            infoDate.textContent = getDateFromDayOfYear(state.dayOfYear);
+            infoDeclination.textContent = state.declination.toFixed(1) + "°";
+            infoElevation.textContent = state.elevation.toFixed(1) + "°";
+            infoDayLength.textContent = state.dayLength.toFixed(1) + " h";
 
-            document.getElementById('infoDate').textContent = getDateFromDay(state.dayOfYear);
-            document.getElementById('infoSeason').textContent = getSeason(state.latitude, state.dayOfYear);
-            document.getElementById('infoAngle').textContent = Math.max(0, altitude).toFixed(1) + '°';
-            document.getElementById('infoDayLength').textContent = dayLength.toFixed(1) + 'h';
-            document.getElementById('infoDeclination').textContent = declination.toFixed(1) + '°';
+            const isNorthernHemisphere = state.latitude >= 0;
+            seasonIndicator.textContent = getSeason(state.dayOfYear, isNorthernHemisphere);
+
+            drawOrbitalView();
+            drawSunAngleDiagram();
         }
 
-        // Animation loop
-        function animate() {
-            if (state.isPlaying) {
-                state.dayOfYear = (state.dayOfYear + state.speed * 0.5) % 365;
-                document.getElementById('daySlider').value = state.dayOfYear;
-                updateSliderDisplay();
-            }
-            updateDisplay();
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // Event listeners
-        document.getElementById('daySlider').addEventListener('input', (e) => {
-            state.dayOfYear = parseFloat(e.target.value);
-            updateSliderDisplay();
+        monthSlider.addEventListener("input", (e) => {
+            state.dayOfYear = parseInt(e.target.value);
+            updateState();
         });
 
-        function updateSliderDisplay() {
-            document.getElementById('dayValue').textContent = state.dayOfYear.toFixed(0);
-            document.getElementById('monthLabel').textContent = getDateFromDay(state.dayOfYear);
-        }
-
-        document.getElementById('latSlider').addEventListener('input', (e) => {
-            state.latitude = parseFloat(e.target.value);
-            updateLatDisplay();
+        latSlider.addEventListener("input", (e) => {
+            state.latitude = parseInt(e.target.value);
+            updateState();
         });
 
-        function updateLatDisplay() {
-            const lat = state.latitude;
-            document.getElementById('latValue').textContent =
-                (lat >= 0 ? lat.toFixed(1) + '°N' : Math.abs(lat).toFixed(1) + '°S');
-        }
-
-        document.getElementById('playBtn').addEventListener('click', () => {
-            state.isPlaying = !state.isPlaying;
-            document.getElementById('playBtn').textContent = state.isPlaying ? '⏸' : '▶';
-        });
-
-        document.getElementById('speedBtn').addEventListener('click', () => {
-            state.speed = state.speed === 1 ? 5 : 1;
-            document.getElementById('speedBtn').textContent = state.speed + 'x';
-        });
-
-        document.getElementById('viewOrbital').addEventListener('click', () => {
-            state.viewMode = 'orbital';
-            document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
-            document.getElementById('viewOrbital').classList.add('active');
-        });
-
-        document.getElementById('viewAngle').addEventListener('click', () => {
-            state.viewMode = 'angle';
-            document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('active'));
-            document.getElementById('viewAngle').classList.add('active');
-        });
-
-        function setLatitude(lat) {
-            state.latitude = lat;
-            document.getElementById('latSlider').value = lat;
-            updateLatDisplay();
-        }
-
-        function toggleShowAxis() {
-            state.showAxis = !state.showAxis;
-            document.getElementById('showAxisBtn').textContent =
-                (state.showAxis ? '✓' : '☐') + ' Erdachse anzeigen';
-            document.getElementById('showAxisBtn').classList.toggle('active');
-        }
-
-        function toggleShowRays() {
-            state.showRays = !state.showRays;
-            document.getElementById('showRaysBtn').textContent =
-                (state.showRays ? '✓' : '☐') + ' Sonnenstrahlen zeigen';
-            document.getElementById('showRaysBtn').classList.toggle('active');
-        }
-
-        function toggleShowTerminator() {
+        terminatorToggle.addEventListener("click", () => {
             state.showTerminator = !state.showTerminator;
-            document.getElementById('showTerminatorBtn').textContent =
-                (state.showTerminator ? '✓' : '☐') + ' Tag/Nacht Grenze';
-            document.getElementById('showTerminatorBtn').classList.toggle('active');
-        }
+            terminatorToggle.classList.toggle("active");
+            drawOrbitalView();
+        });
 
-        // Initialize
-        updateSliderDisplay();
-        updateLatDisplay();
+        raysToggle.addEventListener("click", () => {
+            state.showRays = !state.showRays;
+            raysToggle.classList.toggle("active");
+            drawSunAngleDiagram();
+        });
+
+        document.querySelectorAll(".preset-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                state.latitude = parseInt(btn.dataset.lat);
+                latSlider.value = state.latitude;
+                updateState();
+            });
+        });
+
+        window.addEventListener("resize", updateState);
+
+        updateState();
     </script>
 </body>
 </html>

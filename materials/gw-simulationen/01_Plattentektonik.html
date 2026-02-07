@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plattentektonik - Interaktiver Simulator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Plattentektonik Simulation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <style>
         * {
             margin: 0;
@@ -17,876 +14,792 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1a0a0a 0%, #4a1500 50%, #6d2000 100%);
-            min-height: 100vh;
-            color: #ffffff;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1010 50%, #5c1a00 100%);
+            color: #f0f0f0;
+            height: 100vh;
             overflow: hidden;
-            padding: 0;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px 20px;
+            border-bottom: 2px solid rgba(255, 127, 39, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+
+        header h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 280px;
             gap: 12px;
+            height: calc(100vh - 70px);
             padding: 12px;
-            height: calc(100vh - 24px);
-            max-width: 100%;
-            margin: 0 auto;
         }
 
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-                height: auto;
-                min-height: 100vh;
-            }
-        }
-
-        .canvas-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
-            flex: 1;
-            min-height: 0;
-            position: relative;
-        }
-
-        @media (max-width: 900px) {
-            .canvas-section {
-                min-height: 400px;
-            }
-        }
-
-        canvas {
-            display: block;
-            max-width: 100%;
-            max-height: 100%;
-        }
-
-        .controls-section {
+        .controls {
+            background: rgba(20, 10, 10, 0.8);
+            border: 1px solid rgba(255, 127, 39, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            overflow-y: auto;
-            padding-right: 8px;
+            gap: 16px;
         }
 
-        .controls-section::-webkit-scrollbar {
+        .controls::-webkit-scrollbar {
             width: 6px;
         }
 
-        .controls-section::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
+        .controls::-webkit-scrollbar-track {
+            background: rgba(255, 127, 39, 0.1);
+            border-radius: 3px;
         }
 
-        .controls-section::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+        .controls::-webkit-scrollbar-thumb {
+            background: rgba(255, 127, 39, 0.3);
+            border-radius: 3px;
         }
 
-        .panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
+        .controls::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 127, 39, 0.5);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .header h1 {
-            font-size: 1.5em;
-            font-weight: 700;
-            margin-bottom: 4px;
-            background: linear-gradient(135deg, #ffb366 0%, #ff6b6b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header p {
-            font-size: 0.8em;
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .boundary-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-        }
-
-        @media (max-width: 900px) {
-            .boundary-buttons {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .boundary-btn {
-            padding: 6px 10px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.8);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.75em;
-            font-weight: 600;
-            text-align: center;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .boundary-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .boundary-btn.active {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff4444 100%);
-            border-color: #ff6b6b;
-            color: white;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-        }
-
-        .icon {
-            font-size: 20px;
-            display: block;
-            margin-bottom: 6px;
-        }
-
-        .slider-group {
+        .control-section {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .slider-label {
-            font-size: 0.8em;
+        .section-title {
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 127, 39, 0.8);
+            margin-bottom: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        button {
+            background: linear-gradient(135deg, rgba(255, 127, 39, 0.2), rgba(200, 100, 50, 0.2));
+            border: 1px solid rgba(255, 127, 39, 0.4);
+            color: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-family: 'Inter', sans-serif;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
+        button:hover {
+            background: linear-gradient(135deg, rgba(255, 127, 39, 0.4), rgba(200, 100, 50, 0.4));
+            border-color: rgba(255, 127, 39, 0.6);
+            transform: translateY(-1px);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, rgba(255, 127, 39, 0.6), rgba(200, 100, 50, 0.6));
+            border-color: rgba(255, 127, 39, 0.8);
+            box-shadow: 0 0 12px rgba(255, 127, 39, 0.4);
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .slider-label {
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: space-between;
+        }
+
         input[type="range"] {
             width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(255, 255, 255, 0.1);
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 127, 39, 0.2);
             outline: none;
             -webkit-appearance: none;
             appearance: none;
+            cursor: pointer;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #ffb366 0%, #ff6b6b 100%);
+            background: rgba(255, 127, 39, 0.8);
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: rgba(255, 127, 39, 1);
+            box-shadow: 0 0 8px rgba(255, 127, 39, 0.6);
         }
 
         input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #ffb366 0%, #ff6b6b 100%);
+            background: rgba(255, 127, 39, 0.8);
             cursor: pointer;
             border: none;
-            box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+            transition: all 0.2s;
         }
 
-        .toggles {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        input[type="range"]::-moz-range-thumb:hover {
+            background: rgba(255, 127, 39, 1);
+            box-shadow: 0 0 8px rgba(255, 127, 39, 0.6);
         }
 
-        .toggle-item {
+        .toggle-container {
             display: flex;
             align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 6px;
-            transition: background 0.2s ease;
-        }
-
-        .toggle-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            gap: 8px;
+            font-size: 0.75em;
         }
 
         .toggle-switch {
-            width: 40px;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
             position: relative;
-            transition: background 0.3s ease;
-            flex-shrink: 0;
+            width: 28px;
+            height: 16px;
+            background: rgba(255, 127, 39, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 127, 39, 0.3);
         }
 
         .toggle-switch.active {
-            background: linear-gradient(135deg, #ffb366 0%, #ff6b6b 100%);
+            background: rgba(255, 127, 39, 0.5);
+            border-color: rgba(255, 127, 39, 0.6);
         }
 
-        .toggle-circle {
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
+        .toggle-switch::after {
+            content: '';
             position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #f0f0f0;
+            border-radius: 50%;
             top: 2px;
             left: 2px;
-            transition: left 0.3s ease;
+            transition: left 0.3s;
         }
 
-        .toggle-switch.active .toggle-circle {
-            left: 18px;
-        }
-
-        .toggle-label {
-            font-size: 0.8em;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.85);
+        .toggle-switch.active::after {
+            left: 14px;
         }
 
         .info-panel {
-            background: rgba(255, 107, 107, 0.1);
-            border: 1px solid rgba(255, 107, 107, 0.3);
-            border-radius: 8px;
+            background: rgba(255, 127, 39, 0.1);
+            border: 1px solid rgba(255, 127, 39, 0.3);
+            border-radius: 4px;
             padding: 8px;
+            font-size: 0.7em;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .info-title {
-            font-size: 0.8em;
             font-weight: 700;
-            color: #ffb366;
-            margin-bottom: 6px;
+            color: rgba(255, 127, 39, 0.9);
+            margin-bottom: 4px;
         }
 
-        .info-text {
-            font-size: 0.8em;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .legend {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
-            flex-shrink: 0;
-        }
-
-        .world-map-corner {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 120px;
-            height: 80px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        canvas {
+            background: linear-gradient(to bottom, rgba(100, 150, 200, 0.1), rgba(0, 0, 0, 0.3));
             border-radius: 8px;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .speed-value {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            text-align: right;
-        }
-
-        @media (max-width: 900px) {
-            .canvas-section {
-                grid-column: 1;
-            }
-
-            .controls-section {
-                grid-column: 1;
-                max-height: none;
-                padding-right: 0;
-            }
+            display: block;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Plattentektonik - Bewegung der Erdplatten</h1>
+    </header>
+
     <div class="container">
-        <div class="canvas-section">
-            <canvas id="tectonicsCanvas"></canvas>
-            <div class="world-map-corner" id="worldMapCorner">🌍</div>
-        </div>
+        <canvas id="canvas"></canvas>
 
-        <div class="controls-section">
-            <div class="panel header">
-                <h1>Plattentektonik</h1>
-                <p>Dynamik der Erdkruste</p>
-            </div>
-
-            <div class="panel">
-                <div class="slider-label">Plattengrenze</div>
-                <div class="boundary-buttons">
-                    <button class="boundary-btn active" data-type="convergent">
-                        <span class="icon">🔻</span>
-                        Konvergent
-                    </button>
-                    <button class="boundary-btn" data-type="divergent">
-                        <span class="icon">🔼</span>
-                        Divergent
-                    </button>
-                    <button class="boundary-btn" data-type="transform">
-                        <span class="icon">↔️</span>
-                        Transform
-                    </button>
+        <div class="controls">
+            <div class="control-section">
+                <div class="section-title">Plattengrenze</div>
+                <div class="button-group">
+                    <button class="boundary-btn active" data-mode="convergent">Konvergent</button>
+                    <button class="boundary-btn" data-mode="divergent">Divergent</button>
+                    <button class="boundary-btn" data-mode="transform">Transformstörung</button>
                 </div>
             </div>
 
-            <div class="panel">
-                <div class="slider-group">
-                    <div>
-                        <div class="slider-label">Animationsgeschwindigkeit</div>
-                        <input type="range" id="speedSlider" min="0.5" max="2" step="0.1" value="1">
-                        <div class="speed-value" id="speedValue">1.0x</div>
+            <div class="control-section">
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Geschwindigkeit</span>
+                        <span id="speedValue">1.0x</span>
                     </div>
+                    <input type="range" id="speedSlider" min="0.3" max="2" step="0.1" value="1">
                 </div>
             </div>
 
-            <div class="panel">
-                <div class="toggles">
-                    <div class="toggle-item" id="labelsToggle">
-                        <div class="toggle-switch active">
-                            <div class="toggle-circle"></div>
-                        </div>
-                        <div class="toggle-label">Beschriftungen anzeigen</div>
-                    </div>
-                    <div class="toggle-item" id="hazardsToggle">
-                        <div class="toggle-switch active">
-                            <div class="toggle-circle"></div>
-                        </div>
-                        <div class="toggle-label">Erdbeben & Vulkane</div>
-                    </div>
-                    <div class="toggle-item" id="convectionToggle">
-                        <div class="toggle-switch active">
-                            <div class="toggle-circle"></div>
-                        </div>
-                        <div class="toggle-label">Konvektionsströme</div>
-                    </div>
+            <div class="control-section">
+                <div class="toggle-container">
+                    <div class="toggle-switch active" id="labelsToggle"></div>
+                    <span>Beschriftungen</span>
+                </div>
+                <div class="toggle-container">
+                    <div class="toggle-switch active" id="earthquakesToggle"></div>
+                    <span>Erdbeben anzeigen</span>
+                </div>
+                <div class="toggle-container">
+                    <div class="toggle-switch active" id="convectionToggle"></div>
+                    <span>Konvektionsströme</span>
                 </div>
             </div>
 
-            <div class="panel info-panel">
-                <div class="info-title" id="infoTitle">Konvergente Plattengrenze</div>
-                <div class="info-text" id="infoText">
-                    Zwei Platten bewegen sich aufeinander zu. Eine ozeanische Platte wird unter eine kontinentale Platte geschoben. Dies führt zu intensiver vulkanischer Aktivität und der Bildung von Tiefseegräben.
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="slider-label" style="margin-bottom: 12px;">Legende</div>
-                <div class="legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #8b6f47;"></div>
-                        <span>Kruste</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #e8771f;"></div>
-                        <span>Mantel</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #ff4444;"></div>
-                        <span>Magma</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #ffb366;"></div>
-                        <span>Heiß</span>
-                    </div>
+            <div class="info-panel">
+                <div class="info-title" id="infoTitle">Konvergente Grenze</div>
+                <div id="infoText">
+                    Zwei Platten bewegen sich aufeinander zu. Die dichtere ozeanische Platte taucht unter die leichtere kontinentale Platte. Dies führt zu Gebirgsketten, Vulkanen und häufigen Erdbeben.
+                    <br><br>
+                    <strong>Beispiel:</strong> Himalaya, Anden
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('tectonicsCanvas');
+        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Set canvas size
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width - 40;
-            canvas.height = rect.height - 40;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        // State
-        let state = {
-            boundaryType: 'convergent',
-            animationSpeed: 1,
+        let animationState = {
+            mode: 'convergent',
+            speed: 1,
             showLabels: true,
-            showHazards: true,
+            showEarthquakes: true,
             showConvection: true,
             time: 0
         };
 
-        // Boundary type info
-        const boundaryInfo = {
+        const infoData = {
             convergent: {
-                title: 'Konvergente Plattengrenze',
-                text: 'Zwei Platten bewegen sich aufeinander zu. Eine ozeanische Platte wird unter eine kontinentale Platte geschoben. Dies führt zu intensiver vulkanischer Aktivität und der Bildung von Tiefseegräben.'
+                title: 'Konvergente Grenze',
+                text: 'Zwei Platten bewegen sich aufeinander zu. Die dichtere ozeanische Platte taucht unter die leichtere kontinentale Platte. Dies führt zu Gebirgsketten, Vulkanen und häufigen Erdbeben.<br><br><strong>Beispiele:</strong> Himalaya, Anden, Pazifischer Feuerring'
             },
             divergent: {
-                title: 'Divergente Plattengrenze',
-                text: 'Zwei Platten bewegen sich voneinander weg. Magma steigt aus dem Mantel auf und erstarrt zu neuer Kruste. Dies ist die Quelle der Spreizungsachsen an Mittelozeanischen Rücken.'
+                title: 'Divergente Grenze',
+                text: 'Zwei Platten bewegen sich voneinander weg. Heißes Magma steigt aus dem Erdmantel auf und bildet neue Kruste. Dies führt zur Bildung von mittelozeanischen Rücken und Riftzonen.<br><br><strong>Beispiele:</strong> Mittelatlantischer Rücken, Ostafrikanischer Riftgraben'
             },
             transform: {
                 title: 'Transformstörung',
-                text: 'Zwei Platten verschieben sich horizontal aneinander vorbei. An Stresskonzentrationen entstehen Erdbeben durch plötzliche Rutschungen (Stick-Slip-Bewegung).'
+                text: 'Zwei Platten gleiten horizontal aneinander vorbei. Es entstehen keine neuen Platten, aber die Reibung führt zu starken Erdbeben und Verwerfungen.<br><br><strong>Beispiele:</strong> San-Andreas-Verwerfung, Nordanatolische Verwerfung'
             }
         };
 
-        // Event listeners - Boundary type buttons
-        document.querySelectorAll('.boundary-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.boundary-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                state.boundaryType = btn.dataset.type;
-                updateInfo();
-            });
-        });
-
-        // Speed slider
-        document.getElementById('speedSlider').addEventListener('input', (e) => {
-            state.animationSpeed = parseFloat(e.target.value);
-            document.getElementById('speedValue').textContent = state.animationSpeed.toFixed(1) + 'x';
-        });
-
-        // Toggles
-        function setupToggle(elementId, stateKey) {
-            const element = document.getElementById(elementId);
-            element.addEventListener('click', () => {
-                state[stateKey] = !state[stateKey];
-                element.querySelector('.toggle-switch').classList.toggle('active');
-            });
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
         }
-        setupToggle('labelsToggle', 'showLabels');
-        setupToggle('hazardsToggle', 'showHazards');
-        setupToggle('convectionToggle', 'showConvection');
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Event listeners
+        document.querySelectorAll('.boundary-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.boundary-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                animationState.mode = this.dataset.mode;
+                updateInfo();
+                animationState.time = 0;
+            });
+        });
+
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            animationState.speed = parseFloat(this.value);
+            document.getElementById('speedValue').textContent = this.value + 'x';
+        });
+
+        document.getElementById('labelsToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            animationState.showLabels = this.classList.contains('active');
+        });
+
+        document.getElementById('earthquakesToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            animationState.showEarthquakes = this.classList.contains('active');
+        });
+
+        document.getElementById('convectionToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            animationState.showConvection = this.classList.contains('active');
+        });
 
         function updateInfo() {
-            const info = boundaryInfo[state.boundaryType];
+            const info = infoData[animationState.mode];
             document.getElementById('infoTitle').textContent = info.title;
-            document.getElementById('infoText').textContent = info.text;
+            document.getElementById('infoText').innerHTML = info.text;
         }
 
-        // Drawing functions
-        function drawConvergent(time) {
+        // Earthquake and volcano particles
+        let earthquakes = [];
+        let volcanoes = [];
+
+        function createEarthquake(x, y) {
+            earthquakes.push({
+                x: x,
+                y: y,
+                life: 0.8,
+                radius: 8
+            });
+        }
+
+        function createVolcano(x, y) {
+            for (let i = 0; i < 5; i++) {
+                volcanoes.push({
+                    x: x + (Math.random() - 0.5) * 20,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: -Math.random() * 2,
+                    life: 1,
+                    size: Math.random() * 3 + 1
+                });
+            }
+        }
+
+        function drawBackground() {
             const w = canvas.width;
             const h = canvas.height;
-            const centerX = w / 2;
-            const centerY = h / 2;
-            const scale = Math.min(w, h) / 8;
 
-            // Background gradient (mantle)
-            const gradient = ctx.createLinearGradient(0, centerY, 0, h);
-            gradient.addColorStop(0, '#e8771f');
-            gradient.addColorStop(0.5, '#ff8844');
-            gradient.addColorStop(1, '#ff6666');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, centerY, w, h - centerY);
+            // Water (ocean)
+            ctx.fillStyle = 'rgba(30, 80, 150, 0.3)';
+            ctx.fillRect(0, 0, w, h * 0.15);
 
-            // Crust surface
-            ctx.fillStyle = '#8b6f47';
-            ctx.fillRect(0, centerY - 30, w, 30);
+            // Land surface transition
+            ctx.fillStyle = 'rgba(100, 80, 40, 0.2)';
+            ctx.fillRect(0, h * 0.15, w, h * 0.05);
 
-            // Oceanic plate (left side, moving right)
-            const oceanicOffset = Math.sin(time * 0.003 * state.animationSpeed) * 10;
-            ctx.fillStyle = '#7a5f3f';
-            ctx.beginPath();
-            ctx.moveTo(0, centerY);
-            ctx.lineTo(centerX - 20 + oceanicOffset, centerY);
-            ctx.lineTo(centerX - 20 + oceanicOffset, centerY + 120);
-            ctx.lineTo(0, centerY + 120);
-            ctx.closePath();
-            ctx.fill();
+            // Sky gradient
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, h * 0.15);
+            skyGradient.addColorStop(0, 'rgba(100, 150, 200, 0.1)');
+            skyGradient.addColorStop(1, 'rgba(100, 80, 40, 0.05)');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, w, h * 0.15);
 
-            // Subducting oceanic plate
-            const subductAngle = oceanicOffset / 30;
-            ctx.fillStyle = '#5a4030';
-            ctx.beginPath();
-            ctx.moveTo(centerX - 20 + oceanicOffset, centerY);
-            ctx.lineTo(centerX + 40, centerY);
-            ctx.lineTo(centerX + 30, centerY + 100 + Math.sin(time * 0.004 * state.animationSpeed) * 20);
-            ctx.lineTo(centerX - 20 + oceanicOffset, centerY + 120);
-            ctx.closePath();
-            ctx.fill();
-
-            // Continental plate (right side)
-            ctx.fillStyle = '#9a8f7f';
-            ctx.fillRect(centerX + 40, centerY - 30, w / 2, 120);
-
-            // Trench
-            ctx.strokeStyle = '#2a2a2a';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(centerX - 20 + oceanicOffset, centerY - 15);
-            ctx.lineTo(centerX + 20 + oceanicOffset * 0.5, centerY + 40);
-            ctx.stroke();
-
-            // Mountain/Volcano on continental side
-            const volcanoX = centerX + 100;
-            const volcanoY = centerY - 40;
-            ctx.fillStyle = '#654321';
-            ctx.beginPath();
-            ctx.moveTo(volcanoX - 30, centerY);
-            ctx.lineTo(volcanoX, volcanoY);
-            ctx.lineTo(volcanoX + 30, centerY);
-            ctx.closePath();
-            ctx.fill();
-
-            // Volcano crater
-            ctx.fillStyle = '#000000';
-            ctx.beginPath();
-            ctx.arc(volcanoX, volcanoY - 5, 6, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Lava emission
-            if (state.showHazards) {
-                const eruptionIntensity = Math.abs(Math.sin(time * 0.008 * state.animationSpeed));
-                for (let i = 0; i < eruptionIntensity * 5; i++) {
-                    const angle = Math.random() * Math.PI * 0.6 + Math.PI * 0.2;
-                    const speed = Math.random() * 20 + 10;
-                    const x = volcanoX + Math.cos(angle) * (speed + eruptionIntensity * 20);
-                    const y = volcanoY - Math.sin(angle) * (speed + eruptionIntensity * 20);
-                    ctx.fillStyle = `rgba(255, 100, 68, ${0.6 - eruptionIntensity * 0.3})`;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            // Magma chamber
-            ctx.fillStyle = 'rgba(255, 68, 68, 0.3)';
-            ctx.beginPath();
-            ctx.ellipse(centerX + 50, centerY + 80, 40, 30, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Convection currents
-            if (state.showConvection) {
-                drawConvectionCurrents(centerX, centerY, time);
-            }
-
-            // Depth scale
-            drawDepthScale();
-
-            // Labels
-            if (state.showLabels) {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.font = 'bold 12px Inter';
-                ctx.textAlign = 'center';
-
-                ctx.fillText('Ozeanische Kruste', centerX - 80, centerY + 50);
-                ctx.fillText('Kontinentale Kruste', centerX + 100, centerY + 50);
-                ctx.fillText('Tiefseerinne', centerX + 10, centerY + 55);
-                ctx.fillText('Vulkan', volcanoX, volcanoY - 30);
-                ctx.fillText('Magma', centerX + 50, centerY + 100);
-                ctx.fillText('Lithosphäre', centerX + 100, centerY + 130);
-            }
-
-            // Earthquake indicators
-            if (state.showHazards) {
-                const quakeFocus = Math.abs(Math.sin(time * 0.006 * state.animationSpeed));
-                ctx.fillStyle = `rgba(255, 100, 100, ${quakeFocus * 0.7})`;
-                ctx.beginPath();
-                ctx.arc(centerX - 5, centerY + 80, 8 + quakeFocus * 4, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            // Mantle gradient (deep below crust)
+            const mantleGradient = ctx.createLinearGradient(0, h * 0.35, 0, h);
+            mantleGradient.addColorStop(0, 'rgba(150, 60, 20, 0.3)');
+            mantleGradient.addColorStop(0.5, 'rgba(100, 40, 20, 0.3)');
+            mantleGradient.addColorStop(1, 'rgba(50, 20, 10, 0.3)');
+            ctx.fillStyle = mantleGradient;
+            ctx.fillRect(0, h * 0.35, w, h * 0.65);
         }
 
-        function drawDivergent(time) {
+        function drawConvectionArrows(centerX) {
+            if (!animationState.showConvection) return;
+
             const w = canvas.width;
             const h = canvas.height;
-            const centerX = w / 2;
-            const centerY = h / 2;
+            const baseY = h * 0.5;
 
-            // Background gradient (mantle)
-            const gradient = ctx.createLinearGradient(0, centerY, 0, h);
-            gradient.addColorStop(0, '#e8771f');
-            gradient.addColorStop(0.5, '#ff8844');
-            gradient.addColorStop(1, '#ff6666');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, centerY, w, h - centerY);
-
-            // Crust surface
-            ctx.fillStyle = '#8b6f47';
-            ctx.fillRect(0, centerY - 30, w, 30);
-
-            // Left plate moving left
-            const spreadOffset = Math.sin(time * 0.003 * state.animationSpeed) * 20;
-            ctx.fillStyle = '#7a5f3f';
-            ctx.fillRect(0, centerY - 30, centerX - 30 - spreadOffset, 120);
-
-            // Right plate moving right
-            ctx.fillStyle = '#7a5f3f';
-            ctx.fillRect(centerX + 30 + spreadOffset, centerY - 30, w - (centerX + 30 + spreadOffset), 120);
-
-            // Rift zone
-            ctx.fillStyle = '#5a4030';
-            ctx.fillRect(centerX - 30 - spreadOffset, centerY - 30, 60 + spreadOffset * 2, 120);
-
-            // Magma chamber
-            ctx.fillStyle = 'rgba(255, 68, 68, 0.4)';
-            ctx.beginPath();
-            ctx.ellipse(centerX, centerY + 60, 35, 40, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Rising magma
-            const magmaIntensity = Math.abs(Math.sin(time * 0.005 * state.animationSpeed));
-            for (let i = 0; i < magmaIntensity * 8; i++) {
-                const x = centerX + (Math.random() - 0.5) * 50;
-                const y = centerY + 30 + Math.random() * 60;
-                const size = 2 + Math.random() * 3;
-                ctx.fillStyle = `rgba(255, 100, 68, ${0.5 - magmaIntensity * 0.2})`;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            // New crust forming
-            const solidifyProgress = Math.sin(time * 0.004 * state.animationSpeed) * 0.5 + 0.5;
-            ctx.fillStyle = `rgba(139, 111, 71, ${solidifyProgress * 0.6})`;
-            ctx.fillRect(centerX - 15, centerY + 30, 30, 40);
-
-            // Convection currents
-            if (state.showConvection) {
-                drawConvectionCurrents(centerX, centerY, time);
-            }
-
-            // Depth scale
-            drawDepthScale();
-
-            // Labels
-            if (state.showLabels) {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.font = 'bold 12px Inter';
-                ctx.textAlign = 'center';
-
-                ctx.fillText('Mittelozeanischer Rücken', centerX, centerY - 50);
-                ctx.fillText('Magmakammer', centerX, centerY + 100);
-                ctx.fillText('Neue Kruste', centerX, centerY + 60);
-                ctx.fillText('Rift', centerX, centerY + 10);
-            }
-        }
-
-        function drawTransform(time) {
-            const w = canvas.width;
-            const h = canvas.height;
-            const centerX = w / 2;
-            const centerY = h / 2;
-
-            // Background gradient (mantle)
-            const gradient = ctx.createLinearGradient(0, centerY, 0, h);
-            gradient.addColorStop(0, '#e8771f');
-            gradient.addColorStop(0.5, '#ff8844');
-            gradient.addColorStop(1, '#ff6666');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, centerY, w, h - centerY);
-
-            // Crust surface
-            ctx.fillStyle = '#8b6f47';
-            ctx.fillRect(0, centerY - 30, w, 30);
-
-            // Left plate
-            ctx.fillStyle = '#7a5f3f';
-            ctx.fillRect(0, centerY - 30, centerX, 120);
-
-            // Right plate
-            ctx.fillStyle = '#7a5f3f';
-            ctx.fillRect(centerX, centerY - 30, w - centerX, 120);
-
-            // Fault line with stick-slip motion
-            const slipCycle = Math.sin(time * 0.004 * state.animationSpeed);
-            const slipAmount = Math.abs(slipCycle) > 0.5 ? (slipCycle - 0.5) * 40 : 0;
-
-            ctx.strokeStyle = '#ff8800';
-            ctx.lineWidth = 3;
-            ctx.setLineDash([8, 8]);
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY - 30);
-            ctx.lineTo(centerX + slipAmount * 0.3, centerY + 120);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Friction markers
-            ctx.strokeStyle = 'rgba(255, 150, 100, 0.6)';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 6; i++) {
-                const y = centerY + 20 + i * 20;
-                ctx.beginPath();
-                ctx.moveTo(centerX - 8, y);
-                ctx.lineTo(centerX + 8, y);
-                ctx.stroke();
-            }
-
-            // Stress concentration and earthquakes
-            if (state.showHazards) {
-                const earthquakeIntensity = Math.abs(slipCycle) > 0.7 ? (Math.abs(slipCycle) - 0.7) * 5 : 0;
-
-                // Multiple earthquake foci along the fault
-                for (let i = 0; i < 3; i++) {
-                    const focalY = centerY + 30 + i * 30;
-                    ctx.fillStyle = `rgba(255, 100, 100, ${earthquakeIntensity * 0.8})`;
-                    ctx.beginPath();
-                    ctx.arc(centerX, focalY, 6 + earthquakeIntensity * 3, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Seismic waves
-                    if (earthquakeIntensity > 0) {
-                        ctx.strokeStyle = `rgba(255, 100, 100, ${(1 - earthquakeIntensity) * 0.4})`;
-                        ctx.lineWidth = 2;
-                        for (let r = 1; r < 4; r++) {
-                            ctx.beginPath();
-                            ctx.arc(centerX, focalY, 10 + r * earthquakeIntensity * 8, 0, Math.PI * 2);
-                            ctx.stroke();
-                        }
-                    }
-                }
-            }
-
-            // Convection currents (subtle)
-            if (state.showConvection) {
-                drawConvectionCurrents(centerX, centerY, time);
-            }
-
-            // Depth scale
-            drawDepthScale();
-
-            // Labels
-            if (state.showLabels) {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.font = 'bold 12px Inter';
-                ctx.textAlign = 'center';
-
-                ctx.fillText('Verwerfung', centerX + 40, centerY - 50);
-                ctx.fillText('Erdbebenherd', centerX - 60, centerY + 60);
-                ctx.fillText('Plattengrenze', centerX, centerY + 120);
-            }
-        }
-
-        function drawConvectionCurrents(centerX, centerY, time) {
-            ctx.strokeStyle = 'rgba(255, 200, 100, 0.3)';
+            ctx.strokeStyle = 'rgba(255, 127, 39, 0.2)';
+            ctx.fillStyle = 'rgba(255, 127, 39, 0.15)';
             ctx.lineWidth = 2;
 
             // Left convection cell
-            const phase = time * 0.002 * state.animationSpeed;
+            const leftOffset = Math.sin(animationState.time * 0.01) * 5;
+            drawConvectionCell(w * 0.25 + leftOffset, baseY + 50, 60, 100, true);
 
-            // Upwelling left
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            ctx.moveTo(centerX - 150, centerY + 80);
-            ctx.quadraticCurveTo(centerX - 120 + Math.cos(phase) * 20, centerY + 120, centerX - 100, centerY + 150);
-            ctx.stroke();
-
-            // Downwelling right
-            ctx.beginPath();
-            ctx.moveTo(centerX + 150, centerY + 80);
-            ctx.quadraticCurveTo(centerX + 120 + Math.cos(phase + Math.PI) * 20, centerY + 120, centerX + 100, centerY + 150);
-            ctx.stroke();
-
-            ctx.setLineDash([]);
-
-            // Arrow heads
-            ctx.fillStyle = 'rgba(255, 200, 100, 0.3)';
-            drawArrow(centerX - 120, centerY + 100, centerX - 100, centerY + 130, 6);
-            drawArrow(centerX + 120, centerY + 100, centerX + 100, centerY + 130, 6);
+            // Right convection cell
+            const rightOffset = Math.sin(animationState.time * 0.01 + Math.PI) * 5;
+            drawConvectionCell(w * 0.75 + rightOffset, baseY + 50, 60, 100, false);
         }
 
-        function drawArrow(fromX, fromY, toX, toY, headSize) {
-            const angle = Math.atan2(toY - fromY, toX - fromX);
-            ctx.beginPath();
-            ctx.moveTo(toX - headSize * Math.cos(angle - Math.PI / 6), toY - headSize * Math.sin(angle - Math.PI / 6));
-            ctx.lineTo(toX, toY);
-            ctx.lineTo(toX - headSize * Math.cos(angle + Math.PI / 6), toY - headSize * Math.sin(angle + Math.PI / 6));
-            ctx.stroke();
-        }
+        function drawConvectionCell(x, y, width, height, leftCurve) {
+            const steps = 8;
+            for (let i = 0; i < steps; i++) {
+                const progress = i / steps;
+                const angle = progress * Math.PI;
 
-        function drawDepthScale() {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.font = '10px Inter';
-            ctx.textAlign = 'right';
+                const startX = leftCurve ? x - width * Math.cos(angle) : x + width * Math.cos(angle);
+                const startY = y - height * 0.5 + progress * height;
 
-            const depths = ['0 km', '50 km', '100 km', '150 km', '200 km'];
-            const startY = canvas.height / 2;
-            const depthStep = 80;
+                const arrowSize = 6;
+                const arrowAngle = leftCurve ? -Math.PI / 4 : Math.PI / 4;
 
-            for (let i = 0; i < depths.length; i++) {
-                const y = startY + i * depthStep;
-                ctx.fillText(depths[i], 40, y);
-
-                // Tick mark
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.moveTo(45, y);
-                ctx.lineTo(55, y);
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(startX - Math.cos(arrowAngle) * arrowSize, startY - Math.sin(arrowAngle) * arrowSize);
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(startX + Math.cos(arrowAngle - Math.PI / 2) * arrowSize, startY + Math.sin(arrowAngle - Math.PI / 2) * arrowSize);
                 ctx.stroke();
             }
         }
 
-        // Animation loop
-        function animate() {
-            // Clear canvas
-            ctx.fillStyle = '#1a0a0a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        function drawConvergentMode() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const centerX = w * 0.5;
+            const crustY = h * 0.2;
+            const plateThickness = 60;
 
-            // Draw based on boundary type
-            switch(state.boundaryType) {
+            // Plate movement
+            const offset = Math.sin(animationState.time * 0.005 * animationState.speed) * 30;
+
+            // Left plate
+            ctx.fillStyle = 'rgba(180, 140, 80, 0.8)';
+            ctx.fillRect(offset, crustY, centerX - offset - 5, plateThickness);
+            ctx.strokeStyle = 'rgba(150, 110, 50, 1)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(offset, crustY, centerX - offset - 5, plateThickness);
+
+            // Right plate (subducting)
+            ctx.fillStyle = 'rgba(160, 120, 70, 0.8)';
+            ctx.beginPath();
+            ctx.moveTo(centerX + offset + 5, crustY);
+            ctx.lineTo(w - offset, crustY);
+            ctx.lineTo(w - offset, crustY + plateThickness * 0.7);
+            ctx.lineTo(centerX + offset + 5 + 80, crustY + plateThickness * 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Mountain formation at boundary
+            const mountainHeight = 40 + Math.abs(offset) * 0.3;
+            ctx.fillStyle = 'rgba(120, 100, 60, 0.9)';
+            ctx.beginPath();
+            ctx.moveTo(centerX - 30, crustY);
+            ctx.lineTo(centerX + 10, crustY - mountainHeight);
+            ctx.lineTo(centerX + 50, crustY);
+            ctx.closePath();
+            ctx.fill();
+
+            // Trench at subduction zone
+            ctx.fillStyle = 'rgba(20, 60, 100, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(centerX + 30, crustY + plateThickness);
+            ctx.quadraticCurveTo(centerX + 50, crustY + plateThickness + 40, centerX + 60, crustY + plateThickness);
+            ctx.lineTo(centerX + 70, crustY + plateThickness);
+            ctx.quadraticCurveTo(centerX + 50, crustY + plateThickness + 30, centerX + 30, crustY + plateThickness);
+            ctx.closePath();
+            ctx.fill();
+
+            // Volcanoes
+            const volcanoX = centerX - 80;
+            const volcanoY = crustY;
+            drawVolcano(volcanoX, volcanoY);
+
+            // Periodic eruptions
+            if (Math.sin(animationState.time * 0.01 * animationState.speed) > 0.7) {
+                createVolcano(volcanoX, volcanoY - 20);
+            }
+
+            // Earthquakes at subduction zone
+            if (animationState.showEarthquakes && Math.random() > 0.95 * animationState.speed) {
+                const quakeX = centerX + Math.random() * 40;
+                const quakeY = crustY + Math.random() * 40;
+                createEarthquake(quakeX, quakeY);
+            }
+
+            // Movement arrows
+            ctx.strokeStyle = 'rgba(255, 200, 100, 0.6)';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = 'rgba(255, 200, 100, 0.6)';
+            drawArrow(w * 0.2, crustY + plateThickness / 2, w * 0.35, crustY + plateThickness / 2);
+            drawArrow(w * 0.8, crustY + plateThickness / 2, w * 0.65, crustY + plateThickness / 2);
+
+            if (animationState.showLabels) {
+                ctx.font = 'bold 12px Inter';
+                ctx.fillStyle = 'rgba(200, 200, 200, 0.8)';
+                ctx.textAlign = 'center';
+                ctx.fillText('Kontinentalplatte', w * 0.25, crustY - 20);
+                ctx.fillText('Ozeanische Platte', w * 0.75, crustY - 20);
+                ctx.fillText('Subduktion', centerX, crustY + 120);
+            }
+
+            drawConvectionArrows(centerX);
+        }
+
+        function drawDivergentMode() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const centerX = w * 0.5;
+            const crustY = h * 0.2;
+            const plateThickness = 60;
+
+            // Plate movement
+            const offset = Math.sin(animationState.time * 0.005 * animationState.speed) * 25;
+
+            // Left plate
+            ctx.fillStyle = 'rgba(180, 140, 80, 0.8)';
+            ctx.fillRect(0, crustY, centerX - 10 - offset, plateThickness);
+            ctx.strokeStyle = 'rgba(150, 110, 50, 1)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, crustY, centerX - 10 - offset, plateThickness);
+
+            // Right plate
+            ctx.fillStyle = 'rgba(160, 120, 70, 0.8)';
+            ctx.fillRect(centerX + 10 + offset, crustY, w - (centerX + 10 + offset), plateThickness);
+            ctx.strokeRect(centerX + 10 + offset, crustY, w - (centerX + 10 + offset), plateThickness);
+
+            // Mid-ocean ridge with magma
+            const magmaWidth = 20 + Math.abs(offset) * 0.5;
+            const magmaGradient = ctx.createLinearGradient(centerX - magmaWidth/2, crustY, centerX + magmaWidth/2, crustY);
+            magmaGradient.addColorStop(0, 'rgba(180, 80, 20, 0.6)');
+            magmaGradient.addColorStop(0.5, 'rgba(255, 150, 50, 0.8)');
+            magmaGradient.addColorStop(1, 'rgba(180, 80, 20, 0.6)');
+            ctx.fillStyle = magmaGradient;
+            ctx.fillRect(centerX - magmaWidth/2, crustY - 10, magmaWidth, plateThickness + 20);
+
+            // Ridge structure
+            ctx.fillStyle = 'rgba(100, 60, 40, 0.8)';
+            ctx.beginPath();
+            ctx.moveTo(centerX - magmaWidth/2, crustY);
+            ctx.lineTo(centerX - magmaWidth/4, crustY - 15);
+            ctx.lineTo(centerX, crustY - 20);
+            ctx.lineTo(centerX + magmaWidth/4, crustY - 15);
+            ctx.lineTo(centerX + magmaWidth/2, crustY);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cooling new crust
+            ctx.fillStyle = 'rgba(130, 90, 60, 0.7)';
+            ctx.fillRect(centerX - magmaWidth/2 - 15, crustY, 15, plateThickness);
+            ctx.fillRect(centerX + magmaWidth/2, crustY, 15, plateThickness);
+
+            // Movement arrows
+            ctx.strokeStyle = 'rgba(255, 200, 100, 0.6)';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = 'rgba(255, 200, 100, 0.6)';
+            drawArrow(w * 0.2, crustY + plateThickness / 2, w * 0.35, crustY + plateThickness / 2);
+            drawArrow(w * 0.8, crustY + plateThickness / 2, w * 0.65, crustY + plateThickness / 2);
+
+            // Hydrothermal vents
+            if (Math.random() > 0.85 * animationState.speed) {
+                createVolcano(centerX + (Math.random() - 0.5) * magmaWidth * 2, crustY - 10);
+            }
+
+            if (animationState.showLabels) {
+                ctx.font = 'bold 12px Inter';
+                ctx.fillStyle = 'rgba(200, 200, 200, 0.8)';
+                ctx.textAlign = 'center';
+                ctx.fillText('Nordamerikanische Platte', w * 0.25, crustY - 20);
+                ctx.fillText('Eurasische Platte', w * 0.75, crustY - 20);
+                ctx.fillText('Mittelozeanischer Rücken', centerX, crustY - 35);
+            }
+
+            drawConvectionArrows(centerX);
+        }
+
+        function drawTransformMode() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const centerX = w * 0.5;
+            const crustY = h * 0.2;
+            const plateThickness = 60;
+
+            // Plate movement (sliding)
+            const offset = Math.sin(animationState.time * 0.005 * animationState.speed) * 20;
+
+            // Upper plate (moving right)
+            ctx.fillStyle = 'rgba(180, 140, 80, 0.8)';
+            ctx.fillRect(0, crustY - 30, w, plateThickness);
+            ctx.strokeStyle = 'rgba(150, 110, 50, 1)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, crustY - 30, w, plateThickness);
+
+            // Lower plate (offset)
+            ctx.fillStyle = 'rgba(160, 120, 70, 0.8)';
+            ctx.fillRect(offset, crustY + plateThickness - 30, w, plateThickness);
+            ctx.strokeRect(offset, crustY + plateThickness - 30, w, plateThickness);
+
+            // Fault line with stress visualization
+            const stressIntensity = (Math.abs(offset) / 20) * 0.5 + 0.3;
+            ctx.strokeStyle = `rgba(255, 150, 50, ${stressIntensity})`;
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+
+            // Jagged fault line
+            let faultX = centerX - 150;
+            let faultY = crustY;
+            ctx.beginPath();
+            ctx.moveTo(faultX, faultY - 50);
+            for (let i = 0; i < 8; i++) {
+                faultX += 40;
+                faultY += (Math.random() - 0.5) * 30;
+                ctx.lineTo(faultX, faultY);
+            }
+            faultX = centerX + 150;
+            faultY = crustY;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Stress glow at fault
+            if (stressIntensity > 0.6) {
+                ctx.fillStyle = `rgba(255, 100, 50, ${(stressIntensity - 0.6) * 0.4})`;
+                ctx.beginPath();
+                ctx.arc(centerX, crustY, 50, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Earthquakes along fault
+            if (animationState.showEarthquakes && stressIntensity > 0.65 && Math.random() > 0.9) {
+                for (let i = 0; i < 3; i++) {
+                    const quakeX = centerX - 100 + Math.random() * 200;
+                    const quakeY = crustY + (Math.random() - 0.5) * 30;
+                    createEarthquake(quakeX, quakeY);
+                }
+            }
+
+            // Movement arrows
+            ctx.strokeStyle = 'rgba(255, 200, 100, 0.6)';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = 'rgba(255, 200, 100, 0.6)';
+            drawArrow(w * 0.2, crustY - 50, w * 0.35, crustY - 50);
+            drawArrow(w * 0.8, crustY + 30, w * 0.65, crustY + 30);
+
+            if (animationState.showLabels) {
+                ctx.font = 'bold 12px Inter';
+                ctx.fillStyle = 'rgba(200, 200, 200, 0.8)';
+                ctx.textAlign = 'center';
+                ctx.fillText('Pacifische Platte', w * 0.3, crustY - 50);
+                ctx.fillText('Nordamerikanische Platte', w * 0.7, crustY + 70);
+                ctx.fillText('Transformstörung', centerX, crustY + 100);
+            }
+
+            drawConvectionArrows(centerX);
+        }
+
+        function drawVolcano(x, y) {
+            ctx.fillStyle = 'rgba(180, 80, 30, 0.8)';
+            ctx.beginPath();
+            ctx.moveTo(x - 15, y + 5);
+            ctx.lineTo(x, y - 20);
+            ctx.lineTo(x + 15, y + 5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(150, 60, 20, 1)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Crater
+            ctx.fillStyle = 'rgba(50, 20, 10, 0.9)';
+            ctx.fillRect(x - 4, y - 18, 8, 6);
+        }
+
+        function drawArrow(fromX, fromY, toX, toY) {
+            const headlen = 15;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.stroke();
+        }
+
+        function updateParticles() {
+            earthquakes = earthquakes.filter(eq => eq.life > 0);
+            volcanoes = volcanoes.filter(vol => vol.life > 0);
+
+            earthquakes.forEach(eq => {
+                eq.life -= 0.02;
+                eq.radius += 1;
+            });
+
+            volcanoes.forEach(vol => {
+                vol.x += vol.vx;
+                vol.y += vol.vy;
+                vol.vy += 0.1;
+                vol.life -= 0.03;
+            });
+        }
+
+        function drawParticles() {
+            // Draw earthquakes
+            earthquakes.forEach(eq => {
+                ctx.strokeStyle = `rgba(255, 255, 0, ${eq.life * 0.8})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(eq.x, eq.y, eq.radius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.strokeStyle = `rgba(255, 200, 0, ${eq.life * 0.5})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(eq.x, eq.y, eq.radius * 0.6, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+
+            // Draw volcanic particles
+            volcanoes.forEach(vol => {
+                ctx.fillStyle = `rgba(255, ${Math.floor(150 * vol.life)}, 50, ${vol.life})`;
+                ctx.beginPath();
+                ctx.arc(vol.x, vol.y, vol.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBackground();
+
+            switch (animationState.mode) {
                 case 'convergent':
-                    drawConvergent(state.time);
+                    drawConvergentMode();
                     break;
                 case 'divergent':
-                    drawDivergent(state.time);
+                    drawDivergentMode();
                     break;
                 case 'transform':
-                    drawTransform(state.time);
+                    drawTransformMode();
                     break;
             }
 
-            state.time += 1;
+            updateParticles();
+            drawParticles();
+
+            animationState.time += animationState.speed;
+
             requestAnimationFrame(animate);
         }
 
-        // Start animation
-        animate();
         updateInfo();
+        animate();
     </script>
 </body>
 </html>

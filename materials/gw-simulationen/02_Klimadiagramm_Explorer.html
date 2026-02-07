@@ -571,19 +571,29 @@
             return precips.reduce((a, b) => a + b, 0);
         }
 
-        function updateInfo(location, index) {
-            const data = climateData[location];
+        function updateInfo() {
+            const loc1 = document.getElementById("location1").value;
+            const loc2 = document.getElementById("location2").value;
+            const data = climateData[loc1];
+
             if (!data) return;
 
-            const selector = index === 1 ? "" : "2";
+            // Always update info for location 1 (the single chart case)
             document.getElementById("infoCoords").textContent = `${data.lat}, ${data.lon}`;
             document.getElementById("infoAlt").textContent = `${data.alt} m`;
             document.getElementById("infoTemp").textContent = `${getAnnualMeanTemp(data.temp)} °C`;
             document.getElementById("infoPrecip").textContent = `${getAnnualPrecip(data.precip)} mm`;
 
             if (document.getElementById("showClimateZone").checked) {
-                document.getElementById("zoneCode" + selector).textContent = data.zone;
-                document.getElementById("zoneName" + selector).textContent = data.zoneName;
+                document.getElementById("zoneCode1").textContent = data.zone;
+                document.getElementById("zoneName1").textContent = data.zoneName;
+
+                // Update location 2 zone if it exists
+                if (loc2 && climateData[loc2]) {
+                    const data2 = climateData[loc2];
+                    document.getElementById("zoneCode2").textContent = data2.zone;
+                    document.getElementById("zoneName2").textContent = data2.zoneName;
+                }
             }
         }
 
@@ -750,19 +760,23 @@
         }
 
         // Event listeners
-        document.getElementById("location1").addEventListener("change", (e) => {
-            updateInfo(e.target.value, 1);
+        document.getElementById("location1").addEventListener("change", () => {
+            updateInfo();
             document.getElementById("climateZoneSection").style.display = "block";
+            const loc2 = document.getElementById("location2").value;
+            if (loc2) {
+                document.getElementById("climateZoneSection2").style.display = "block";
+            }
             draw();
         });
 
         document.getElementById("location2").addEventListener("change", (e) => {
             if (e.target.value) {
-                updateInfo(e.target.value, 2);
                 document.getElementById("climateZoneSection2").style.display = "block";
             } else {
                 document.getElementById("climateZoneSection2").style.display = "none";
             }
+            updateInfo();
             draw();
         });
 
@@ -784,7 +798,7 @@
 
         // Initialize
         resizeCanvas();
-        updateInfo("Wien", 1);
+        updateInfo();
     </script>
 </body>
 </html>
