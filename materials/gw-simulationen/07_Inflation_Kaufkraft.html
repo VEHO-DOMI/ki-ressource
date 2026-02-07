@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inflation & Kaufkraft Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a0a1a 0%, #2d1040 50%, #3d1060 100%);
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            padding: 12px;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 12px;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #fff;
+            max-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .header-subtitle {
+            font-size: 0.65em;
+            font-weight: 300;
+            color: #b0b0b0;
+            display: block;
+        }
+
+        .canvas-section {
+            height: calc(100vh - 70px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow: hidden;
+        }
+
+        .chart-container {
+            flex: 0.6;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .basket-container {
+            flex: 0.4;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow-y: auto;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .controls-panel {
+            height: calc(100vh - 70px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .section-title {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ff6ba6;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(255, 107, 166, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ff6ba6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 8px rgba(255, 107, 166, 0.4);
+        }
+
+        .value-display {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #00d9ff;
+            padding: 6px 8px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 4px;
+            border-left: 3px solid #00d9ff;
+        }
+
+        .button-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .preset-btn {
+            padding: 6px 8px;
+            font-size: 0.7em;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            background: rgba(255, 107, 166, 0.15);
+            border-color: rgba(255, 107, 166, 0.4);
+            color: #ff6ba6;
+        }
+
+        .preset-btn.active {
+            background: rgba(255, 107, 166, 0.3);
+            border-color: #ff6ba6;
+            color: #ff6ba6;
+            box-shadow: 0 0 8px rgba(255, 107, 166, 0.3);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75em;
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 32px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 9px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-switch.active {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: #00d9ff;
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-switch.active::before {
+            left: 16px;
+            background: #00d9ff;
+            box-shadow: 0 0 6px rgba(0, 217, 255, 0.6);
+        }
+
+        .info-section {
+            margin-top: auto;
+            padding: 12px;
+            background: rgba(255, 107, 166, 0.05);
+            border: 1px solid rgba(255, 107, 166, 0.2);
+            border-radius: 8px;
+        }
+
+        .info-title {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #ff6ba6;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7em;
+            margin-bottom: 6px;
+            color: #d0d0d0;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #00d9ff;
+        }
+
+        .info-value.negative {
+            color: #ff6ba6;
+        }
+
+        /* Scrollbar styling */
+        .controls-panel::-webkit-scrollbar,
+        .basket-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .controls-panel::-webkit-scrollbar-track,
+        .basket-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .controls-panel::-webkit-scrollbar-thumb,
+        .basket-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+        }
+
+        .controls-panel::-webkit-scrollbar-thumb:hover,
+        .basket-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span>💷 Inflation & Kaufkraft</span>
+            <span class="header-subtitle">Wie Inflation dein Geld entwertet</span>
+        </div>
+
+        <div class="canvas-section">
+            <div class="chart-container">
+                <canvas id="chartCanvas"></canvas>
+            </div>
+            <div class="basket-container">
+                <canvas id="basketCanvas"></canvas>
+            </div>
+        </div>
+
+        <div class="controls-panel">
+            <!-- Inflationsrate Section -->
+            <div class="control-section">
+                <div class="section-title">Inflationsrate</div>
+                <div class="slider-wrapper">
+                    <input type="range" id="inflationSlider" min="0" max="15" step="0.1" value="3.5">
+                    <div class="value-display" id="inflationValue">3,5% pro Jahr</div>
+                </div>
+                <div class="button-row">
+                    <button class="preset-btn" data-inflation="2.0">EZB-Ziel 2%</button>
+                    <button class="preset-btn" data-inflation="4.0">Ö 2024 4%</button>
+                </div>
+                <div class="button-row">
+                    <button class="preset-btn" data-inflation="8.0">Hoch 8%</button>
+                    <button class="preset-btn" data-inflation="15.0">Hyper 15%</button>
+                </div>
+            </div>
+
+            <!-- Zeitraum Section -->
+            <div class="control-section">
+                <div class="section-title">Zeitraum</div>
+                <div class="slider-wrapper">
+                    <input type="range" id="yearsSlider" min="1" max="30" step="1" value="10">
+                    <div class="value-display" id="yearsValue">In 10 Jahren</div>
+                </div>
+            </div>
+
+            <!-- Startbetrag Section -->
+            <div class="control-section">
+                <div class="section-title">Startbetrag</div>
+                <div class="slider-wrapper">
+                    <input type="range" id="startAmountSlider" min="100" max="10000" step="100" value="1000">
+                    <div class="value-display" id="startAmountValue">1.000,00 €</div>
+                </div>
+            </div>
+
+            <!-- Lohnwachstum Section -->
+            <div class="control-section">
+                <label class="toggle-label">
+                    <div class="toggle-switch" id="wageToggle"></div>
+                    <span>Lohnentwicklung anzeigen</span>
+                </label>
+                <div class="slider-wrapper" id="wageSliderWrapper" style="display: none;">
+                    <input type="range" id="wageGrowthSlider" min="0" max="10" step="0.1" value="2.5">
+                    <div class="value-display" id="wageGrowthValue">2,5% pro Jahr</div>
+                </div>
+            </div>
+
+            <!-- Info Panel -->
+            <div class="info-section">
+                <div class="info-title">Berechnungen</div>
+                <div class="info-item">
+                    <span>Kaufkraft nach X Jahren:</span>
+                    <span class="info-value" id="purchasingPower">???</span>
+                </div>
+                <div class="info-item">
+                    <span>Wertverlust:</span>
+                    <span class="info-value negative" id="valueLoss">???</span>
+                </div>
+                <div class="info-item">
+                    <span>Realer Wertverlust:</span>
+                    <span class="info-value negative" id="realValueLoss">???</span>
+                </div>
+                <div class="info-item">
+                    <span>Halbierungszeit:</span>
+                    <span class="info-value" id="halvingTime">???</span>
+                </div>
+                <div class="info-item">
+                    <span>Verdopplungszeit (Rule):</span>
+                    <span class="info-value" id="doublingTime">???</span>
+                </div>
+                <div class="info-item" id="realWageItem" style="display: none;">
+                    <span>Reallohnveränderung:</span>
+                    <span class="info-value" id="realWageChange">???</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===================== STATE & CONFIG =====================
+        const state = {
+            inflation: 3.5,
+            years: 10,
+            startAmount: 1000,
+            wageGrowth: 2.5,
+            showWages: false,
+            animatedInflation: 3.5,
+            animatedYears: 10,
+            animatedStartAmount: 1000,
+            animatedWageGrowth: 2.5
+        };
+
+        const goods = [
+            { name: 'Brot', icon: '🍞', currentPrice: 3.50 },
+            { name: 'Milch (1L)', icon: '🥛', currentPrice: 1.60 },
+            { name: 'Kaffee', icon: '☕', currentPrice: 4.20 },
+            { name: 'Kino', icon: '🎬', currentPrice: 12.00 },
+            { name: 'Monatskarte', icon: '🚌', currentPrice: 51.00 },
+            { name: 'Handy-Vertrag', icon: '📱', currentPrice: 25.00 },
+            { name: 'Miete (m²)', icon: '🏠', currentPrice: 12.50 },
+            { name: 'Benzin (1L)', icon: '⛽', currentPrice: 1.65 }
+        ];
+
+        // ===================== DOM ELEMENTS =====================
+        const chartCanvas = document.getElementById('chartCanvas');
+        const chartCtx = chartCanvas.getContext('2d');
+        const basketCanvas = document.getElementById('basketCanvas');
+        const basketCtx = basketCanvas.getContext('2d');
+
+        const inflationSlider = document.getElementById('inflationSlider');
+        const yearsSlider = document.getElementById('yearsSlider');
+        const startAmountSlider = document.getElementById('startAmountSlider');
+        const wageToggle = document.getElementById('wageToggle');
+        const wageSliderWrapper = document.getElementById('wageSliderWrapper');
+        const wageGrowthSlider = document.getElementById('wageGrowthSlider');
+
+        // ===================== EVENT LISTENERS =====================
+        inflationSlider.addEventListener('input', (e) => {
+            state.inflation = parseFloat(e.target.value);
+            updateDisplay();
+        });
+
+        yearsSlider.addEventListener('input', (e) => {
+            state.years = parseInt(e.target.value);
+            updateDisplay();
+        });
+
+        startAmountSlider.addEventListener('input', (e) => {
+            state.startAmount = parseInt(e.target.value);
+            updateDisplay();
+        });
+
+        wageToggle.addEventListener('click', () => {
+            state.showWages = !state.showWages;
+            wageToggle.classList.toggle('active');
+            wageSliderWrapper.style.display = state.showWages ? 'flex' : 'none';
+            document.getElementById('realWageItem').style.display = state.showWages ? 'flex' : 'none';
+            updateDisplay();
+        });
+
+        wageGrowthSlider.addEventListener('input', (e) => {
+            state.wageGrowth = parseFloat(e.target.value);
+            updateDisplay();
+        });
+
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const value = parseFloat(e.target.dataset.inflation);
+                state.inflation = value;
+                inflationSlider.value = value;
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                updateDisplay();
+            });
+        });
+
+        // ===================== HELPER FUNCTIONS =====================
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('de-AT', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+
+        function formatPercent(value) {
+            return new Intl.NumberFormat('de-AT', {
+                style: 'percent',
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1
+            }).format(value);
+        }
+
+        function calculatePurchasingPower(principal, rate, years) {
+            const rateDecimal = rate / 100;
+            return principal / Math.pow(1 + rateDecimal, years);
+        }
+
+        function calculateFuturePrice(currentPrice, rate, years) {
+            const rateDecimal = rate / 100;
+            return currentPrice * Math.pow(1 + rateDecimal, years);
+        }
+
+        function calculateHalvingTime(rate) {
+            const rateDecimal = rate / 100;
+            if (rateDecimal <= 0) return Infinity;
+            return Math.log(2) / Math.log(1 + rateDecimal);
+        }
+
+        function calculateDoublingTime(rate) {
+            const rateDecimal = rate / 100;
+            if (rateDecimal <= 0) return Infinity;
+            return 72 / rate;
+        }
+
+        function calculateRealWageChange(wageGrowth, inflation) {
+            const wg = wageGrowth / 100;
+            const inf = inflation / 100;
+            return ((1 + wg) / (1 + inf) - 1) * 100;
+        }
+
+        // ===================== ANIMATION LOOP =====================
+        let animationId = null;
+
+        function animate() {
+            const speed = 0.08;
+
+            state.animatedInflation += (state.inflation - state.animatedInflation) * speed;
+            state.animatedYears += (state.years - state.animatedYears) * speed;
+            state.animatedStartAmount += (state.startAmount - state.animatedStartAmount) * speed;
+            if (state.showWages) {
+                state.animatedWageGrowth += (state.wageGrowth - state.animatedWageGrowth) * speed;
+            }
+
+            draw();
+
+            const threshold = 0.01;
+            const diff = Math.abs(state.inflation - state.animatedInflation) +
+                        Math.abs(state.years - state.animatedYears) +
+                        Math.abs(state.startAmount - state.animatedStartAmount);
+
+            if (diff > threshold) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById('inflationValue').textContent =
+                state.inflation.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + '% pro Jahr';
+
+            document.getElementById('yearsValue').textContent =
+                `In ${state.years} Jahr${state.years !== 1 ? 'en' : ''}`;
+
+            document.getElementById('startAmountValue').textContent =
+                formatCurrency(state.startAmount);
+
+            if (state.showWages) {
+                document.getElementById('wageGrowthValue').textContent =
+                    state.wageGrowth.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + '% pro Jahr';
+            }
+
+            updateInfoPanel();
+
+            if (animationId) cancelAnimationFrame(animationId);
+            animationId = requestAnimationFrame(animate);
+        }
+
+        function updateInfoPanel() {
+            const pp = calculatePurchasingPower(state.startAmount, state.inflation, state.years);
+            const valueLossPercent = (1 - pp / state.startAmount) * 100;
+            const realValueLoss = state.startAmount - pp;
+            const halvingTime = calculateHalvingTime(state.inflation);
+            const doublingTime = calculateDoublingTime(state.inflation);
+
+            document.getElementById('purchasingPower').textContent = formatCurrency(pp);
+            document.getElementById('valueLoss').textContent = '-' + valueLossPercent.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + '%';
+            document.getElementById('realValueLoss').textContent = '-' + formatCurrency(realValueLoss);
+            document.getElementById('halvingTime').textContent = halvingTime < 1000 ? halvingTime.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + ' a' : '∞';
+            document.getElementById('doublingTime').textContent = doublingTime < 1000 ? doublingTime.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + ' a' : '∞';
+
+            if (state.showWages) {
+                const realWageChange = calculateRealWageChange(state.wageGrowth, state.inflation);
+                document.getElementById('realWageChange').textContent = realWageChange >= 0 ? '+' : '';
+                document.getElementById('realWageChange').textContent += realWageChange.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + '%';
+                document.getElementById('realWageChange').classList.toggle('negative', realWageChange < 0);
+            }
+        }
+
+        // ===================== DRAWING FUNCTIONS =====================
+        function resizeCanvases() {
+            const chartContainer = document.querySelector('.chart-container');
+            const basketContainer = document.querySelector('.basket-container');
+
+            chartCanvas.width = chartContainer.clientWidth;
+            chartCanvas.height = chartContainer.clientHeight;
+
+            basketCanvas.width = basketContainer.clientWidth;
+            basketCanvas.height = basketContainer.clientHeight;
+        }
+
+        function draw() {
+            drawChart();
+            drawBasket();
+        }
+
+        function drawChart() {
+            const w = chartCanvas.width;
+            const h = chartCanvas.height;
+            const padding = 40;
+            const graphW = w - padding * 2;
+            const graphH = h - padding * 2;
+
+            // Clear
+            chartCtx.clearRect(0, 0, w, h);
+
+            // Draw grid
+            chartCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            chartCtx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                const x = padding + (graphW / 10) * i;
+                const y = padding + (graphH / 10) * i;
+                chartCtx.beginPath();
+                chartCtx.moveTo(x, padding);
+                chartCtx.lineTo(x, h - padding);
+                chartCtx.stroke();
+                chartCtx.beginPath();
+                chartCtx.moveTo(padding, y);
+                chartCtx.lineTo(w - padding, y);
+                chartCtx.stroke();
+            }
+
+            // Draw axes
+            chartCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            chartCtx.lineWidth = 2;
+            chartCtx.beginPath();
+            chartCtx.moveTo(padding, padding);
+            chartCtx.lineTo(padding, h - padding);
+            chartCtx.lineTo(w - padding, h - padding);
+            chartCtx.stroke();
+
+            // X-axis labels (Jahre)
+            chartCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            chartCtx.font = '11px Inter';
+            chartCtx.textAlign = 'center';
+            for (let i = 0; i <= 30; i += 5) {
+                const x = padding + (i / 30) * graphW;
+                chartCtx.fillText(i, x, h - padding + 18);
+            }
+
+            // Y-axis labels (Kaufkraft)
+            chartCtx.textAlign = 'right';
+            for (let i = 0; i <= 10; i++) {
+                const y = h - padding - (graphH / 10) * i;
+                const val = Math.round((state.animatedStartAmount / 10) * i);
+                chartCtx.fillText(formatCurrency(val), padding - 8, y + 4);
+            }
+
+            // Draw axis labels
+            chartCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            chartCtx.font = '600 12px Inter';
+            chartCtx.textAlign = 'center';
+            chartCtx.fillText('Jahre', w / 2, h - 8);
+            chartCtx.save();
+            chartCtx.translate(12, h / 2);
+            chartCtx.rotate(-Math.PI / 2);
+            chartCtx.fillText('Kaufkraft in €', 0, 0);
+            chartCtx.restore();
+
+            // Draw purchasing power curve
+            const points = [];
+            for (let i = 0; i <= 30; i++) {
+                const pp = calculatePurchasingPower(state.animatedStartAmount, state.animatedInflation, i);
+                const x = padding + (i / 30) * graphW;
+                const y = h - padding - (pp / state.animatedStartAmount) * graphH;
+                points.push({ x, y, pp });
+            }
+
+            // Fill area under curve
+            const gradient = chartCtx.createLinearGradient(0, padding, 0, h - padding);
+            gradient.addColorStop(0, 'rgba(255, 107, 166, 0.3)');
+            gradient.addColorStop(1, 'rgba(255, 107, 166, 0)');
+
+            chartCtx.fillStyle = gradient;
+            chartCtx.beginPath();
+            chartCtx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                chartCtx.lineTo(points[i].x, points[i].y);
+            }
+            chartCtx.lineTo(points[points.length - 1].x, h - padding);
+            chartCtx.lineTo(points[0].x, h - padding);
+            chartCtx.closePath();
+            chartCtx.fill();
+
+            // Draw main curve
+            chartCtx.strokeStyle = '#ff6ba6';
+            chartCtx.lineWidth = 3;
+            chartCtx.beginPath();
+            chartCtx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                chartCtx.lineTo(points[i].x, points[i].y);
+            }
+            chartCtx.stroke();
+
+            // Draw halving point
+            const halvingTime = calculateHalvingTime(state.animatedInflation);
+            if (halvingTime < 30) {
+                const hx = padding + (halvingTime / 30) * graphW;
+                const hy = h - padding - (0.5 * graphH);
+
+                // Dashed line
+                chartCtx.strokeStyle = 'rgba(0, 217, 255, 0.5)';
+                chartCtx.lineWidth = 1;
+                chartCtx.setLineDash([5, 5]);
+                chartCtx.beginPath();
+                chartCtx.moveTo(hx, padding);
+                chartCtx.lineTo(hx, h - padding);
+                chartCtx.stroke();
+                chartCtx.setLineDash([]);
+
+                // Label
+                chartCtx.fillStyle = '#00d9ff';
+                chartCtx.font = '600 10px Inter';
+                chartCtx.textAlign = 'center';
+                chartCtx.fillText('Halbierung', hx, padding - 8);
+                chartCtx.fillStyle = 'rgba(0, 217, 255, 0.8)';
+                chartCtx.fillText(halvingTime.toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + 'a', hx, padding + 8);
+            }
+
+            // Draw wage growth line if enabled
+            if (state.showWages) {
+                const wagePoints = [];
+                for (let i = 0; i <= 30; i++) {
+                    const realWageMultiplier = Math.pow(1 + state.animatedWageGrowth / 100, i) / Math.pow(1 + state.animatedInflation / 100, i);
+                    const pp = state.animatedStartAmount * realWageMultiplier;
+                    const x = padding + (i / 30) * graphW;
+                    const y = h - padding - (pp / state.animatedStartAmount) * graphH;
+                    wagePoints.push({ x, y });
+                }
+
+                chartCtx.strokeStyle = '#00d9ff';
+                chartCtx.lineWidth = 2;
+                chartCtx.setLineDash([3, 3]);
+                chartCtx.beginPath();
+                chartCtx.moveTo(wagePoints[0].x, wagePoints[0].y);
+                for (let i = 1; i < wagePoints.length; i++) {
+                    chartCtx.lineTo(wagePoints[i].x, wagePoints[i].y);
+                }
+                chartCtx.stroke();
+                chartCtx.setLineDash([]);
+
+                // Legend
+                chartCtx.fillStyle = '#ff6ba6';
+                chartCtx.fillRect(w - padding - 150, padding + 8, 12, 12);
+                chartCtx.fillStyle = '#00d9ff';
+                chartCtx.font = '11px Inter';
+                chartCtx.textAlign = 'left';
+                chartCtx.fillText('Kaufkraft', w - padding - 132, padding + 17);
+
+                chartCtx.fillStyle = '#00d9ff';
+                chartCtx.fillRect(w - padding - 150, padding + 28, 12, 12);
+                chartCtx.fillStyle = '#00d9ff';
+                chartCtx.fillText('Mit Lohnwachstum', w - padding - 132, padding + 37);
+            }
+        }
+
+        function drawBasket() {
+            const w = basketCanvas.width;
+            const h = basketCanvas.height;
+            const padding = 16;
+            const itemWidth = (w - padding * 2) / 2;
+            const itemHeight = (h - padding * 2) / Math.ceil(goods.length / 2);
+            const barWidth = (itemWidth - 40) / 2;
+            const barSpacing = 8;
+
+            basketCtx.clearRect(0, 0, w, h);
+
+            goods.forEach((good, idx) => {
+                const row = Math.floor(idx / 2);
+                const col = idx % 2;
+                const x = padding + col * itemWidth;
+                const y = padding + row * itemHeight;
+
+                // Item background
+                basketCtx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+                basketCtx.fillRect(x, y, itemWidth - 4, itemHeight - 4);
+                basketCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                basketCtx.lineWidth = 1;
+                basketCtx.strokeRect(x, y, itemWidth - 4, itemHeight - 4);
+
+                // Icon and name
+                basketCtx.font = 'bold 14px Inter';
+                basketCtx.textAlign = 'left';
+                basketCtx.fillStyle = '#fff';
+                basketCtx.fillText(good.icon + ' ' + good.name, x + 8, y + 20);
+
+                // Current price (today)
+                const currentPrice = good.currentPrice;
+                const futurePrice = calculateFuturePrice(good.currentPrice, state.animatedInflation, state.animatedYears);
+
+                const barY = y + 28;
+                const barHeight = itemHeight - 40;
+                const maxPrice = Math.max(currentPrice, futurePrice) * 1.2;
+                const scale = barHeight / maxPrice;
+
+                // Current price bar
+                const currentHeight = Math.min(currentPrice * scale, barHeight);
+                basketCtx.fillStyle = '#00d9ff';
+                basketCtx.fillRect(x + 8, barY + barHeight - currentHeight, barWidth - barSpacing, currentHeight);
+
+                // Future price bar
+                const futureHeight = Math.min(futurePrice * scale, barHeight);
+                basketCtx.fillStyle = '#ff6ba6';
+                basketCtx.fillRect(x + 8 + barWidth + barSpacing, barY + barHeight - futureHeight, barWidth - barSpacing, futureHeight);
+
+                // Price labels
+                basketCtx.font = '10px Inter';
+                basketCtx.textAlign = 'center';
+                basketCtx.fillStyle = '#00d9ff';
+                basketCtx.fillText('€' + currentPrice.toFixed(2), x + 8 + barWidth / 2 - barSpacing, barY + barHeight + 12);
+
+                basketCtx.fillStyle = '#ff6ba6';
+                basketCtx.fillText('€' + futurePrice.toFixed(2), x + 8 + barWidth + barSpacing + barWidth / 2 - barSpacing, barY + barHeight + 12);
+
+                // Time labels
+                basketCtx.font = '9px Inter';
+                basketCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                basketCtx.fillText('Heute', x + 8 + barWidth / 2 - barSpacing, barY - 4);
+                basketCtx.fillText(`+${state.animatedYears.toFixed(0)}a`, x + 8 + barWidth + barSpacing + barWidth / 2 - barSpacing, barY - 4);
+            });
+
+            // Legend
+            const legendY = padding + Math.ceil(goods.length / 2) * itemHeight + 8;
+            basketCtx.fillStyle = '#00d9ff';
+            basketCtx.fillRect(padding, legendY, 10, 10);
+            basketCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            basketCtx.font = '10px Inter';
+            basketCtx.textAlign = 'left';
+            basketCtx.fillText('Heutige Preise', padding + 14, legendY + 9);
+
+            basketCtx.fillStyle = '#ff6ba6';
+            basketCtx.fillRect(padding + 130, legendY, 10, 10);
+            basketCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            basketCtx.fillText('Zukünftige Preise', padding + 144, legendY + 9);
+        }
+
+        // ===================== INITIALIZATION =====================
+        window.addEventListener('resize', () => {
+            resizeCanvases();
+            draw();
+        });
+
+        resizeCanvases();
+        updateDisplay();
+    </script>
+</body>
+</html>
