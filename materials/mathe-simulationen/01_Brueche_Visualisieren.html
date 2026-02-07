@@ -575,7 +575,7 @@
                 y += 20;
 
                 const pieSection = h * 0.45;
-                const pieRadius = Math.min((w - 2 * padding) / 2, pieSection - 50) * 0.75;
+                const pieRadius = Math.min((w - 2 * padding) / 2, (pieSection - 40) / 2);
                 drawPieChart(canvasCenter, y + pieRadius, pieRadius, state.numerator1, state.denominator1, CONFIG.colors.primary);
                 y = padding + pieSection;
 
@@ -616,7 +616,7 @@
                 let y = padding + 22;
 
                 const pieSection = h * 0.42;
-                const chartRadius = Math.min(pieSection - 50, (w / 2) - padding - 10) * 0.55;
+                const chartRadius = Math.min((pieSection - 50) / 2, (w / 4) - padding);
 
                 // Section 1: Pie Charts
                 ctx.fillStyle = CONFIG.colors.textLight;
