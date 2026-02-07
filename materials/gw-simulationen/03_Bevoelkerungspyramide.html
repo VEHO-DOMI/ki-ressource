@@ -141,31 +141,35 @@
             gap: 6px;
         }
 
-        .country-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
-        }
-
-        .country-btn {
-            padding: 4px 8px;
+        .country-select {
+            width: 100%;
+            padding: 5px 8px;
             background: rgba(0, 180, 180, 0.2);
             border: 1px solid rgba(0, 180, 180, 0.4);
             border-radius: 6px;
             color: #ffffff;
             cursor: pointer;
-            font-size: 0.65em;
+            font-size: 0.7em;
             font-weight: 500;
-            transition: all 0.2s;
             font-family: 'Inter', sans-serif;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300d4d4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 24px;
         }
 
-        .country-btn:hover { background: rgba(0, 180, 180, 0.4); }
+        .country-select:hover, .country-select:focus {
+            background-color: rgba(0, 180, 180, 0.35);
+            border-color: rgba(0, 180, 180, 0.7);
+        }
 
-        .country-btn.active {
-            background: rgba(0, 180, 180, 0.6);
-            border-color: rgba(0, 180, 180, 0.8);
-            box-shadow: 0 0 10px rgba(0, 180, 180, 0.3);
+        .country-select option {
+            background: #0a2a2a;
+            color: #ffffff;
+            padding: 4px;
         }
 
         .phase-selector {
@@ -387,12 +391,26 @@
         <div class="controls-strip">
             <!-- Col 1: Presets + Phase -->
             <div class="col-presets">
-                <div class="country-buttons">
-                    <button class="country-btn active" data-country="Österreich">Österreich</button>
-                    <button class="country-btn" data-country="Nigeria">Nigeria</button>
-                    <button class="country-btn" data-country="Japan">Japan</button>
-                    <button class="country-btn" data-country="USA">USA</button>
-                </div>
+                <select class="country-select" id="countrySelect">
+                    <optgroup label="Europa">
+                        <option value="Österreich" selected>Österreich</option>
+                    </optgroup>
+                    <optgroup label="Asien">
+                        <option value="Japan">Japan</option>
+                        <option value="Südkorea">Südkorea</option>
+                        <option value="China">China</option>
+                        <option value="Indien">Indien</option>
+                        <option value="Saudi-Arabien">Saudi-Arabien</option>
+                    </optgroup>
+                    <optgroup label="Afrika">
+                        <option value="Nigeria">Nigeria</option>
+                        <option value="Niger">Niger</option>
+                    </optgroup>
+                    <optgroup label="Amerika">
+                        <option value="USA">USA</option>
+                        <option value="Brasilien">Brasilien</option>
+                    </optgroup>
+                </select>
                 <div class="phase-selector">
                     <button class="phase-btn" data-phase="1">P1</button>
                     <button class="phase-btn" data-phase="2">P2</button>
@@ -480,6 +498,42 @@
                 males: [10050000,10385000,10720000,10385000,10050000,11055000,11725000,11390000,10720000,10050000,11055000,11725000,11055000,9380000,7370000,5360000,3350000,1675000,670000,167500],
                 females: [9745000,10080000,10415000,10080000,9745000,10720000,11390000,11055000,10415000,10050000,11055000,12060000,11390000,9745000,8040000,6370000,4355000,2345000,1005000,335000],
                 phase: 4, birthRate: 11.0, deathRate: 10.2
+            },
+            "Niger": {
+                year: 2024, totalPopulation: 27200000, type: "pyramidenförmig",
+                males: [2992000,2584000,2176000,1768000,1360000,1088000,816000,612000,476000,340000,245000,177000,122000,82000,48000,24000,10000,4000,1000,500],
+                females: [2856000,2448000,2040000,1700000,1360000,1088000,844000,652000,510000,374000,272000,204000,150000,102000,62000,34000,14000,6000,2000,1000],
+                phase: 1, birthRate: 46.0, deathRate: 10.0
+            },
+            "Indien": {
+                year: 2024, totalPopulation: 1430000000, type: "glockenförmig",
+                males: [62920000,66430000,68510000,71500000,72930000,71500000,65780000,60060000,54340000,47190000,40040000,33605000,27170000,20020000,14300000,8580000,5005000,2145000,715000,286000],
+                females: [57200000,60060000,62920000,66430000,68510000,67210000,62920000,57200000,51480000,44330000,37180000,31460000,25740000,18590000,13585000,8580000,5720000,2860000,1144000,572000],
+                phase: 3, birthRate: 17.0, deathRate: 7.3
+            },
+            "China": {
+                year: 2024, totalPopulation: 1410000000, type: "urnenförmig",
+                males: [38070000,42300000,46530000,50760000,56400000,59340000,56400000,63440000,69480000,73710000,67068000,56400000,52170000,42300000,31020000,19740000,11280000,5640000,1692000,564000],
+                females: [35130000,39360000,43590000,47820000,54870000,57810000,54870000,61910000,67950000,72180000,66362000,55810000,52170000,44712000,33432000,22560000,14100000,8460000,2820000,1410000],
+                phase: 4, birthRate: 7.5, deathRate: 7.9
+            },
+            "Brasilien": {
+                year: 2024, totalPopulation: 216000000, type: "glockenförmig",
+                males: [7344000,7560000,7776000,8424000,9072000,9504000,9288000,8856000,8208000,7560000,6696000,5616000,4536000,3456000,2376000,1512000,864000,432000,130000,43000],
+                females: [7128000,7344000,7560000,8208000,8856000,9288000,9072000,8640000,8208000,7776000,7128000,6048000,5184000,4104000,3024000,2160000,1296000,756000,260000,108000],
+                phase: 3, birthRate: 13.5, deathRate: 7.0
+            },
+            "Südkorea": {
+                year: 2024, totalPopulation: 51700000, type: "urnenförmig",
+                males: [827200,930600,1086200,1241800,1551000,1706600,1862200,2017800,2069500,2121200,2069500,1965800,1862200,1551000,1137700,724400,465500,258600,103400,31000],
+                females: [775500,878900,1034500,1190100,1448000,1603600,1759200,1914800,1966500,2069500,2069500,1966500,1914800,1655600,1293400,879000,620100,413400,206700,62000],
+                phase: 5, birthRate: 4.9, deathRate: 7.3
+            },
+            "Saudi-Arabien": {
+                year: 2024, totalPopulation: 37000000, type: "glockenförmig",
+                males: [1480000,1406000,1332000,1480000,2220000,2960000,3330000,2960000,2220000,1480000,1110000,740000,518000,370000,222000,148000,74000,37000,11000,4000],
+                females: [1369000,1295000,1221000,1332000,1480000,1591000,1480000,1369000,1110000,888000,703000,518000,370000,259000,148000,111000,55500,37000,14800,5500],
+                phase: 3, birthRate: 14.0, deathRate: 3.6
             }
         };
 
@@ -780,25 +834,22 @@
 
         // ===================== EVENT LISTENERS =====================
 
-        // Country buttons
-        document.querySelectorAll(".country-btn").forEach(btn => {
-            btn.addEventListener("click", function() {
-                document.querySelectorAll(".country-btn").forEach(b => b.classList.remove("active"));
-                this.classList.add("active");
-                const preset = countryPresets[this.dataset.country];
-                state.country = this.dataset.country;
-                state.year = preset.year;
-                state.males = [...preset.males];
-                state.females = [...preset.females];
-                state.totalPopulation = preset.totalPopulation;
-                state.birthRate = preset.birthRate;
-                state.deathRate = preset.deathRate;
-                state.phase = preset.phase;
-                document.getElementById("birthRateSlider").value = state.birthRate;
-                document.getElementById("deathRateSlider").value = state.deathRate;
-                updatePhaseButtons();
-                updateDisplay();
-            });
+        // Country select
+        document.getElementById("countrySelect").addEventListener("change", function() {
+            const preset = countryPresets[this.value];
+            if (!preset) return;
+            state.country = this.value;
+            state.year = preset.year;
+            state.males = [...preset.males];
+            state.females = [...preset.females];
+            state.totalPopulation = preset.totalPopulation;
+            state.birthRate = preset.birthRate;
+            state.deathRate = preset.deathRate;
+            state.phase = preset.phase;
+            document.getElementById("birthRateSlider").value = state.birthRate;
+            document.getElementById("deathRateSlider").value = state.deathRate;
+            updatePhaseButtons();
+            updateDisplay();
         });
 
         // Sliders
