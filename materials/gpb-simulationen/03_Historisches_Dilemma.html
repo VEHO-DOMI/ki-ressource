@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historisches Dilemma – Die Neue Welt 1519</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1020 50%, #5c1030 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            color: #ffc107;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #e0e0e0;
+            font-style: italic;
+        }
+
+        .progress-bar {
+            margin: 30px 0;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .progress-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid #ffc107;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background-color: #ffc107;
+            color: #1a0a0a;
+            transform: scale(1.2);
+        }
+
+        .progress-dot.completed {
+            background-color: rgba(255, 193, 7, 0.6);
+        }
+
+        .scene-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            animation: slideIn 0.6s ease-out;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .scene-container.active {
+            display: block;
+        }
+
+        .scene-header {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #1a0a0a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            font-size: 1.3em;
+            text-shadow: none;
+        }
+
+        .scene-number {
+            opacity: 0.8;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .narrative-text {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .choice-button {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 152, 0, 0.15) 100%);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .choice-button:hover {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.3) 0%, rgba(255, 152, 0, 0.3) 100%);
+            transform: translateX(10px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .choice-button::before {
+            content: '→';
+            font-size: 1.5em;
+            min-width: 30px;
+        }
+
+        .choice-text {
+            flex: 1;
+        }
+
+        .ending-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            animation: slideIn 0.6s ease-out;
+            display: none;
+        }
+
+        .ending-container.active {
+            display: block;
+        }
+
+        .ending-text {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 1.05em;
+            line-height: 1.8;
+            min-height: 120px;
+        }
+
+        .reflection-quote {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            font-style: italic;
+            font-size: 1.1em;
+            color: #ffd54f;
+        }
+
+        .historical-context {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid #4caf50;
+        }
+
+        .historical-context h3 {
+            color: #4caf50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .historical-context p {
+            margin-bottom: 12px;
+            line-height: 1.7;
+            color: #e0e0e0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .control-button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #1a0a0a;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .control-button.secondary {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 152, 0, 0.2) 100%);
+            color: #ffc107;
+            border: 2px solid #ffc107;
+        }
+
+        .control-button.secondary:hover {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.4) 0%, rgba(255, 152, 0, 0.4) 100%);
+        }
+
+        .decision-path {
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.95em;
+            color: #90caf9;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .intro-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .intro-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .intro-container h2 {
+            color: #ffc107;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .info-box {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            color: #c8e6c9;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .scene-container,
+            .ending-container,
+            .intro-container {
+                padding: 25px;
+            }
+
+            .narrative-text {
+                font-size: 1em;
+            }
+
+            .choice-button {
+                padding: 15px;
+                font-size: 0.95em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .control-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Historisches Dilemma</h1>
+            <p class="subtitle">Die Neue Welt 1519 – Ein Abenteuer mit Konsequenzen</p>
+        </header>
+
+        <div class="progress-bar">
+            <div class="progress-dot" id="progress-0">0</div>
+            <div class="progress-dot" id="progress-1">1</div>
+            <div class="progress-dot" id="progress-2">2</div>
+            <div class="progress-dot" id="progress-3">3</div>
+            <div class="progress-dot" id="progress-4">4</div>
+            <div class="progress-dot" id="progress-5">5</div>
+        </div>
+
+        <!-- INTRO -->
+        <div id="intro" class="intro-container active">
+            <h2>Willkommen, Diego</h2>
+            <div class="intro-text">
+                <p>Du bist Diego González, 19 Jahre alt. Das Jahr ist 1519. Die Welt steht an der Schwelle zu einer neuen Ära – eine Ära, die Millionen Menschen verändern, töten und in Not stürzen wird.</p>
+                <p>Dies ist keine normale Geschichte. Du wirst Entscheidungen treffen, die eine echte Bedeutung haben. Jede Wahl hat Konsequenzen – nicht nur für Diego, sondern für Menschen, die du noch nicht kennst.</p>
+            </div>
+
+            <div class="info-box">
+                <strong>Hinweis:</strong> Dieses Abenteuer behandelt schwierige Themen: Unterdrückung, Kulturzerstörung, Gewalt. Es versucht nicht, sie schönzufärben. Stattdessen fordert es dich auf, selbst zu urteilen – mit den Augen eines Menschen aus dem 16. Jahrhundert, aber auch mit deinem modernen Verstand.
+            </div>
+
+            <div class="button-group">
+                <button class="control-button" onclick="startGame()">Abenteuer beginnen</button>
+            </div>
+        </div>
+
+        <!-- SCENE 1: DIE ABFAHRT -->
+        <div id="scene-1" class="scene-container">
+            <div class="scene-header">
+                <div class="scene-number">Szene 1 von 5</div>
+                Die Abfahrt – Sevilla, 1519
+            </div>
+
+            <div class="narrative-text">
+                Du sitzt in einer Schenke in Sevilla. Die Mauern sind dunkel, der Rauch vom Feuer steigt in dicken Schwaden auf. Dein Vater war ein einfacher Weber, deine Mutter ist gestorben, als du zehn Jahre alt warst. Ihr Haus ist klein, dein Leben scheint festgelegt: Armut, harte Arbeit, kaum Hoffnung auf etwas Besseres.
+                <br><br>
+                Aber jetzt spricht die ganze Stadt von einer Expedition. Ein Mann namens Hernán Cortés sucht Abenteurer. Man erzählt sich Geschichten von Gold, von reichen Ländern jenseits des Meeres, von Ruhm und Reichtum. Dein Herz rast bei dem Gedanken.
+                <br><br>
+                Gestern noch hast du deinen Onkel besucht, einen Mönch im Kloster von San Isidoro. Seine Augen wurden dunkel, als du von der Expedition erzähltest. „Diego," sagte er langsam, „die, die dorthin fahren, werden Dinge tun, die ihre Seele beschädigen. Sie werden Kulturen zerstören, Menschen töten, die ihnen nichts getan haben. Der Preis für Gold ist höher, als du glaubst."
+                <br><br>
+                Aber dein Bauch ist leer, und die Armut erstickt dich. Es ist eine Entscheidung zwischen Hoffnung und Angst.
+            </div>
+
+            <div class="choices-container">
+                <button class="choice-button" onclick="makeChoice(1, 'A')">
+                    <span class="choice-text">Du schließt dich der Expedition an. Dein Onkel irrt sich. Du bist stark, du kannst Gold finden und deine Familie retten.</span>
+                </button>
+                <button class="choice-button" onclick="makeChoice(1, 'B')">
+                    <span class="choice-text">Du lehnst ab. Dein Onkel hat recht – es ist zu gefährlich. Du bleibst in Sevilla und arbeitest, um deine Familie zu unterstützen.</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCENE 2: DIE BEGEGNUNG -->
+        <div id="scene-2" class="scene-container">
+            <div class="scene-header">
+                <div class="scene-number">Szene 2 von 5</div>
+                Die Begegnung – Die Küste von Mexiko, sechs Wochen später
+            </div>
+
+            <div class="decision-path" id="decision-path-2"></div>
+
+            <div class="narrative-text">
+                Nach Wochen auf See, nach Stürmen, nach Hunger und Angst, seht ihr Land. Weiße Strände, üppiger grüner Wald, Vögel in Farben, die du nie gesehen hast. Es ist wunderschön.
+                <br><br>
+                Ein Dorf liegt vor euch. Die Menschen sind neugierig – sie kommen auf euch zu, lächelnd. Sie sind nicht bewaffnet, oder nur mit leichten Speeren. Sie tragen Federn, Schmuck aus Gold und Jade. Ein älterer Mann, offensichtlich der Anführer, beugt sich vor und bietet Cortés Früchte an – süße, saftige Früchte, die du noch nie probiert hast.
+                <br><br>
+                Cortés' Augen leuchten, aber nicht von Freundlichkeit. Er leuchten vom Goldschmuck. Er wendet sich dir zu – du bist der beste Übersetzer in der Expedition, ein Mann namens Malinche hat dir geholfen, die Sprache zu lernen. „Diego," sagt Cortés leise, „erkläre diesen Menschen, dass sie dem König von Spanien gehorchen müssen. Dass wir hier sind, um ihre Länder unter unsere Herrschaft zu bringen. Mach ihnen klar, was passiert, wenn sie uns nicht folgen."
+                <br><br>
+                Die Männer um dich herum nicken ermutigend. Das ist, warum sie hier sind. Aber als du in die Augen des alten Mannes schaust, siehst du Vertrauen. Er denkt, du und deine Leute seid Freunde.
+            </div>
+
+            <div class="choices-container">
+                <button class="choice-button" onclick="makeChoice(2, 'A')">
+                    <span class="choice-text">Du übersetzt Cortés' Forderung wortgetreu. Die Totonaken müssen wissen, wer hier das Sagen hat. Es ist Krieg, es ist Eroberung.</span>
+                </button>
+                <button class="choice-button" onclick="makeChoice(2, 'B')">
+                    <span class="choice-text">Du milderst die Worte ab. Du sagst dem alten Mann, dass ihr Freunde seid und Handelsmöglichkeiten bietet. Deine Worte sind freundlich, nicht bedrohlich.</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCENE 3A: DIE UNTERWERFUNG -->
+        <div id="scene-3a" class="scene-container">
+            <div class="scene-header">
+                <div class="scene-number">Szene 3 von 5</div>
+                Die Unterwerfung – Das Totonaken-Dorf
+            </div>
+
+            <div class="decision-path" id="decision-path-3a"></div>
+
+            <div class="narrative-text">
+                Die Worte funktionieren wie eine Waffe. Als der alte Mann versteht, dass er keinen freien Willen hat, dass er sich dem König von Spanien unterwerfen muss, fallen Stille über das Dorf. Einige Menschen laufen weg, in Panik. Andere knien. Ein junger Mann, vielleicht fünfzehn Jahre alt, flieht in den Wald.
+                <br><br>
+                Cortés befiehlt, den Jungen zu fangen. Seine Männer fangen ihn, schlagen ihn brutal, um ein Beispiel zu geben. Die Mutter des Jungen schreitet auf Cortés zu, fleht, spricht schnell in einer Sprache, die du nicht verstehst. Aber ihr Schmerz braucht keine Übersetzung.
+                <br><br>
+                Du wirst reich für deine Dienste belohnt. Cortés gibt dir eine Handfull Gold – es ist mehr, als deine Familie in zehn Jahren verdient hätte. Der erste Teil deines Traums ist Wirklichkeit geworden.
+                <br><br>
+                Aber in dieser Nacht, als du unter Sternen schläfst, hörst du ein Weinen. Es kommt von einem Zelt in der Nähe. Es ist die Mutter des Jungen. Sie weint, als würde die Welt enden. Und vielleicht endet die Welt für sie auch – die Welt, wie sie sie kannte.
+            </div>
+
+            <div class="choices-container">
+                <button class="choice-button" onclick="makeChoice('3a', 'A')">
+                    <span class="choice-text">Es ist Krieg. Das ist notwendig. Du schläfst und vergisst das Weinen. Es ist nicht deine Schuld – es ist einfach die Natur der Eroberung.</span>
+                </button>
+                <button class="choice-button" onclick="makeChoice('3a', 'B')">
+                    <span class="choice-text">Du sprichst Cortés darauf an. Das war zu brutal. Diese Menschen haben uns nichts getan. Das war Verrat an Menschen, die uns vertraut haben.</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCENE 3B: DIE FREUNDSCHAFT -->
+        <div id="scene-3b" class="scene-container">
+            <div class="scene-header">
+                <div class="scene-number">Szene 3 von 5</div>
+                Die Freundschaft – Das Totonaken-Dorf
+            </div>
+
+            <div class="decision-path" id="decision-path-3b"></div>
+
+            <div class="narrative-text">
+                Deine sanften Worte schaffen Vertrauen. Der alte Mann lächelt und lädt dich in sein Haus ein. Du sitzt mit ihm, isst Maisbrot und Fisch. Langsam erzählt er dir von seiner Angst.
+                <br><br>
+                „Wir sind Totonaken," sagt er. „Aber vor vielen Jahren kamen die Azteken mit Waffen und Gewalt. Sie zwingt uns, jeden Jahr Menschen zu opfern – Menschen, die wir lieben. Familien werden zerrissen. Unser Gold wird genommen. Die Azteken unter ihrem Kaiser Moctezuma sind wie eine dunkle Wolke über unserem Land. Wenn ihr uns helfen könnt, sie zu besiegen, würde unsere Nation wieder frei sein."
+                <br><br>
+                Die Geschichte schockiert dich. Ja, die Azteken opfern Menschen – das hast du gehört. Aber dein Onkel hat auch von aztekischen Schulen und Krankenhäusern gesprochen. Die moralische Welt ist komplizierter, als du dachte.
+                <br><br>
+                Du erzählst Cortés davon. Sofort plant er ein Bündnis – nicht aus Freundlichkeit, sondern aus Berechnung. Die Totonaken könnten Soldaten stellen, und Cortés könnte mit ihnen gegen die Azteken marschieren. Es ist eine Allianz der Interessen. Aber du weißt, dass Cortés diese Menschen danach nicht frei lassen wird. Eine neue Herrschaft wird die alte ersetzen.
+            </div>
+
+            <div class="button-group">
+                <button class="control-button" onclick="moveToScene(4)">Weiter zu Szene 4</button>
+            </div>
+        </div>
+
+        <!-- SCENE 4: TENOCHTITLAN -->
+        <div id="scene-4" class="scene-container">
+            <div class="scene-header">
+                <div class="scene-number">Szene 4 von 5</div>
+                Tenochtitlan – Die Stadt auf dem Wasser
+            </div>
+
+            <div class="decision-path" id="decision-path-4"></div>
+
+            <div class="narrative-text">
+                Keine Stadt, die du in Spanien gesehen hast, ist so beeindruckend wie Tenochtitlan. Sie liegt auf Inseln in einem großen See, verbunden durch Brücken und Kanäle. Die Häuser sind weiß, die Straßen sind sauber. Es gibt Schulen, Tempel, Märkte mit Waren aus allen Teilen der Welt.
+                <br><br>
+                Der Kaiser Moctezuma empfängt euch als Gäste. Er ist höflich, elegant, intelligent. Er zeigt euch Dinge, die dich sprachlos machen: Universitäten, wo Schüler Mathematik und Astronomie lernen; Krankenhäuser, wo Ärzte Kranke heilen; Bibliotheken mit tausenden Büchern.
+                <br><br>
+                Aber du siehst auch andere Dinge. Auf der großen Pyramide sehen Hunderte von Menschen – Kriegsgefangene – auf ihr Schicksal warten. Priester in roten Gewändern führen Rituale durch, die in Menschenopfern enden. Das Blut fließt. Die Schreie hallen über die Stadt. Es ist grausam, es ist falsch.
+                <br><br>
+                Cortés schaut das an und sieht nicht die moralische Komplexität. Er sieht nur, dass Moctezuma schwach ist, dass diese Stadt reich ist, dass sie für die Plünderung reif ist. In der Nacht, in seinem Zelt, erzählt er dir von seinem Plan: Er wird Moctezuma gefangen nehmen. Er wird die Stadt von innen zerstören.
+                <br><br>
+                „Es ist für Gott," sagt Cortés. „Diese Menschen sind Heiden, Mörder. Wir befreien sie von ihrer Verderbtheit."
+                <br><br>
+                Du weißt, dass es eine Lüge ist. Du weißt, dass dieser Plan nicht um Religion geht. Er geht um Gold. Um Macht. Um Ruhm für Cortés.
+            </div>
+
+            <div class="choices-container">
+                <button class="choice-button" onclick="makeChoice(4, 'A')">
+                    <span class="choice-text">Du machst mit. Moctezuma ist ein Tyrann. Seine Menschenopfer sind eine Verbrechen. Wenn du diese Stadt einnimmst, zerstörst du ein Böses.</span>
+                </button>
+                <button class="choice-button" onclick="makeChoice(4, 'B')">
+                    <span class="choice-text">Du weigerst dich. Moctezuma hat euch als Gäste aufgenommen. Das ist Verrat. Ja, die Opfer sind falsch, aber zwei Verbrechen machen die Welt nicht besser.</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCENE 5: DAS ERBE -->
+        <div id="scene-5" class="scene-container">
+            <div class="scene-header">
+                <div class="scene-number">Szene 5 von 5</div>
+                Das Erbe – Ein Jahr später
+            </div>
+
+            <div class="decision-path" id="decision-path-5"></div>
+
+            <div class="narrative-text" id="scene-5-text">
+                [Der Text wird basierend auf deinen Entscheidungen angepasst]
+            </div>
+
+            <div class="reflection-quote" id="reflection-quote">
+                [Ein Reflexionszitat wird basierend auf deinen Entscheidungen angezeigt]
+            </div>
+
+            <div class="historical-context" id="historical-context">
+                [Historischer Kontext wird angezeigt]
+            </div>
+
+            <div class="button-group">
+                <button class="control-button" onclick="restartGame()">Neustart – Andere Entscheidungen treffen</button>
+            </div>
+        </div>
+
+        <!-- ENDING: REFUSED TO JOIN -->
+        <div id="ending-refused" class="ending-container">
+            <div class="scene-header">
+                Die Straße nicht genommen – Sevilla, 1525
+            </div>
+
+            <div class="ending-text">
+                Sechs Jahre später sitzt du wieder in derselben Schenke in Sevilla. Du bist älter, ärmer, aber dein Gewissen ist leicht. Du hast hart gearbeitet, hast deine Familie unterstützt. Es war nicht der große Ruhm, den du dir vorgestellt hast, aber es war ehrlich.
+                <br><br>
+                Dann kommen die Geschichten. Ein Schiff kehrt aus Mexiko zurück. Überlebende erzählen von der Zerstörung Tenochtitlans. Hunderttausende sind tot. Eine ganze Zivilisation ist ausgelöscht. Viele der Conquistadoren, die damals abreisten – manche deine Freunde – sind gefallen oder haben sich an Krankheiten angesteckt.
+                <br><br>
+                Dein Onkel besucht dich. Er legt eine Hand auf deine Schulter und sagt nur: „Du hast gut gehandelt, Diego. Nicht immer ist Untätigkeit falsch. Manchmal ist es Weisheit."
+            </div>
+
+            <div class="reflection-quote">
+                „Nicht zu handeln ist auch eine Entscheidung. Aber wenn die Handlung selbst böse ist, ist es manchmal moralischer, nicht zu handeln."
+            </div>
+
+            <div class="historical-context">
+                <h3>Historischer Kontext</h3>
+                <p><strong>Was ist wirklich passiert?</strong> Tausende von Spaniern – nicht Millionen, aber immer noch viele – segelten nach Amerika. Die überwiegende Mehrheit war arm, wie Diego. Viele starben auf der Reise oder kämpften. Die, die überlebten und Gold fanden, wurden reich – ein paar Jahre lang. Aber viele litten unter Schuldgefühlen ihr Leben lang.</p>
+                <p><strong>Die Zerstörung Tenochtitlans:</strong> Die Stadt fiel 1521, zwei Jahre nach Cortés' Ankunft. Schätzungsweise 100.000 bis 240.000 Menschen starben – nicht nur durch Gewalt, sondern hauptsächlich durch Krankheiten wie Pocken, die die Spanier einschleppten. Die Azteken hatten keine Immunität gegen europäische Krankheiten.</p>
+                <p><strong>Die moralische Komplexität:</strong> Die Azteken waren wirklich für ihre Menschenopfer berüchtigt. Aber die spanische Eroberung war nicht eine moralisch saubere „Befreiung". Sie war eine Eroberung, die eine ganze Zivilisation zerstörte. Zwei Wrongs machen nicht ein Right.</p>
+                <p><strong>Können wir Menschen der Vergangenheit mit modernen Maßstäben beurteilen?</strong> Eine schwere Frage. Ja, die Menschen des 16. Jahrhunderts hätten moralisch bessere Entscheidungen treffen können. Aber wir müssen auch verstehen, dass ihre Welt anders war. Das entschuldigt nicht das Böse, sondern hilft uns zu verstehen, wie gewöhnliche Menschen im Namen von Ruhm, Gold und Religion zu Tätern werden können.</p>
+            </div>
+
+            <div class="button-group">
+                <button class="control-button" onclick="restartGame()">Neustart – Eine andere Geschichte</button>
+            </div>
+        </div>
+
+        <!-- ENDING: SPOKE UP AGAINST CORTÉS -->
+        <div id="ending-spoke-up" class="ending-container">
+            <div class="scene-header">
+                Der Widerstand – Ein dunkles Erbe
+            </div>
+
+            <div class="ending-text">
+                Du schaust Cortés in die Augen und sagst: „Das ist falsch. Das ist Verrat."
+                <br><br>
+                Die Zelt wird still. Die anderen Soldaten starren dich an. Cortés' Gesicht wird dunkelrot vor Wut. „Du fragst mich, ob ich Verrat begehe? Ich begehe einen heiligen Krieg gegen Heiden," knurrt er. „Aber du – du bist noch schlimmer. Du fragst nach Moral, während du von spanischem Gold profitierst."
+                <br><br>
+                Cortés lässt dich verhaften. Du wirst für die nächsten Monate wie ein Gefangener behandelt. Aber dein Mut – dein kleiner, schwacher Mut – stärkt ein oder zwei andere Männer. Sie beginnen Fragen zu stellen. Sie weigern sich zu folgen.
+                <br><br>
+                Du überlebst die Belagerung von Tenochtitlan nicht. Du stirbst an Pocken, wie tausende andere. Aber in deinen letzten Stunden weißt du: Du hast wenigstens versucht, das Richtige zu tun.
+            </div>
+
+            <div class="reflection-quote">
+                „Manchmal ist die einzige Sache, die wir tun können, nein zu sagen. Manchmal ist nein sagen nicht genug. Aber wenigstens haben wir es versucht."
+            </div>
+
+            <div class="historical-context">
+                <h3>Historischer Kontext</h3>
+                <p><strong>Gab es solche Widerstände?</strong> Ja. Ein Priester namens Bartolomé de las Casas war ein früher Kritiker der spanischen Eroberungen. Er verbrachte sein Leben damit, die Verbrechen gegen die Indigenen zu dokumentieren und zu verdammen. Viele andere Soldaten – namenlos in der Geschichte – weigerten sich auch, an den schlimmsten Gräueltaten teilzunehmen. Ihre Geschichten sind vergessen, aber sie existierten.</p>
+                <p><strong>Die Nürnberger Prozesse und die Frage der persönlichen Verantwortung:</strong> Nach dem Zweiten Weltkrieg argumentierten Nazis, dass sie „nur Befehle befolgten". Die Welt sagte: Das ist keine Entschuldigung. Jeder Mensch hat moralische Verantwortung. Das gleiche Prinzip hätte auf Eroberer im 16. Jahrhundert angewendet werden können.</p>
+                <p><strong>Der Preis der Moral:</strong> Manchmal führt das Richtige zum persönlichen Preis. Diejenigen, die sich gegen das System stellten, wurden oft bestraft, verachtet oder vergessen. Aber ihre Entscheidung hatte einen Wert – einen moralischen Wert, auch wenn die Welt sie nicht anerkannte.</p>
+                <p><strong>Was würde ich tun?</strong> Das ist die Frage, die jeder historische Dilemma stellt. Es ist leicht, vom 21. Jahrhundert aus zu urteilen. Aber wenn du in Diegos Schuhen wärst – arm, hungrig, ein Soldat unter Tausenden – würdest du widersprechen?</p>
+            </div>
+
+            <div class="button-group">
+                <button class="control-button" onclick="restartGame()">Neustart – Eine andere Geschichte</button>
+            </div>
+        </div>
+
+        <!-- ENDING: ACCEPTED CONQUEST (Path A) -->
+        <div id="ending-accepted-conquest" class="ending-container">
+            <div class="scene-header">
+                Der Reichtum und die Schuld – Mexiko, 1521
+            </div>
+
+            <div class="ending-text">
+                Tenochtitlan fällt nach einer Belagerung von drei Monaten. Die Stadt brennt. Die Straßen sind mit Leichen gefüllt. Du stehst auf den Trümmern einer Zivilisation und bist unermesslich reich geworden. Gold, Edelsteine, Land – all das ist jetzt dein.
+                <br><br>
+                Du kehrst nach Spanien zurück als reicher Mann. Deine Familie ist glücklich. Du baust ein großes Haus. Nachts aber sitzen Sie allein und erinnern sich an die Dinge, die Sie gesehen haben. Die Mutter, die um ihren Sohn weinte. Die Kinder, die verhungerten, als die Stadt belagert wurde. Die Priester, die beim Anblick ihrer zerstörten Tempel weinte.
+                <br><br>
+                Du hattest recht gehabt – der Preis für Gold war höher, als du glauben konntest. Nicht nur für dich, sondern für Millionen anderer.
+            </div>
+
+            <div class="reflection-quote">
+                „Gold ist schwer – nicht wegen seines Gewichts, sondern wegen des Blutes, das daran klebt. Und dieses Blut wäscht sich nicht ab, egal wie viel Zeit vergeht."
+            </div>
+
+            <div class="historical-context">
+                <h3>Historischer Kontext</h3>
+                <p><strong>Was hat die Eroberung gekostet?</strong> Schätzungsweise 3,5 bis 5,6 Millionen Azteken starben in den Jahrzehnten nach der Eroberung. Nicht alle durch spanische Gewalt – die meisten durch Krankheiten. Aber die Verantwortung liegt bei der Eroberung selbst, die diese Bedingungen schuf.</p>
+                <p><strong>Das Paradox des Reichtums:</strong> Viele Conquistadoren wurden Reich und kehrten nach Spanien zurück. Aber ihre Reichtum war nicht das saubere Gold, das sie sich vorgestellt hatten. Viele beschrieben Schuldgefühle, Albträume, spirituelle Leere. Einige wandten sich religiöser Askese zu, als würden sie für ihre Sünden büßen.</p>
+                <p><strong>Die Vernichtung einer Zivilisation:</strong> Die Azteken hatten komplexe Systeme von Gesetz, Bildung, Medizin und Kunst. Ein großer Teil wurde zerstört oder durch europäische Systeme ersetzt. Es ist ein massiver Kulturverlust für die Menschheit.</p>
+                <p><strong>Wem gehörte die Moral?</strong> Cortés rechtfertigte seine Taten mit dem Christentum. Aber die echten Gründe waren Gold, Ruhm und persönliche Macht. Das ist nicht neu – Macht rechtfertigt sich selbst mit moralischen Masken.</p>
+                <p><strong>Kann man Vergangenheit und Gegenwart verbinden?</strong> Ja. Mexico City steht heute auf den Trümmern Tenochtitlans. Die Nachkommen der Azteken leben unter einer anderen Herrschaft als ihrer Vorfahren. Das Erbe der Eroberung wirkt noch heute nach – in sozialen Ungerechtigkeit, in verlorener Kultur, in anhaltender Armut in vielen indigenen Gemeinschaften.</p>
+            </div>
+
+            <div class="button-group">
+                <button class="control-button" onclick="restartGame()">Neustart – Eine andere Geschichte</button>
+            </div>
+        </div>
+
+        <!-- ENDING: REFUSED TO BETRAY MOCTEZUMA -->
+        <div id="ending-refused-moctezuma" class="ending-container">
+            <div class="scene-header">
+                Der Weg des Widerstands – Tenochtitlan, 1521
+            </div>
+
+            <div class="ending-text">
+                Du sagst Cortés klar: „Nein. Das ist falsch."
+                <br><br>
+                Deine Worte ändern Cortés nicht. Er lacht und sagt dir, dass du ein Narr bist. Aber deine Weigerung verbreitet sich unter den Soldaten. Ein oder zwei andere unterstützen dich. Es ist nicht genug, um Cortés zu stoppen – aber es reicht, um einem zu zeigen, dass die Soldaten nicht alle einer Meinung sind.
+                <br><br>
+                Die Belagerung beginnt. Es ist kaum zu beschreiben – chaos, Hunger, Krankheit. Du kämpfst immer noch, weil du keine Wahl hast. Aber du weißt, dass du auf der falschen Seite stehst. Vier Monate später fällt die Stadt. Du überlebst, aber du bist nicht mehr dieselbe Person. Du hast die Last eines geteilten Gewissens getragen – und das ist manchmal das Schwerste.
+            </div>
+
+            <div class="reflection-quote">
+                „Das Richtige zu tun ist selten einfach. Manchmal führt es nicht zu einem happy ending. Aber es führt zu etwas, das noch wichtiger ist: Ein Gewissen, das du mit dir selbst teilen kannst."
+            </div>
+
+            <div class="historical-context">
+                <h3>Historischer Kontext</h3>
+                <p><strong>Die ethische Komplexität:</strong> Die Frage „sollte man sich einer unmoralischen Aktion widersetzen, auch wenn man sie nicht verhindern kann?" ist zeitlos. Sie stellt sich in jedem Krieg, in jeder Unterdrückung.</p>
+                <p><strong>Bartolomé de las Casas und andere Kritiker:</strong> Es gab Stimmen, die gegen die spanische Eroberung protestierten. De las Casas schrieb ein Buch – „Brevísima relación de la destrucción de las Indias" (Eine kurze Beschreibung der Zerstörung der Indias) – das die Greuel dokumentierte. Seine Arbeit führte zu späteren Gesetzen zum Schutz der Indigenen. Es war nicht genug, um die Zerstörung zu verhindern, aber es war ein Anfang.</p>
+                <p><strong>Das Dilemma der Mitwisserschaft:</strong> Wenn man bei einem Verbrechen dabeistehen und nichts dagegen tun kann, ist man schuldig? Philosophen und Juristen streiten darüber. Aber eine Sache ist sicher: Das Schweigen ermöglicht das Verbrechen.</p>
+                <p><strong>Was sagt uns das über heute?</strong> Wir leben in einer Welt von Ungerechtigkeit – Unterdrückung, Ausbeutung, Gewalt. Manchmal fühlt sich unser Widerstand klein und machtlos an, wie Diegos. Aber kleine Taten der Moral zählen. Sie zählen, weil sie unsere Menschlichkeit bewahren.</p>
+            </div>
+
+            <div class="button-group">
+                <button class="control-button" onclick="restartGame()">Neustart – Eine andere Geschichte</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let currentScene = 'intro';
+        let choices = {
+            scene1: null,
+            scene2: null,
+            scene3: null,
+            scene4: null
+        };
+
+        const decisions = {
+            1: {
+                A: 'Du bist der Expedition beigetreten',
+                B: 'Du hast Sevilla verlassen'
+            },
+            2: {
+                A: 'Du hast Cortés\' Befehle wörtlich übersetzt',
+                B: 'Du hast die Worte abgemildert'
+            },
+            '3a': {
+                A: 'Du hast die Unterdrückung akzeptiert',
+                B: 'Du hast dich gegen Cortés gestellt'
+            },
+            '3b': {
+                A: 'Du hast die Unterwerfung übernommen',
+                B: 'Du hast die Unterwerfung übernommen'
+            },
+            4: {
+                A: 'Du hast die Eroberung unterstützt',
+                B: 'Du hast dich geweigert, Moctezuma zu verraten'
+            }
+        };
+
+        function startGame() {
+            hideScene('intro');
+            showScene('scene-1');
+            updateProgress();
+        }
+
+        function makeChoice(scene, choice) {
+            choices[`scene${scene}`] = choice;
+
+            if (scene === 1) {
+                if (choice === 'A') {
+                    hideScene('scene-1');
+                    showScene('scene-2');
+                    updateDecisionPath();
+                } else {
+                    hideScene('scene-1');
+                    showEnding('ending-refused');
+                }
+            } else if (scene === 2) {
+                choices['scene2'] = choice;
+                hideScene('scene-2');
+                if (choice === 'A') {
+                    showScene('scene-3a');
+                    updateDecisionPath();
+                } else {
+                    showScene('scene-3b');
+                    updateDecisionPath();
+                }
+            } else if (scene === '3a') {
+                choices['scene3'] = 'A';
+                hideScene('scene-3a');
+                if (choice === 'A') {
+                    showScene('scene-4');
+                    updateDecisionPath();
+                } else {
+                    showEnding('ending-spoke-up');
+                }
+            } else if (scene === 4) {
+                hideScene('scene-4');
+                if (choice === 'A') {
+                    showScene('scene-5');
+                    displayEnding('accepted');
+                } else {
+                    showEnding('ending-refused-moctezuma');
+                }
+            }
+
+            updateProgress();
+        }
+
+        function moveToScene(sceneNum) {
+            hideScene('scene-3b');
+            showScene(`scene-${sceneNum}`);
+            updateProgress();
+        }
+
+        function displayEnding(type) {
+            const narrativeText = document.getElementById('scene-5-text');
+            const reflectionQuote = document.getElementById('reflection-quote');
+            const historicalContext = document.getElementById('historical-context');
+
+            if (type === 'accepted') {
+                narrativeText.innerHTML = `
+                    Tenochtitlan liegt in Trümmern. Monate haben die Belagerung gedauert. Moctezuma ist tot. Die Tempelpyramiden sind zerstört. Die Bibliotheken der Azteken sind verbrannt. Tausende sind tot – nicht nur Krieger, sondern Frauen, Kinder, Alte.
+                    <br><br>
+                    Du hast gewonnen. Du bist jetzt reich. Cortés gibt dir Land, Sklaven, Gold. Auf dem Papier, du hast alles erreicht, was du in Sevilla träumte.
+                    <br><br>
+                    Aber in der Nacht liegst du wach. Du denkst an den alten Mann im Totonaken-Dorf, der dir vertraut hat. Du denkst an die Mutter, die um ihren Sohn weinte. Du denkst an die Schulen und Krankenhäuser Tenochtitlans, die jetzt Asche sind. Du denkst an Millionen von Menschen, deren Welt zerstört wurde.
+                    <br><br>
+                    Dein Onkel war recht. Der Preis für Gold ist wirklich höher als die Seele.
+                `;
+
+                reflectionQuote.textContent = '"Gold ist schwer – nicht wegen seines Gewichts, sondern wegen des Blutes, das daran klebt. Und dieses Blut wäscht sich nicht ab, egal wie viel Zeit vergeht." – Ein Conquistador, Jahre später';
+
+                historicalContext.innerHTML = `
+                    <h3>Historischer Kontext: Die Vernichtung einer Zivilisation</h3>
+                    <p><strong>Die Zahl der Todesfälle:</strong> Schätzungsweise 100.000 bis 240.000 Menschen starben während der Belagerung von Tenochtitlan. In den folgenden Jahrzehnten starben Millionen mehr – hauptsächlich durch Pocken und andere europäische Krankheiten.</p>
+                    <p><strong>Eine Frage der Schuld:</strong> Wer trägt die Schuld? Cortés? Die spanische Krone? Die Soldaten, die befolgten? Oder alle zusammen? Geschichte ist nie einfach, aber die Antwort ist: Sie alle tragen einen Teil der Verantwortung.</p>
+                    <p><strong>Das paradoxe Ende:</strong> Viele Conquistadoren wurden reich, aber ihre Reichtum war nie so süß, wie sie gehofft hatten. Sie lebten mit Schuldgefühlen. Einige schrieben später Briefe oder Tagebücher, die ihre Angst und ihre Reue zeigen.</p>
+                    <p><strong>Mexico heute:</strong> Mexico City wurde auf den Überresten Tenochtitlans gebaut. Die Azteken sind nicht verschwunden – ihre Nachkommen leben noch heute in Mexiko. Aber ihre Kultur wurde unterdrückt, ihre Sprachen wurden fast ausgelöscht, ihre Reichtum wurde gestohlen. Das Erbe der Eroberung wirkt sich noch heute aus.</p>
+                    <p><strong>Die große Frage:</strong> Hätte es anders sein können? Hätte Cortés die Stadt respektieren können? Hätten die beiden Kulturen koexistieren können? Das wissen wir nicht. Aber wir wissen, dass Cortés diese Fragen nicht mal gestellt hat.</p>
+                `;
+            }
+
+            showScene('scene-5');
+        }
+
+        function showScene(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function hideScene(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function showEnding(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function updateDecisionPath() {
+            // Update decision paths as needed
+            const paths = {
+                '2': choices.scene1 === 'A' ? 'Du bist abgereist' : '',
+                '3a': choices.scene2 === 'A' ? 'Du hast die Totonaken unterdrückt' : '',
+                '3b': choices.scene2 === 'B' ? 'Du hast die Totonaken als Verbündete behandelt' : '',
+                '4': choices.scene3 ? 'Du setzt deine Reise fort' : '',
+                '5': 'Der Moment der Wahrheit...'
+            };
+
+            for (let key in paths) {
+                const element = document.getElementById(`decision-path-${key}`);
+                if (element && paths[key]) {
+                    element.innerHTML = `<strong>Bisherige Entscheidungen:</strong> ${paths[key]}`;
+                }
+            }
+        }
+
+        function updateProgress() {
+            // Reset all progress dots
+            for (let i = 0; i <= 5; i++) {
+                const dot = document.getElementById(`progress-${i}`);
+                dot.classList.remove('active', 'completed');
+            }
+
+            // Mark current scene
+            const progressMap = {
+                'intro': 0,
+                'scene-1': 1,
+                'scene-2': 2,
+                'scene-3a': 3,
+                'scene-3b': 3,
+                'scene-4': 4,
+                'scene-5': 5
+            };
+
+            const currentProgress = progressMap[currentScene] || 0;
+
+            // Mark completed
+            for (let i = 0; i < currentProgress; i++) {
+                document.getElementById(`progress-${i}`).classList.add('completed');
+            }
+
+            // Mark active
+            if (currentProgress <= 5) {
+                document.getElementById(`progress-${currentProgress}`).classList.add('active');
+            }
+        }
+
+        function restartGame() {
+            // Reset all state
+            choices = {
+                scene1: null,
+                scene2: null,
+                scene3: null,
+                scene4: null
+            };
+
+            // Hide all scenes and endings
+            document.querySelectorAll('.scene-container, .ending-container, .intro-container').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Show intro and restart
+            currentScene = 'intro';
+            showScene('intro');
+            updateProgress();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

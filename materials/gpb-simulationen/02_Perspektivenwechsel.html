@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perspektivenwechsel – Leben im Mittelalter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1020 50%, #5c1030 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffc107 0%, #ffeb3b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #bdbdbd;
+            margin-bottom: 10px;
+        }
+
+        .context {
+            font-size: 1rem;
+            color: #9e9e9e;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Character Tabs */
+        .character-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .char-tab {
+            padding: 14px 20px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .char-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .char-tab.heinrich {
+            color: #d4a574;
+            border-color: #8b6f47;
+        }
+
+        .char-tab.heinrich:hover {
+            background-color: rgba(212, 165, 116, 0.1);
+            border-color: #d4a574;
+        }
+
+        .char-tab.konrad {
+            color: #7eb3d4;
+            border-color: #4a6b8a;
+        }
+
+        .char-tab.konrad:hover {
+            background-color: rgba(126, 179, 212, 0.1);
+            border-color: #7eb3d4;
+        }
+
+        .char-tab.hildegard {
+            color: #b588d4;
+            border-color: #6d4a8a;
+        }
+
+        .char-tab.hildegard:hover {
+            background-color: rgba(181, 136, 212, 0.1);
+            border-color: #b588d4;
+        }
+
+        .char-tab.agnes {
+            color: #6db374;
+            border-color: #4a7a52;
+        }
+
+        .char-tab.agnes:hover {
+            background-color: rgba(109, 179, 116, 0.1);
+            border-color: #6db374;
+        }
+
+        .char-tab.samuel {
+            color: #d4b574;
+            border-color: #8a7a4a;
+        }
+
+        .char-tab.samuel:hover {
+            background-color: rgba(212, 181, 116, 0.1);
+            border-color: #d4b574;
+        }
+
+        .char-tab.active {
+            border-color: #ffc107;
+            background-color: rgba(255, 193, 7, 0.15);
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+        }
+
+        /* Diary Entry Card */
+        .diary-section {
+            margin-bottom: 40px;
+        }
+
+        .diary-card {
+            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .diary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ffc107, transparent);
+        }
+
+        .diary-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .diary-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .diary-icon.heinrich {
+            background-color: rgba(212, 165, 116, 0.2);
+            color: #d4a574;
+        }
+
+        .diary-icon.konrad {
+            background-color: rgba(126, 179, 212, 0.2);
+            color: #7eb3d4;
+        }
+
+        .diary-icon.hildegard {
+            background-color: rgba(181, 136, 212, 0.2);
+            color: #b588d4;
+        }
+
+        .diary-icon.agnes {
+            background-color: rgba(109, 179, 116, 0.2);
+            color: #6db374;
+        }
+
+        .diary-icon.samuel {
+            background-color: rgba(212, 181, 116, 0.2);
+            color: #d4b574;
+        }
+
+        .diary-info h2 {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+            color: #ffc107;
+        }
+
+        .diary-info .role {
+            font-size: 0.95rem;
+            color: #bdbdbd;
+            font-style: italic;
+        }
+
+        .diary-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            font-style: italic;
+            border-left: 3px solid #ffc107;
+            padding-left: 20px;
+            background-color: rgba(255, 193, 7, 0.05);
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        /* Questions Section */
+        .questions-section {
+            margin-top: 30px;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            color: #ffc107;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .question-item {
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.04);
+            padding: 18px;
+            border-radius: 8px;
+            border-left: 3px solid #ffc107;
+        }
+
+        .question-text {
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 6px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 60px;
+            transition: all 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.12);
+            border-color: #ffc107;
+            box-shadow: 0 0 12px rgba(255, 193, 7, 0.2);
+        }
+
+        /* Perspective Content */
+        .perspective-content {
+            display: none;
+        }
+
+        .perspective-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Compare Section */
+        .compare-section {
+            margin-top: 50px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+        }
+
+        .compare-section h2 {
+            font-size: 1.6rem;
+            color: #ffc107;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .comparison-table th {
+            background-color: rgba(255, 193, 7, 0.15);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #ffc107;
+        }
+
+        .comparison-table td {
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            padding: 16px;
+            color: #e0e0e0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+
+        /* Reflection Section */
+        .reflection-section {
+            margin-top: 40px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 193, 7, 0.02) 100%);
+            border: 2px solid rgba(255, 193, 7, 0.4);
+            border-radius: 12px;
+        }
+
+        .reflection-section h3 {
+            font-size: 1.4rem;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+
+        .reflection-question {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .reflection-input {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .reflection-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.12);
+            border-color: #ffc107;
+            box-shadow: 0 0 12px rgba(255, 193, 7, 0.2);
+        }
+
+        /* Button Styles */
+        .button {
+            padding: 12px 24px;
+            background-color: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: rgba(255, 193, 7, 0.3);
+            box-shadow: 0 0 16px rgba(255, 193, 7, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .character-tabs {
+                gap: 8px;
+            }
+
+            .char-tab {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+            }
+
+            .diary-card {
+                padding: 20px;
+            }
+
+            .diary-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .diary-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.4rem;
+            }
+
+            .diary-info h2 {
+                font-size: 1.3rem;
+            }
+
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 193, 7, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 193, 7, 0.3);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 193, 7, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚔️ Perspektivenwechsel: Leben im Mittelalter</h1>
+            <p class="subtitle">Ein Markttag im Jahre 1250 – fünf verschiedene Sichtweisen</p>
+            <p class="context">
+                Es ist Markttag in einer österreichischen Stadt um 1250. Der Herr verkündet: Die Steuern werden erhöht!
+                Fünf Menschen erleben und interpretieren dieses Ereignis völlig unterschiedlich.
+                Lies ihre Tagebucheinträge und entdecke, wie die gleiche Realität ganz unterschiedlich wahrgenommen werden kann.
+            </p>
+        </header>
+
+        <div class="character-tabs">
+            <button class="char-tab heinrich active" data-character="heinrich">👨‍🌾 Bauer Heinrich</button>
+            <button class="char-tab konrad" data-character="konrad">⚔️ Ritter Konrad</button>
+            <button class="char-tab hildegard" data-character="hildegard">⛪ Äbtissin Hildegard</button>
+            <button class="char-tab agnes" data-character="agnes">🏪 Händlerin Agnes</button>
+            <button class="char-tab samuel" data-character="samuel">🕯️ Dr. Samuel</button>
+        </div>
+
+        <!-- HEINRICH -->
+        <div id="heinrich" class="perspective-content active">
+            <div class="diary-section">
+                <div class="diary-card">
+                    <div class="diary-header">
+                        <div class="diary-icon heinrich">👨‍🌾</div>
+                        <div class="diary-info">
+                            <h2>Bauer Heinrich</h2>
+                            <div class="role">Bauer, Familie mit 4 Kindern</div>
+                        </div>
+                    </div>
+                    <div class="diary-text">
+                        Wieder ein schwerer Tag. Der Herr hat die Abgaben erhöht – jetzt müssen wir ein Drittel der Ernte abgeben statt ein Viertel. Wie sollen wir den Winter überleben? Meine Frau sagt, wir sollen zum Markt gehen und klagen, aber wer hört schon auf einen Bauern? Der Pfarrer sagt, es sei Gottes Wille, dass wir gehorchen. Ich sage: Gottes Wille kann nicht sein, dass meine Kinder hungern.
+                    </div>
+
+                    <div class="questions-section">
+                        <div class="question-title">📝 Fragen zu Heinrichs Perspektive:</div>
+
+                        <div class="question-item">
+                            <div class="question-text">1. Wie bewertet Heinrich die Steuererhöhung? Welche Gefühle drückt er aus?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">2. Welche Interessen und Sorgen hat Heinrich? Was bedroht ihn?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">3. Was sieht Heinrich NICHT? Welche anderen Perspektiven oder Gründe für die Steuererhöhung kennt er nicht?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KONRAD -->
+        <div id="konrad" class="perspective-content">
+            <div class="diary-section">
+                <div class="diary-card">
+                    <div class="diary-header">
+                        <div class="diary-icon konrad">⚔️</div>
+                        <div class="diary-info">
+                            <h2>Ritter Konrad von Falkenstein</h2>
+                            <div class="role">Ritter, Vasall des Herzogs</div>
+                        </div>
+                    </div>
+                    <div class="diary-text">
+                        Der Herzog braucht mehr Mittel für den Feldzug gegen die Ungarn. Also muss ich die Abgaben meiner Bauern erhöhen. Es gefällt mir nicht – sie werden jammern, aber Pflicht ist Pflicht. Wenn ich meinen Lehnseid breche, verliere ich mein Land. Und wer schützt dann die Bauern vor den Räubern? Ich werde dafür sorgen, dass die Ärmsten etwas Saatgut behalten dürfen.
+                    </div>
+
+                    <div class="questions-section">
+                        <div class="question-title">📝 Fragen zu Konrads Perspektive:</div>
+
+                        <div class="question-item">
+                            <div class="question-text">1. Wie bewertet Konrad die Steuererhöhung? Welche Gründe sieht er dafür?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">2. Welche Interessen und Pflichten hat Konrad? Welchen Zwängen unterliegt er?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">3. Was sieht Konrad NICHT oder was verdrängt er? Welche Leiden der Bauern ignoriert er möglicherweise?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HILDEGARD -->
+        <div id="hildegard" class="perspective-content">
+            <div class="diary-section">
+                <div class="diary-card">
+                    <div class="diary-header">
+                        <div class="diary-icon hildegard">⛪</div>
+                        <div class="diary-info">
+                            <h2>Äbtissin Hildegard</h2>
+                            <div class="role">Äbtissin, Leiterin des Klosters</div>
+                        </div>
+                    </div>
+                    <div class="diary-text">
+                        Die Erhöhung der Abgaben trifft auch unser Kloster – wir müssen dem Bischof mehr zahlen, und der gibt es an den Landesherrn weiter. Dabei brauchen wir das Geld für die Armenspeisung und das Hospital. Ich habe dem Ritter geschrieben und ihn an seine christliche Pflicht erinnert. Die Armen sind Gottes Kinder, und wer sie hungern lässt, versündigt sich.
+                    </div>
+
+                    <div class="questions-section">
+                        <div class="question-title">📝 Fragen zu Hildegards Perspektive:</div>
+
+                        <div class="question-item">
+                            <div class="question-text">1. Wie bewertet Hildegard die Steuererhöhung? Mit welchen Argumenten kritisiert sie sie?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">2. Welche Interessen hat Hildegard? Wer ist ihr wichtigster „Klient"?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">3. Was sieht Hildegard NICHT? Welche politischen oder militärischen Realitäten blendet sie aus?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AGNES -->
+        <div id="agnes" class="perspective-content">
+            <div class="diary-section">
+                <div class="diary-card">
+                    <div class="diary-header">
+                        <div class="diary-icon agnes">🏪</div>
+                        <div class="diary-info">
+                            <h2>Händlerin Agnes</h2>
+                            <div class="role">Händlerin, Unternehmerin</div>
+                        </div>
+                    </div>
+                    <div class="diary-text">
+                        Höhere Abgaben bedeuten: Die Bauern haben weniger Geld. Also kaufen sie weniger auf dem Markt. Das ist schlecht für mein Geschäft. Aber es bedeutet auch: Sie müssen mehr verkaufen, um die Abgaben zu zahlen – also mehr Angebot und niedrigere Preise für mich. Wenn ich klug einkaufe, kann ich sogar profitieren. Man muss immer beide Seiten sehen.
+                    </div>
+
+                    <div class="questions-section">
+                        <div class="question-title">📝 Fragen zu Agnes' Perspektive:</div>
+
+                        <div class="question-item">
+                            <div class="question-text">1. Wie bewertet Agnes die Steuererhöhung? Findet sie sie einfach „gut" oder „schlecht"?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">2. Welche komplexen Interessen hat Agnes? Welche „zwei Seiten" sieht sie?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">3. Was macht Agnes' Perspektive einzigartig? Warum kann sie rational profitieren, wo andere leiden?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAMUEL -->
+        <div id="samuel" class="perspective-content">
+            <div class="diary-section">
+                <div class="diary-card">
+                    <div class="diary-header">
+                        <div class="diary-icon samuel">🕯️</div>
+                        <div class="diary-info">
+                            <h2>Dr. Samuel (Jüdischer Arzt)</h2>
+                            <div class="role">Arzt, Minderheit in der Stadt</div>
+                        </div>
+                    </div>
+                    <div class="diary-text">
+                        Wieder einmal habe ich Angst. Wenn die Zeiten schlecht werden und die Bauern hungern, suchen sie Schuldige – und finden sie bei uns. Schon höre ich auf dem Markt, wie einer sagt: „Die Juden sind schuld, die leihen Geld zu Wucherzinsen." Dass der Herr die Steuern erhöht hat, vergessen sie schnell. Ich habe meiner Familie gesagt, sie soll in den nächsten Tagen nicht allein auf die Straße gehen.
+                    </div>
+
+                    <div class="questions-section">
+                        <div class="question-title">📝 Fragen zu Samuels Perspektive:</div>
+
+                        <div class="question-item">
+                            <div class="question-text">1. Wie nimmt Samuel die Steuererhöhung wahr? Was befürchtet er?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">2. Welche existenzielle Gefahr bedroht Samuel und seine Familie? Warum ist seine Perspektive besonders verletzlich?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-text">3. Was zeigt Samuels Sichtweise über die Macht von Vorurteilen und Sündenböcken in Gesellschaften?</div>
+                            <textarea class="answer-input" placeholder="Deine Antwort..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPARE SECTION -->
+        <div class="compare-section">
+            <h2>🔍 Vergleichen: Alle 5 Perspektiven auf einen Blick</h2>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Person</th>
+                        <th>Bewertung der Steuererhöhung</th>
+                        <th>Hauptinteresse</th>
+                        <th>Was sie NICHT sieht</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Bauer Heinrich</strong></td>
+                        <td>Katastrophe, existenzielle Bedrohung</td>
+                        <td>Überleben seiner Familie, genug zu essen</td>
+                        <td>Warum die Steuern erhöht werden (militärische Gründe)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ritter Konrad</strong></td>
+                        <td>Notwendig, aber bedauerlich (Pflicht)</td>
+                        <td>Einhaltung seines Lehnseid, Schutz seines Landes</td>
+                        <td>Das echte Leiden der Bauern, alternative Lösungen</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Äbtissin Hildegard</strong></td>
+                        <td>Moralisch falsch, unchristlich</td>
+                        <td>Hilfe für die Armen, christliche Ethik</td>
+                        <td>Die politischen Zwänge des Ritters</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Händlerin Agnes</strong></td>
+                        <td>Komplex: Risiko UND Chance</td>
+                        <td>Wirtschaftlicher Vorteil, Marktchancen</td>
+                        <td>Das menschliche Leiden dahinter</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dr. Samuel</strong></td>
+                        <td>Bedrohung (nicht der Steuern selbst, sondern der Konsequenzen)</td>
+                        <td>Sicherheit seiner Familie, Überleben der Minderheit</td>
+                        <td>Wird zum Sündenbock für etwas, das er nicht verursacht hat</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- REFLECTION SECTION -->
+        <div class="reflection-section">
+            <h3>💭 Abschließende Reflexion</h3>
+            <div class="reflection-question">
+                <strong>Warum erzählen diese fünf Menschen dasselbe Ereignis so unterschiedlich? Was bedeutet das für die Geschichtsschreibung?</strong>
+                <br><br>
+                Denk darüber nach:
+                <ul style="margin-top: 15px; margin-left: 20px; color: #e0e0e0;">
+                    <li>Jede Person hat unterschiedliche Interessen und Ziele.</li>
+                    <li>Jede Person hat unterschiedliche Informationen und ein unterschiedliches Verständnis der Situation.</li>
+                    <li>Jede Person hat unterschiedliche Macht und Einfluss.</li>
+                    <li>Wenn wir Geschichte lesen, lesen wir oft nur EINE dieser Perspektiven (z.B. nur die des Siegers, des Mächtigen oder des Chronisten).</li>
+                </ul>
+            </div>
+            <textarea class="reflection-input" placeholder="Schreib deine eigenen Gedanken auf: Wie würdest du diesen Tag erzählen, wenn du selbst dort gelebt hättest? Und warum ist es wichtig, viele verschiedene Perspektiven zu kennen?"></textarea>
+        </div>
+    </div>
+
+    <script>
+        // Character tab functionality
+        const charTabs = document.querySelectorAll('.char-tab');
+        const perspectiveContents = document.querySelectorAll('.perspective-content');
+
+        charTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const character = tab.dataset.character;
+
+                // Remove active class from all tabs and contents
+                charTabs.forEach(t => t.classList.remove('active'));
+                perspectiveContents.forEach(content => content.classList.remove('active'));
+
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(character).classList.add('active');
+
+                // Scroll to top of content
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Auto-save answers to localStorage
+        const answerInputs = document.querySelectorAll('.answer-input, .reflection-input');
+
+        answerInputs.forEach(input => {
+            // Load saved answer on page load
+            const savedAnswer = localStorage.getItem(input.id || input.placeholder);
+            if (savedAnswer) {
+                input.value = savedAnswer;
+            }
+
+            // Save answer on input
+            input.addEventListener('input', () => {
+                localStorage.setItem(input.id || input.placeholder, input.value);
+            });
+        });
+
+        // Give unique IDs to inputs for localStorage
+        answerInputs.forEach((input, index) => {
+            if (!input.id) {
+                input.id = `answer-${index}`;
+            }
+        });
+    </script>
+</body>
+</html>

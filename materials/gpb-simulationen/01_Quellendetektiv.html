@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quellendetektiv – Historische Quellen analysieren</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1020 50%, #5c1030 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #ffc107;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            color: #d0d0d0;
+            font-weight: 300;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: #b0b0b0;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffc107 0%, #ffb300 100%);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        /* Source Tabs */
+        .tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 0.75rem 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #b0b0b0;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 193, 7, 0.1) 100%);
+            border-color: #ffc107;
+            color: #ffc107;
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.2);
+        }
+
+        .tab.completed {
+            background: rgba(76, 175, 80, 0.15);
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .tab.completed::after {
+            content: " ✓";
+            color: #4caf50;
+            font-weight: 700;
+        }
+
+        /* Main Content Container */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Source Card */
+        .source-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .source-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .source-card h3 {
+            color: #ffc107;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .source-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #b0b0b0;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .source-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .source-meta-label {
+            font-weight: 600;
+            color: #ffc107;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .source-text {
+            background: rgba(255, 248, 220, 0.08);
+            border-left: 3px solid #ffc107;
+            padding: 1.25rem;
+            border-radius: 6px;
+            font-style: italic;
+            line-height: 1.6;
+            color: #e8e8e8;
+            font-size: 0.95rem;
+        }
+
+        /* Analysis Form */
+        .analysis-form {
+            display: none;
+        }
+
+        .analysis-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group.filled {
+            border-color: rgba(76, 175, 80, 0.4);
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .form-group.empty {
+            border-color: rgba(244, 67, 54, 0.4);
+            background: rgba(244, 67, 54, 0.05);
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-label-text {
+            font-weight: 600;
+            color: #ffc107;
+            font-size: 0.9rem;
+        }
+
+        .form-label-number {
+            font-size: 0.75rem;
+            color: #b0b0b0;
+            background: rgba(255, 193, 7, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .tip-toggle {
+            background: none;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .tip-toggle:hover {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: #ffc107;
+        }
+
+        .tip-text {
+            font-size: 0.85rem;
+            color: #ffecb3;
+            background: rgba(255, 193, 7, 0.1);
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            border-left: 2px solid #ffc107;
+            display: none;
+        }
+
+        .tip-text.visible {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            transition: all 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffc107;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 12px rgba(255, 193, 7, 0.2);
+        }
+
+        /* Solution Display */
+        .solution-container {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .solution-container.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .solution-label {
+            font-weight: 600;
+            color: #4caf50;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .solution-label::before {
+            content: "✓";
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .solution-text {
+            font-size: 0.9rem;
+            color: #c8e6c9;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+
+        /* Feedback Message */
+        .feedback {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.visible {
+            display: block;
+        }
+
+        .feedback.positive {
+            background: rgba(76, 175, 80, 0.15);
+            border-color: rgba(76, 175, 80, 0.3);
+            color: #c8e6c9;
+        }
+
+        .feedback.needs-work {
+            background: rgba(255, 152, 0, 0.15);
+            border-color: rgba(255, 152, 0, 0.3);
+            color: #ffe0b2;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border-radius: 12px;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state-text {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .content-wrapper {
+                gap: 1rem;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 Quellendetektiv</h1>
+        <p>Historische Quellen analysieren und verstehen lernen</p>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-label">Dein Fortschritt</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <div class="tabs-container" id="tabsContainer"></div>
+
+    <div class="content-wrapper">
+        <div id="sourceContainer"></div>
+        <div id="formContainer"></div>
+    </div>
+
+    <div class="button-container">
+        <button class="btn-secondary" id="prevBtn" onclick="previousSource()">← Zurück</button>
+        <button class="btn-primary" id="checkBtn" onclick="checkSolution()">Lösung prüfen</button>
+        <button class="btn-secondary" id="nextBtn" onclick="nextSource()">Weiter →</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <script>
+        // Source Data
+        const sources = [
+            {
+                id: 0,
+                title: "Codex Hammurabi",
+                type: "Gesetzestext",
+                period: "ca. 1750 v. Chr.",
+                origin: "Babylon",
+                text: `„Wenn ein Mann einem anderen Mann ein Auge ausschlägt, so soll man ihm ein Auge ausschlagen. Wenn er einem Manne einen Knochen bricht, so soll man ihm einen Knochen brechen. Wenn ein Adliger einem Freigelassenen ein Auge ausschlägt, so soll er eine Mine Silber zahlen."`,
+                fields: [
+                    {
+                        label: "Quellenart",
+                        name: "type",
+                        tip: "Ist das ein Gesetz, Brief, Tagebuch, Inschrift, Münze oder etwas anderes?",
+                        solution: "Gesetzestext / Rechtskodex - eine schriftliche Sammlung von Gesetzen, die Strafen und Rechte regelt."
+                    },
+                    {
+                        label: "Urheber/in",
+                        name: "author",
+                        tip: "Wer hat diese Quelle geschaffen? Ein König, ein Priester, ein normaler Bürger? Kannst du das aus der Quelle erkennen?",
+                        solution: "König Hammurabi von Babylon (ca. 1792-1750 v. Chr.). Die Gesetze wurden im Auftrag des Königs aufgestellt und sollten seine Macht und Gerechtigkeit zeigen."
+                    },
+                    {
+                        label: "Entstehungszeit",
+                        name: "date",
+                        tip: "Steht ein Datum in der Quelle? Oder kannst du es durch andere Informationen herausfinden?",
+                        solution: "Etwa 1750 v. Chr., eine der ältesten schriftlichen Rechtssammlungen der Menschheit."
+                    },
+                    {
+                        label: "Adressat/in",
+                        name: "audience",
+                        tip: "Für wen war diese Quelle gedacht? Für alle Bürger? Nur für Richter? Für den König selbst?",
+                        solution: "Die Gesetze waren öffentlich und für alle Bürger Babylons gedacht, um zu wissen, welche Strafen für welche Verbrechen gelten. Sie wurden oft auf Steinsäulen veröffentlicht, damit alle sie lesen konnten."
+                    },
+                    {
+                        label: "Absicht",
+                        name: "purpose",
+                        tip: "Warum wurde diese Quelle geschaffen? Um Ordnung herzustellen? Um eine bestimmte Botschaft zu vermitteln?",
+                        solution: "Ziel war es, Recht und Ordnung in Babylon herzustellen. Der König wollte zeigen, dass er weise und gerecht ist und sein Reich verwalten kann."
+                    },
+                    {
+                        label: "Zentrale Aussage",
+                        name: "message",
+                        tip: "Was ist die wichtigste Botschaft? Welche Vorstellung von Gerechtigkeit spiegelt sich darin wider?",
+                        solution: "Menschen sollten für ihre Vergehen bestraft werden (‚Auge um Auge'). Aber Achtung: Die Strafe hängt von der sozialen Klasse ab – Adlige und einfache Menschen werden unterschiedlich bestraft! Das zeigt eine strenge Hierachie."
+                    },
+                    {
+                        label: "Was fehlt?",
+                        name: "missing",
+                        tip: "Welche Perspektiven oder Informationen sind NICHT in der Quelle enthalten? Wessen Stimme hören wir nicht?",
+                        solution: "Es fehlt die Perspektive der Sklaven und Unterdrückten – sie hatten keine Rechte und werden kaum erwähnt. Auch Frauen werden weniger geschützt. Wir erfahren nicht, ob diese Gesetze wirklich befolgt wurden."
+                    },
+                    {
+                        label: "Glaubwürdigkeit",
+                        name: "reliability",
+                        tip: "Wie zuverlässig ist diese Quelle? Warum sollte man ihr trauen oder nicht trauen?",
+                        solution: "Diese Quelle ist wertvoll, weil sie die Rechtsverhältnisse dokumentiert. ABER: Der König präsentiert sich selbst als weise und gerecht. Die Quelle ist Propaganda – sie zeigt, wie der König sein Reich sehen möchte, nicht unbedingt, wie es wirklich war."
+                    }
+                ]
+            },
+            {
+                id: 1,
+                title: "Brief eines römischen Soldaten",
+                type: "Privatbrief",
+                period: "ca. 100 n. Chr.",
+                origin: "Germanien",
+                text: `„Lieber Vater, ich schreibe dir vom Lager am Limes. Es ist kalt hier in Germanien und das Essen ist schlecht. Der Centurio lässt uns täglich exerzieren. Die Germanen jenseits des Flusses sind ruhig, aber wir trauen dem Frieden nicht. Schick mir bitte warme Socken und etwas Geld. Dein Sohn Claudius."`,
+                fields: [
+                    {
+                        label: "Quellenart",
+                        name: "type",
+                        tip: "Was ist das für ein Dokument?",
+                        solution: "Privatbrief – ein persönliches Schreiben von einem Soldaten an seinen Vater."
+                    },
+                    {
+                        label: "Urheber/in",
+                        name: "author",
+                        tip: "Wer schreibt hier? Was ist sein Beruf?",
+                        solution: "Claudius, ein römischer Soldat. Er ist nicht wichtig oder berühmt – ein einfacher Legionär."
+                    },
+                    {
+                        label: "Entstehungszeit",
+                        name: "date",
+                        tip: "Wann wurde dieser Brief geschrieben?",
+                        solution: "Um 100 n. Chr., zur Zeit der römischen Besatzung in Germanien (die sogenannte Limes-Zeit)."
+                    },
+                    {
+                        label: "Adressat/in",
+                        name: "audience",
+                        tip: "An wen ist dieser Brief adressiert? Warum ausgerechnet diese Person?",
+                        solution: "An seinen Vater daheim. Ein privater Brief zwischen Familienmitgliedern. Der Sohn möchte seiner Familie zeigen, wie es ihm geht und bittet um Hilfe."
+                    },
+                    {
+                        label: "Absicht",
+                        name: "purpose",
+                        tip: "Warum schreibt Claudius diesen Brief? Was möchte er erreichen?",
+                        solution: "Er möchte mit seiner Familie kommunizieren, ihr berichten, wie es ihm im Lager geht, und vor allem: um materielle Hilfe bitten (warme Socken, Geld)."
+                    },
+                    {
+                        label: "Zentrale Aussage",
+                        name: "message",
+                        tip: "Was sind die Hauptthemen dieses Briefes?",
+                        solution: "Der Alltag eines römischen Soldaten war hart: Kälte, schlechtes Essen, hartes Training. Gleichzeitig gibt es eine angespannte Sicherheitslage an der Grenze zu Germanien. Claudius hat Heimweh und braucht Unterstützung."
+                    },
+                    {
+                        label: "Was fehlt?",
+                        name: "missing",
+                        tip: "Welche großen, wichtigen Dinge werden NICHT erwähnt?",
+                        solution: "Es fehlt das große Bild: Welche strategischen Ziele verfolgt Rom? Wie sehen die Germanen die Römer? Welche Konflikte und Kriege gab es? Ein Privatbrief zeigt nur einen kleinen Ausschnitt des Alltagslebens, nicht die großen Ereignisse."
+                    },
+                    {
+                        label: "Glaubwürdigkeit",
+                        name: "reliability",
+                        tip: "Wie zuverlässig ist dieser Brief? Was können wir daraus wirklich wissen?",
+                        solution: "Sehr wertvoll! Dies ist eine authentische Stimme eines normalen Soldaten. Wir lernen sein echtes Leben kennen, nicht eine idealisierte Version. ABER: Es ist subjektiv – Claudius schreibt nur über seine eigenen Erfahrungen und Gefühle. Andere Soldaten könnten anders berichten."
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Chronik des Kreuzzugs",
+                type: "Chronik",
+                period: "1099 n. Chr.",
+                origin: "Europäische Christenheit",
+                text: `„Mit Gottes Hilfe eroberten unsere tapferen Ritter die Heilige Stadt Jerusalem. Die Ungläubigen flohen vor dem gerechten Zorn der Christenheit. Ein großer Sieg für den wahren Glauben! Die Straßen hallten wider von Lobgesängen."`,
+                fields: [
+                    {
+                        label: "Quellenart",
+                        name: "type",
+                        tip: "Was ist das für eine Quelle?",
+                        solution: "Chronik – ein Geschichtsbericht aus damaliger Zeit, geschrieben von einem Chronist / Chronisten."
+                    },
+                    {
+                        label: "Urheber/in",
+                        name: "author",
+                        tip: "Wer hat diese Chronik geschrieben? Welche Überzeugungen hatte diese Person wahrscheinlich?",
+                        solution: "Ein christlicher Geistlicher oder Mönch, vermutlich aus Europa. Er unterstützt den Kreuzzug und die christliche Sache stark."
+                    },
+                    {
+                        label: "Entstehungszeit",
+                        name: "date",
+                        tip: "Wann wurde diese Chronik geschrieben?",
+                        solution: "1099 n. Chr., direkt nach der Eroberung Jerusalems während des 1. Kreuzzugs."
+                    },
+                    {
+                        label: "Adressat/in",
+                        name: "audience",
+                        tip: "Für wen wurde diese Chronik geschrieben? Wer sollte sie lesen?",
+                        solution: "Für christliche Leser in Europa – Kirche, Adel, gebildete Bürger. Es war Teil der Propaganda für den Kreuzzug und sollte Christen stolz auf ihren Kampf machen."
+                    },
+                    {
+                        label: "Absicht",
+                        name: "purpose",
+                        tip: "Was ist das Ziel dieser Chronik? Welche Botschaft soll vermittelt werden?",
+                        solution: "Die Chronik soll zeigen: (1) Der christliche Glaube ist richtig und Gott unterstützt die Christen. (2) Der Kreuzzug ist ein großer Sieg und eine gerechte Sache. (3) Christen sind tapfer und Feinde sind böse. Es ist Kriegspropaganda."
+                    },
+                    {
+                        label: "Zentrale Aussage",
+                        name: "message",
+                        tip: "Was wird hier hauptsächlich ausgesagt?",
+                        solution: "Der Kreuzzug ist ein Sieg Gottes. ‚Unsere Ritter' sind tapfer, die Gegner sind ‚Ungläubige' und haben verdient zu verlieren. Der christliche Glaube ist der ‚wahre Glaube'. Ein sehr einseitiges Narrativ."
+                    },
+                    {
+                        label: "Was fehlt?",
+                        name: "missing",
+                        tip: "Was wird NICHT gesagt? Wessen Perspektive fehlt?",
+                        solution: "SEHR VIEL fehlt: Die Perspektive der Muslime und Juden, die in Jerusalem lebten! Sie werden gar nicht als Menschen wahrgenommen, nur als ‚Ungläubige'. Auch die Realität wird verfälscht: Tatsächlich kam es zu schrecklichen Massakern, die hier glorifiziert werden. Die Quelle verschweigt das Leid der Gegner."
+                    },
+                    {
+                        label: "Glaubwürdigkeit",
+                        name: "reliability",
+                        tip: "Wie zuverlässig ist diese Chronik?",
+                        solution: "Sehr begrenzt! Das ist extrem einseitige Propaganda. Der Chronist lügt nicht bewusst, aber er zeigt ein stark verzerrtes Bild – alles Gute den Christen, alles Böse den Feinden. Für eine echte Geschichtsforschung müssen wir diese Sichtweise mit anderen Quellen überprüfen, besonders mit Berichten der anderen Seite."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Stadtrecht von Wien",
+                type: "Rechtsdokument",
+                period: "1221 n. Chr.",
+                origin: "Wien",
+                text: `„Die Bürger der Stadt Wien sollen das Recht haben, ihren Richter selbst zu wählen. Jeder Händler, der auf dem Markt Waren verkauft, muss die festgesetzten Maße und Gewichte verwenden. Fremde Kaufleute dürfen ihre Waren nur an Wiener Bürger verkaufen, nicht direkt an andere Fremde."`,
+                fields: [
+                    {
+                        label: "Quellenart",
+                        name: "type",
+                        tip: "Was ist das für ein Dokument?",
+                        solution: "Stadtrecht / Rechtsdokument – eine schriftliche Sammlung von Regeln, die eine Stadt regiert."
+                    },
+                    {
+                        label: "Urheber/in",
+                        name: "author",
+                        tip: "Wer hat dieses Stadtrecht erlassen?",
+                        solution: "Der Herzog von Österreich oder der König, wahrscheinlich in Zusammenarbeit mit den Wiener Bürgern / Bürgern. In dieser Zeit bekamen Städte mehr Rechte und Selbstverwaltung."
+                    },
+                    {
+                        label: "Entstehungszeit",
+                        name: "date",
+                        tip: "Wann wurde dieses Stadtrecht geschrieben?",
+                        solution: "1221 n. Chr. Das ist noch Mittelalter, aber eine Zeit, in der Städte immer wichtiger und wohlhabender wurden."
+                    },
+                    {
+                        label: "Adressat/in",
+                        name: "audience",
+                        tip: "Für wen war dieses Stadtrecht gedacht?",
+                        solution: "Für die Bürger Wiens, die Handwerker und Kaufleute, und für die Behörden, die diese Regeln durchsetzen sollten. Es war ein Vertrag zwischen Stadt und Herrschern."
+                    },
+                    {
+                        label: "Absicht",
+                        name: "purpose",
+                        tip: "Warum wurde dieses Stadtrecht aufgestellt?",
+                        solution: "Um Ordnung in der Stadt zu schaffen, den Handel zu regeln und die Rechte der Bürger zu schützen. Es gebt Wien auch mehr Unabhängigkeit vom Herrscher."
+                    },
+                    {
+                        label: "Zentrale Aussage",
+                        name: "message",
+                        tip: "Was wird hier hauptsächlich geregelt?",
+                        solution: "Drei wichtige Dinge: (1) Bürger haben Mitspracherecht (Richterwahl) – Anfang der Mitbestimmung. (2) Marktregeln für Fairness – standardisierte Maße und Gewichte. (3) Protektionismus – Wiener Bürger werden bevorzugt, Fremde benachteiligt."
+                    },
+                    {
+                        label: "Was fehlt?",
+                        name: "missing",
+                        tip: "Wer wird NICHT erwähnt oder berücksichtigt?",
+                        solution: "Es fehlt die Perspektive von: Fremden Kaufleuten (die benachteiligt werden), Handwerkern ohne Zünfte, Frauen (die kaum Rechte haben), Armen und Sklaven. Das Stadtrecht schützt nur die etablierten Bürger."
+                    },
+                    {
+                        label: "Glaubwürdigkeit",
+                        name: "reliability",
+                        tip: "Wie zuverlässig ist dieses Stadtrecht?",
+                        solution: "Es ist eine legitime Quelle für die Rechtsverhältnisse in Wien. ABER: Es zeigt, was offiziell geregelt sein sollte, nicht unbedingt, was wirklich passiert ist. Wurden die Regeln befolgt? Die Quelle ist auch einseitig zugunsten von Bürgern und gegen Fremde."
+                    }
+                ]
+            }
+        ];
+
+        let currentSourceId = 0;
+        const userAnswers = {};
+
+        // Initialize
+        function init() {
+            renderTabs();
+            showSource(0);
+        }
+
+        // Render tabs
+        function renderTabs() {
+            const container = document.getElementById('tabsContainer');
+            container.innerHTML = '';
+            sources.forEach(source => {
+                const tab = document.createElement('button');
+                tab.className = 'tab';
+                if (source.id === currentSourceId) tab.classList.add('active');
+                if (userAnswers[source.id]) tab.classList.add('completed');
+                tab.textContent = `Quelle ${source.id + 1}: ${source.title}`;
+                tab.onclick = () => showSource(source.id);
+                container.appendChild(tab);
+            });
+        }
+
+        // Show source
+        function showSource(id) {
+            currentSourceId = id;
+            const source = sources[id];
+            userAnswers[id] = userAnswers[id] || {};
+
+            renderTabs();
+            renderSourceCard(source);
+            renderForm(source);
+            updateButtons();
+            updateProgress();
+            document.getElementById('feedback').classList.remove('visible');
+            window.scrollTo(0, 0);
+        }
+
+        // Render source card
+        function renderSourceCard(source) {
+            const container = document.getElementById('sourceContainer');
+            container.innerHTML = `
+                <div class="source-card active">
+                    <h3>${source.title}</h3>
+                    <div class="source-meta">
+                        <div class="source-meta-item">
+                            <span class="source-meta-label">Quellenart</span>
+                            <span>${source.type}</span>
+                        </div>
+                        <div class="source-meta-item">
+                            <span class="source-meta-label">Zeit</span>
+                            <span>${source.period}</span>
+                        </div>
+                        <div class="source-meta-item">
+                            <span class="source-meta-label">Herkunft</span>
+                            <span>${source.origin}</span>
+                        </div>
+                    </div>
+                    <div class="source-text">${source.text}</div>
+                </div>
+            `;
+        }
+
+        // Render form
+        function renderForm(source) {
+            const container = document.getElementById('formContainer');
+            container.innerHTML = '<div class="analysis-form active"></div>';
+            const form = container.querySelector('.analysis-form');
+
+            source.fields.forEach((field, idx) => {
+                const value = userAnswers[currentSourceId][field.name] || '';
+                const hasValue = value.trim().length > 0;
+                const group = document.createElement('div');
+                group.className = 'form-group';
+                if (hasValue) group.classList.add('filled');
+
+                group.innerHTML = `
+                    <div class="form-label">
+                        <span class="form-label-text">${field.label}</span>
+                        <span class="form-label-number">${idx + 1}/8</span>
+                    </div>
+                    <div class="tip-text" id="tip-${field.name}">💡 ${field.tip}</div>
+                    <button type="button" class="tip-toggle" onclick="toggleTip('${field.name}')">Tipp anzeigen</button>
+                    <textarea
+                        id="field-${field.name}"
+                        placeholder="Deine Analyse..."
+                        onchange="saveAnswer('${field.name}', this.value)"
+                        oninput="updateFieldStatus('${field.name}')"
+                    >${value}</textarea>
+                    <div class="solution-container" id="solution-${field.name}">
+                        <div class="solution-label">Musterlösung</div>
+                        <div class="solution-text">${field.solution}</div>
+                    </div>
+                `;
+                form.appendChild(group);
+            });
+        }
+
+        // Toggle tip
+        function toggleTip(fieldName) {
+            const tip = document.getElementById(`tip-${fieldName}`);
+            tip.classList.toggle('visible');
+        }
+
+        // Save answer
+        function saveAnswer(fieldName, value) {
+            userAnswers[currentSourceId] = userAnswers[currentSourceId] || {};
+            userAnswers[currentSourceId][fieldName] = value;
+        }
+
+        // Update field status
+        function updateFieldStatus(fieldName) {
+            const textarea = document.getElementById(`field-${fieldName}`);
+            const group = textarea.closest('.form-group');
+            const hasValue = textarea.value.trim().length > 0;
+            group.classList.toggle('filled', hasValue);
+            group.classList.remove('empty');
+        }
+
+        // Check solution
+        function checkSolution() {
+            const source = sources[currentSourceId];
+            const form = document.querySelector('.analysis-form');
+            let filledCount = 0;
+
+            source.fields.forEach(field => {
+                const textarea = document.getElementById(`field-${field.name}`);
+                const group = textarea.closest('.form-group');
+                const solution = document.getElementById(`solution-${field.name}`);
+                const hasValue = textarea.value.trim().length > 0;
+
+                solution.classList.add('visible');
+
+                if (hasValue) {
+                    group.classList.add('filled');
+                    group.classList.remove('empty');
+                    filledCount++;
+                } else {
+                    group.classList.add('empty');
+                    group.classList.remove('filled');
+                }
+            });
+
+            userAnswers[currentSourceId].completed = true;
+            renderTabs();
+            showFeedback(filledCount, source.fields.length);
+            updateProgress();
+        }
+
+        // Show feedback
+        function showFeedback(filled, total) {
+            const feedback = document.getElementById('feedback');
+            let message = '';
+            let className = '';
+
+            if (filled === total) {
+                message = `✓ Hervorragend! Du hast alle ${total} Felder sorgfältig ausgefüllt. Vergleiche deine Antworten mit der Musterlösung!`;
+                className = 'positive';
+            } else if (filled >= total * 0.75) {
+                message = `Sehr gut! Du hast ${filled}/${total} Felder beantwortet. Schau dir die leeren Felder und die Musterlösungen an.`;
+                className = 'positive';
+            } else if (filled >= total * 0.5) {
+                message = `Gute Ansätze! Du hast ${filled}/${total} Felder beantwortet. Versuche, auch die anderen Felder auszufüllen, um die Quelle ganz zu verstehen.`;
+                className = 'needs-work';
+            } else {
+                message = `Du hast ${filled}/${total} Felder beantwortet. Nimm dir mehr Zeit, um die Quelle gründlich zu analysieren. Die Tipps können dir helfen!`;
+                className = 'needs-work';
+            }
+
+            feedback.textContent = message;
+            feedback.className = `feedback visible ${className}`;
+        }
+
+        // Update progress
+        function updateProgress() {
+            const completed = Object.keys(userAnswers).filter(id => userAnswers[id].completed).length;
+            const total = sources.length;
+            const percent = (completed / total) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+        }
+
+        // Navigation
+        function previousSource() {
+            if (currentSourceId > 0) showSource(currentSourceId - 1);
+        }
+
+        function nextSource() {
+            if (currentSourceId < sources.length - 1) showSource(currentSourceId + 1);
+        }
+
+        // Update buttons
+        function updateButtons() {
+            document.getElementById('prevBtn').disabled = currentSourceId === 0;
+            document.getElementById('nextBtn').disabled = currentSourceId === sources.length - 1;
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

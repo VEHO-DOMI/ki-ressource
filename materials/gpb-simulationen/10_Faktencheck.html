@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faktencheck – Gestern & Heute</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1020 50%, #5c1030 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffc107;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #cccccc;
+            font-weight: 300;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid #ffc107;
+            color: #ffc107;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 193, 7, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: #ffc107;
+            color: #1a0a0a;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #ffc107;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: #ffc107;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        p, li {
+            line-height: 1.8;
+            margin-bottom: 12px;
+            color: #e0e0e0;
+        }
+
+        ul {
+            margin-left: 25px;
+        }
+
+        /* Framework Display */
+        .framework-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .framework-item {
+            background: rgba(255, 193, 7, 0.08);
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .framework-letter {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffc107;
+            margin-bottom: 8px;
+        }
+
+        .framework-question {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .framework-explanation {
+            font-size: 0.95rem;
+            color: #cccccc;
+            line-height: 1.6;
+        }
+
+        /* Claim Cards */
+        .claim-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .claim-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .claim-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .claim-header {
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .claim-header.historical {
+            background: linear-gradient(135deg, #8b6914 0%, #5c4a0a 100%);
+            border: 2px solid #d4a574;
+        }
+
+        .claim-header.modern {
+            background: linear-gradient(135deg, #1a4d6d 0%, #0a2d4a 100%);
+            border: 2px solid #74b8d4;
+        }
+
+        .claim-body {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 193, 7, 0.1);
+            border-top: none;
+            padding: 20px;
+            border-radius: 0 0 12px 12px;
+            font-size: 0.95rem;
+            color: #e0e0e0;
+        }
+
+        .claim-source {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .claim-type {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .claim-type.historical {
+            background: rgba(212, 165, 116, 0.3);
+            color: #d4a574;
+        }
+
+        .claim-type.modern {
+            background: rgba(116, 184, 212, 0.3);
+            color: #74b8d8;
+        }
+
+        /* Detailed Analysis View */
+        .analysis-panel {
+            display: none;
+        }
+
+        .analysis-panel.active {
+            display: block;
+        }
+
+        .claim-full {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .claim-full h3 {
+            color: #ffc107;
+            margin-top: 0;
+        }
+
+        .claim-text {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-style: italic;
+            font-size: 1.05rem;
+        }
+
+        .analysis-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .analysis-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .analysis-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-label {
+            font-weight: 600;
+            color: #ffc107;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .field-letter {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #ffc107;
+            color: #1a0a0a;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            min-height: 100px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea::placeholder {
+            color: #666;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffc107;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 193, 7, 0.2);
+            transform: translateY(-2px);
+        }
+
+        button.primary {
+            background: #ffc107;
+            color: #1a0a0a;
+        }
+
+        button.primary:hover {
+            background: #ffb300;
+        }
+
+        .hint-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .hint-box.active {
+            display: block;
+        }
+
+        .solution-box {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .solution-box.active {
+            display: block;
+        }
+
+        .solution-box h4 {
+            color: #81c784;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .solution-box p {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        /* Patterns Grid */
+        .patterns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .pattern-item {
+            background: rgba(255, 193, 7, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .pattern-title {
+            color: #ffc107;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .pattern-claims {
+            font-size: 0.9rem;
+            color: #cccccc;
+        }
+
+        /* Reflection Section */
+        .reflection-question {
+            background: rgba(255, 193, 7, 0.05);
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+
+        .reflection-question strong {
+            color: #ffc107;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .reflection-answer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 6px;
+            min-height: 80px;
+            color: #ffffff;
+        }
+
+        /* Back Button */
+        .back-button {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 193, 7, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                width: 100%;
+            }
+
+            .glass-panel {
+                padding: 20px;
+            }
+
+            .claim-container {
+                grid-template-columns: 1fr;
+            }
+
+            .framework-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            padding: 15px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            color: #e0e0e0;
+        }
+
+        .checkmark {
+            color: #81c784;
+            font-weight: bold;
+        }
+
+        .insight-box {
+            background: rgba(76, 175, 80, 0.1);
+            border: 2px solid #81c784;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .insight-box h3 {
+            color: #81c784;
+            margin-top: 0;
+        }
+
+        .insight-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Faktencheck – Gestern & Heute</h1>
+            <p class="subtitle">Lerne, Behauptungen kritisch zu hinterfragen – ein Werkzeug für alle Zeiten</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab(0)">1. QUELLEN-CHECK Methode</button>
+            <button class="tab-button" onclick="switchTab(1)">2. Behauptungen analysieren</button>
+            <button class="tab-button" onclick="switchTab(2)">3. Muster erkennen</button>
+            <button class="tab-button" onclick="switchTab(3)">4. Reflexion</button>
+        </div>
+
+        <!-- TAB 1: QUELLEN-CHECK METHODE -->
+        <div id="tab-0" class="tab-content active">
+            <div class="glass-panel">
+                <h2>Die QUELLEN-CHECK Methode</h2>
+                <p>Mit dieser siebenteiligen Methode kannst du jede Behauptung systematisch überprüfen – egal ob historisch oder aktuell. Die Buchstaben von QUELLEN-CHECK zeigen dir, worauf du achten musst:</p>
+            </div>
+
+            <div class="framework-grid">
+                <div class="framework-item">
+                    <div class="framework-letter">Q</div>
+                    <div class="framework-question">Quelle: Wer behauptet das?</div>
+                    <div class="framework-explanation">Identifiziere die Person, Institution oder das Medium, das die Behauptung macht. Eine Aussage von einer Wissenschaftlerin hat ein anderes Gewicht als ein privater Social-Media-Post.</div>
+                </div>
+
+                <div class="framework-item">
+                    <div class="framework-letter">U</div>
+                    <div class="framework-question">Urheber-Interesse: Welches Interesse könnte dahinter stecken?</div>
+                    <div class="framework-explanation">Nicht alle Behauptungen sind objektiv gemeint. Frag dich: Profitiert die Quelle von dieser Aussage? Möchte sie dich beeinflussen oder manipulieren?</div>
+                </div>
+
+                <div class="framework-item">
+                    <div class="framework-letter">E</div>
+                    <div class="framework-question">Evidenz: Welche Belege werden genannt?</div>
+                    <div class="framework-explanation">Suche nach konkreten Nachweisen: Studien, Daten, Dokumente, Zitate von Fachleuten. Sind die genannten Belege überprüfbar und vertrauenswürdig?</div>
+                </div>
+
+                <div class="framework-item">
+                    <div class="framework-letter">L</div>
+                    <div class="framework-question">Logik: Ist die Argumentation logisch?</div>
+                    <div class="framework-explanation">Prüfe die Gedankenkette. Führen die Argumente wirklich zu der Schlussfolgerung? Gibt es logische Sprünge oder Fehlschlüsse (z.B. "Alle A sind B, also sind alle C auch B")?</div>
+                </div>
+
+                <div class="framework-item">
+                    <div class="framework-letter">L</div>
+                    <div class="framework-question">Lücken: Was wird nicht gesagt?</div>
+                    <div class="framework-explanation">Was ist mit Gegenpositionen? Sind wichtige Informationen oder Perspektiven bewusst weggelassen? Unvollständige Informationen können genauso täuschend sein wie falsche.</div>
+                </div>
+
+                <div class="framework-item">
+                    <div class="framework-letter">E</div>
+                    <div class="framework-question">Einordnung: Was sagen andere Quellen?</div>
+                    <div class="framework-explanation">Überprüfe die Behauptung bei mehreren unabhängigen, vertrauenswürdigen Quellen (Fachleute, etablierte Medien mit Korrektursystemen, wissenschaftliche Datenbanken).</div>
+                </div>
+
+                <div class="framework-item">
+                    <div class="framework-letter">N</div>
+                    <div class="framework-question">Nachprüfbarkeit: Kann ich es selbst überprüfen?</div>
+                    <div class="framework-explanation">Kann ich die Quellen, Daten oder Fakten selbst nachvollziehen? Gibt es Transparenz, oder wird bewusst eine „Vertrau mir"-Haltung eingenommen?</div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h3>Kleine Übung: Wende QUELLEN-CHECK an!</h3>
+                <p><strong>Beispiel-Behauptung:</strong> "Ein Influencer postet: 'Dieses Vitamin hat mir super geholfen, seitdem bin ich nie mehr krank! Kauft es hier!'"</p>
+                <p style="margin-top: 20px;"><strong>Deine Analyse:</strong></p>
+                <ul>
+                    <li><strong>Q (Quelle):</strong> Ein Influencer (keine medizinische Ausbildung erkennbar)</li>
+                    <li><strong>U (Urheber-Interesse):</strong> Der Influencer verdient Geld mit Links zu Produkten → klares finanzielles Interesse</li>
+                    <li><strong>E (Evidenz):</strong> Keine Studien verlinkt, nur eine Anekdote (ein Fallbeispiel ≠ Beweis)</li>
+                    <li><strong>L (Logik):</strong> Fehlschluss: Nur weil der Influencer krank war und es nahm, folgt nicht, dass das Vitamin schuld ist (Post-hoc-Fehlschluss)</li>
+                    <li><strong>L (Lücken):</strong> Keine Information über Nebenwirkungen, keine Aussage über Placebos, keine Erwähnung von medizinischen Fachleuten</li>
+                    <li><strong>E (Einordnung):</strong> Ärzte und Apotheker betonen, dass solche Aussagen nicht wissenschaftlich belegt sind</li>
+                    <li><strong>N (Nachprüfbarkeit):</strong> Die Aussage "nie mehr krank" ist nicht überprüfbar und unwahrscheinlich</li>
+                </ul>
+                <p style="margin-top: 20px;"><strong>Fazit:</strong> Vorsicht! Diese Behauptung hat mehrere Manipulationsmerkmale.</p>
+            </div>
+        </div>
+
+        <!-- TAB 2: BEHAUPTUNGEN ANALYSIEREN -->
+        <div id="tab-1" class="tab-content">
+            <div class="glass-panel">
+                <h2>Behauptungen analysieren</h2>
+                <p>Klicke auf eine Behauptung, um sie genauer zu untersuchen. Versuche zunächst, sie mit der QUELLEN-CHECK Methode selbst zu analysieren. Nutze die Hinweise und Lösungen zum Vergleichen.</p>
+            </div>
+
+            <div id="claims-overview" class="claim-container">
+                <div class="claim-card" onclick="selectClaim(0)">
+                    <div class="claim-header historical">📜 Behauptung 1</div>
+                    <div class="claim-body">
+                        <div class="claim-source">Europäische Schulbücher, 19. Jahrhundert</div>
+                        <p><strong>"Kolumbus entdeckte Amerika"</strong></p>
+                        <p>Erfahre, wie diese bekannte historische Aussage problematisch ist.</p>
+                        <span class="claim-type historical">Historisch</span>
+                    </div>
+                </div>
+
+                <div class="claim-card" onclick="selectClaim(1)">
+                    <div class="claim-header historical">📜 Behauptung 2</div>
+                    <div class="claim-body">
+                        <div class="claim-source">Nationalistische Kreise, 1918-1919</div>
+                        <p><strong>Die Dolchstoßlegende</strong></p>
+                        <p>Eine Legende, die real History verändert hat – mit katastrophalen Folgen.</p>
+                        <span class="claim-type historical">Historisch</span>
+                    </div>
+                </div>
+
+                <div class="claim-card" onclick="selectClaim(2)">
+                    <div class="claim-header historical">📜 Behauptung 3</div>
+                    <div class="claim-body">
+                        <div class="claim-source">Moskauer Deklaration 1943, österreichische Politik</div>
+                        <p><strong>"Österreich – das erste Opfer"</strong></p>
+                        <p>Ein Opfermythos, der unangenehme Fragen vermeiden soll.</p>
+                        <span class="claim-type historical">Historisch</span>
+                    </div>
+                </div>
+
+                <div class="claim-card" onclick="selectClaim(3)">
+                    <div class="claim-header modern">💻 Behauptung 4</div>
+                    <div class="claim-body">
+                        <div class="claim-source">Verschiedene Social-Media-Kanäle</div>
+                        <p><strong>"Social Media zeigt die Wahrheit, Mainstream-Medien lügen"</strong></p>
+                        <p>Eine Dichotomie, die heute überall auftaucht.</p>
+                        <span class="claim-type modern">Modern</span>
+                    </div>
+                </div>
+
+                <div class="claim-card" onclick="selectClaim(4)">
+                    <div class="claim-header modern">💻 Behauptung 5</div>
+                    <div class="claim-body">
+                        <div class="claim-source">Alltagsdiskurs, politische Rhetorik</div>
+                        <p><strong>"Früher war alles besser"</strong></p>
+                        <p>Ein altes Muster, das jede Generation über die nächste sagt.</p>
+                        <span class="claim-type modern">Modern</span>
+                    </div>
+                </div>
+
+                <div class="claim-card" onclick="selectClaim(5)">
+                    <div class="claim-header modern">💻 Behauptung 6</div>
+                    <div class="claim-body">
+                        <div class="claim-source">Technologie-Nachrichten, Social Media</div>
+                        <p><strong>"KI wird alle Arbeitsplätze ersetzen"</strong></p>
+                        <p>Eine Angst, die mit jeder neuen Technologie auftaucht.</p>
+                        <span class="claim-type modern">Modern</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYSIS PANELS (hidden until selected) -->
+            <div id="analysis-0" class="analysis-panel">
+                <button class="back-button" onclick="closeClaim()">← Zurück zur Übersicht</button>
+                <div class="glass-panel">
+                    <h2>Behauptung 1: "Kolumbus entdeckte Amerika"</h2>
+                    <div class="claim-full">
+                        <h3>Quelle:</h3>
+                        <p>Europäische Schulbücher, 19. Jahrhundert</p>
+                        <h3>Die vollständige Behauptung:</h3>
+                        <div class="claim-text">
+                            "Am 12. Oktober 1492 entdeckte Christoph Kolumbus Amerika und brachte den Eingeborenen die Zivilisation."
+                        </div>
+                    </div>
+
+                    <h3>Analysiere diese Behauptung:</h3>
+                    <div class="analysis-fields">
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">Q</span>Quelle: Wer behauptet das?</div>
+                            <textarea placeholder="Analysiere die Quelle dieser Aussage..."></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Wer schreibt solche Schulbücher? Welche Perspektive haben europäische Autoren des 19. Jh.? Sind das Fachleute oder Ideologen?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">U</span>Urheber-Interesse: Welches Interesse?</div>
+                            <textarea placeholder="Welches Interesse könnte hinter dieser Aussage stecken?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Warum war es für europäische Mächte wichtig, sich selbst als Entdecker zu darstellen? Welche politischen oder wirtschaftlichen Ziele gab es im 19. Jh.?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Evidenz: Welche Belege?</div>
+                            <textarea placeholder="Welche Belege werden für diese Behauptung gegeben?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Spricht die Aussage von Quellen? Von Dokumenten? Was fehlt: Perspektiven der Ureinwohner?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Logik: Ist die Argumentation logisch?</div>
+                            <textarea placeholder="Wo gibt es logische Fehler?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Kann man etwas „entdecken", das millionen Menschen bereits bewohnt haben? Wer definiert hier, was „entdecken" bedeutet?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Lücken: Was fehlt?</div>
+                            <textarea placeholder="Welche Perspektiven oder Informationen fehlen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Wo sind die Stimmen der Taíno, Arawak und anderen Ureinwohner? Welche historischen Befunde gibt es über nordische Siedlungen (~1000 n.Chr.)?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Einordnung: Was sagen andere?</div>
+                            <textarea placeholder="Wie bewerten Historiker und andere Quellen das heute?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Moderne Geschichtswissenschaft spricht von "Kontakt" oder "Treffen", nicht von "Entdeckung". Was hat sich in der wissenschaftlichen Sicht verändert?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">N</span>Nachprüfbarkeit: Kann ich es überprüfen?</div>
+                            <textarea placeholder="Wie und wo könnte man das überprüfen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Es gibt Primärquellen (Kolumbus' Tagebücher), archäologische Befunde, und historische Fachliteratur. Wo könntest du nachschauen?
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="primary" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+                    <div class="solution-box">
+                        <h4>Analyse: Probleme mit dieser Behauptung</h4>
+                        <p><strong>Quelle:</strong> Europäische Schulbücher des 19. Jh. – geschrieben von europäischen Autoren, nicht von neutralen Fachleuten. Sie reflektieren koloniales Denken.</p>
+                        <p><strong>Urheber-Interesse:</strong> Imperialistische und koloniale Mächte wollten sich als Zivilisatoren darstellen, um ihre Ausbeutung zu rechtfertigen. "Entdecken" = "Wir hatten das Recht, es zu nehmen".</p>
+                        <p><strong>Evidenz:</strong> Keine Diskussion von Gegenbelegen. Millionen Menschen lebten bereits dort – historisch dokumentiert.</p>
+                        <p><strong>Logik-Fehler:</strong> "Entdecken" setzt voraus, dass etwas vorher niemandem bekannt war. Das ist eurozentrisches Denken. Auch Nordmänner waren ~1000 n.Chr. dort (Vinland).</p>
+                        <p><strong>Lücken:</strong> Taíno-, Azteken-, Inka-Perspektiven völlig abwesend. Sie hatten ihre eigenen Kulturen, Technologien, Gesellschaften. "Zivilisation bringen" ignoriert Gewalt, Versklavung, Epidemien.</p>
+                        <p><strong>Einordnung:</strong> Moderne Geschichtswissenschaft: "Treffen zweier Welten", keine einseitige "Entdeckung". Historiker anerkennen die Perspektive der Ureinwohner.</p>
+                        <p><strong>Nachprüfbarkeit:</strong> Ja. Fachbücher wie "1491" von Mann oder "Das verlorene Reich" zeigen eine differenziertere Sicht. Primärquellen sind verfügbar.</p>
+                        <p><strong>FAZIT:</strong> Diese Behauptung ist nicht falsch, aber problemativ: Sie nutzt eurozentrisches Denken, verschleiert Gewalt und ignoriert andere Perspektiven. Ein Beispiel dafür, wie Sprache Geschichte gestaltet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis-1" class="analysis-panel">
+                <button class="back-button" onclick="closeClaim()">← Zurück zur Übersicht</button>
+                <div class="glass-panel">
+                    <h2>Behauptung 2: Die Dolchstoßlegende</h2>
+                    <div class="claim-full">
+                        <h3>Quelle:</h3>
+                        <p>Nationalistische Kreise, Deutschland 1918-1919 (nach dem 1. Weltkrieg)</p>
+                        <h3>Die Behauptung:</h3>
+                        <div class="claim-text">
+                            "Deutschland hat den Krieg nicht auf dem Schlachtfeld verloren. Die Armee war 'im Felde unbesiegt'. Verräter in der Heimat – Sozialisten und Juden – haben dem Heer den Dolch in den Rücken gestoßen."
+                        </div>
+                    </div>
+
+                    <h3>Analysiere diese Behauptung:</h3>
+                    <div class="analysis-fields">
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">Q</span>Quelle: Wer behauptet das?</div>
+                            <textarea placeholder="Wer verbreitet diese Legende?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Nationalisten und militärische Kreise. Warum sind gerade diese Gruppen die Quelle? Sind sie neutral?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">U</span>Urheber-Interesse: Welches Interesse?</div>
+                            <textarea placeholder="Warum wäre diese Legende für Militär und Nationalisten nützlich?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Der Militärs möchte nicht als Verlierer dastehen. Nationalisten suchen jemanden zum Hassen. Wie hilft die Legende beiden?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Evidenz: Welche Belege?</div>
+                            <textarea placeholder="Gibt es Belege für diese Behauptung?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Ludendorff selbst (General) forderte den Waffenstillstand! Warum? Was sagen Militärdokumente?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Logik: Wo sind die Fehlschlüsse?</div>
+                            <textarea placeholder="Welche Logik-Fehler siehst du?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Sündenbock-Logik: Statt "Wir haben verloren", sagt man "Andere haben uns sabotiert". Das lenkt Schuld ab – aber ist es wahr?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Lücken: Was wird verschwiegen?</div>
+                            <textarea placeholder="Welche Fakten werden ignoriert?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Millionen Soldaten starben. Die Versorgung brach zusammen. Gegner waren überlegener. Warum wird das nicht erwähnt?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Einordnung: Was sagen Historiker?</div>
+                            <textarea placeholder="Was ist die wissenschaftliche Sicht?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Historiker nennen das ein "Mythos" – nicht wahr. Die Armee war militärisch geschlagen. Die Legende diente der politischen Mobilisierung.
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">N</span>Nachprüfbarkeit: Wie überprüfbar?</div>
+                            <textarea placeholder="Kann man das überprüfen? Wo?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Militärdokumente, Briefe von Ludendorff, zeitgenössische Berichte. Waren Sozialisten/Juden tatsächlich schuld? Die Fakten sagen nein.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="primary" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+                    <div class="solution-box">
+                        <h4>Analyse: Eine gefährliche Legende</h4>
+                        <p><strong>Quelle:</strong> Nationalistische Kreise, Militärs (keine neutralen Beobachter, sondern Interessierte).</p>
+                        <p><strong>Urheber-Interesse:</strong> Ludendorff und andere Generäle möchten nicht als Verlierer gelten. Nationalisten suchen jemanden zum Hassen = Sozialisten, Juden als Sündenböcke.</p>
+                        <p><strong>Evidenz – FALSCH:</strong> Ludendorff selbst forderte im Sept. 1918 den Waffenstillstand! Militärdokumente zeigen: Die Armee war militärisch besiegt.</p>
+                        <p><strong>Logik-Fehler:</strong> Post-hoc-Fehlschluss: "Das Heim war schwach → Armee verlor → Das Heim ist schuld." Aber die Kausalität ist falsch. Die Armee verlor, WEIL der Gegner stärker war, nicht weil die Heimat sabotierte.</p>
+                        <p><strong>Lücken:</strong> Ignoriert komplette militärische Realität (Ressourcenmangel, Luftüberlegenheit der Entente, zahlenmäßige Überlegenheit).</p>
+                        <p><strong>Einordnung:</strong> Historiker classifizieren dies als "Mythos", nicht als Fakt. Die Legende wurde gezielt verbreitet, um Weimarer Republik zu destabilisieren.</p>
+                        <p><strong>Nachprüfbarkeit:</strong> JA – und zwar widerlegt! Fachbücher wie "Weimar: Why the Republic Failed" zeigen, dass die Legende gelogen war.</p>
+                        <p><strong>FAZIT & WARNUNG:</strong> Diese Legende hatte reale Konsequenzen: Sie unterminierte die Weimarer Republik, schürte Hass auf Minderheiten und half den Nazis an die Macht. Ein Beispiel dafür, wie falsche Behauptungen Geschichte ändern können – mit katastrophalen Folgen.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis-2" class="analysis-panel">
+                <button class="back-button" onclick="closeClaim()">← Zurück zur Übersicht</button>
+                <div class="glass-panel">
+                    <h2>Behauptung 3: "Österreich – das erste Opfer"</h2>
+                    <div class="claim-full">
+                        <h3>Quelle:</h3>
+                        <p>Moskauer Deklaration (1943), österreichische Nachkriegspolitik</p>
+                        <h3>Die Behauptung:</h3>
+                        <div class="claim-text">
+                            "Österreich war das erste Opfer des Nationalsozialismus und trägt keine Mitverantwortung für die NS-Verbrechen."
+                        </div>
+                    </div>
+
+                    <h3>Analysiere diese Behauptung:</h3>
+                    <div class="analysis-fields">
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">Q</span>Quelle: Wer sagt das?</div>
+                            <textarea placeholder="Wer verbreitet diese Aussage und warum?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Die Alliierten 1943 wollten Österreich von Deutschland trennen. Aber auch die österreichische Regierung nach 1945 nutzte diese Erklärung. Warum war das für beide Seiten nützlich?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">U</span>Urheber-Interesse: Welches Interesse?</div>
+                            <textarea placeholder="Welches politische Interesse steckt dahinter?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Für Österreich nach 1945 war es bequem, sich als "Opfer" zu sehen – kein Schuldgefühl, schnellerer Wiederaufbau. War das gerecht?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Evidenz: Welche Belege?</div>
+                            <textarea placeholder="Gibt es Belege für diese Behauptung?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Schau dir die Anschluss-Bilder an (Heldenplatz, 1938). Schau auf die Namen: Eichmann (Österreicher!), Kaltenbrunner (Österreicher!). Waren das Opfer?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Logik: Wo ist der Fehler?</div>
+                            <textarea placeholder="Wo ist die logische Schwäche?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Man kann gleichzeitig Opfer UND Täter sein. Aber die Aussage behauptet nur "Opfer" – ist das vollständig? Ist Nuance möglich?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Lücken: Was wird weggelassen?</div>
+                            <textarea placeholder="Welche Perspektiven fehlen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Stimmen der österreichischen Juden (die meisten getötet)? Dokumentationen von österreichischen KZ-Wächtern? Oder sagt man einfach: "Wir waren zu"?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Einordnung: Was sagen Historiker?</div>
+                            <textarea placeholder="Wie beurteilen Fachleute das heute?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Moderne österreichische Historiker sprechen von "Opfermythos". Sie sagen: Österreich war teilweise Opfer, aber auch Täter. Ein Wendepunkt war die Waldheim-Debatte (1986).
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">N</span>Nachprüfbarkeit: Kann man es überprüfen?</div>
+                            <textarea placeholder="Wie könnte man das überprüfen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Statistiken: Wie viele Österreicher waren NSDAP-Mitglieder? (Proportional höher als in Deutschland!) Dokumentationen von Tätern? Der Eichmann-Prozess 1961 zeigte: österreichische Täter gab es viele.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="primary" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+                    <div class="solution-box">
+                        <h4>Analyse: Ein Mythos der Verdrängung</h4>
+                        <p><strong>Quelle:</strong> Die Moskauer Deklaration (1943) von den Alliierten + Österreichische Nachkriegspolitik (Sicherung der Unabhängigkeit).</p>
+                        <p><strong>Urheber-Interesse:</strong> Die Alliierten wollten Österreich von Deutschland trennen (Blockbildung im Kalten Krieg). Österreich wollte schnell "rehabilitiert" sein. Beide Seiten haben Interesse an "Opferstatus".</p>
+                        <p><strong>Evidenz – UNVOLLSTÄNDIG:</strong> Es ist wahr, dass Österreich von Nazi-Deutschland annektiert wurde (Anschluss 1938). Aber: Die Jubelbilder vom Heldenplatz zeigen massive Unterstützung. Und wichtig: Viele Österreicher waren aktive Täter!</p>
+                        <p><strong>Logik-Fehler:</strong> Dichotomie: "Opfer ODER Täter". In Wahrheit ist es komplizierter: Österreich war annektiert, aber viele Österreicher waren Mittäter, Mitläufer oder stillen Zuschauer.</p>
+                        <p><strong>Lücken:</strong> Keine Diskussion von österreichischen Tätern (Eichmann, Kaltenbrunner, KZ-Personal, etc.). Österreichische Juden sind unsichtbar gemacht. Statistik: Anteil österreichischer NSDAP-Mitglieder WAR höher als in Deutschland!</p>
+                        <p><strong>Einordnung:</strong> Moderne österreichische Historiker nennen das einen "Opfermythos". Die Waldheim-Debatte (1986) war ein Wendepunkt: Vergangenheit konnte nicht länger verdrängt werden. Heute: differenziertere Sichtweise.</p>
+                        <p><strong>Nachprüfbarkeit:</strong> JA. Statistiken, Dokumentationen, Eichmann-Prozess, Austrias Schuldbuch – alles überprüfbar.</p>
+                        <p><strong>FAZIT:</strong> Die Behauptung ist teilweise wahr (Annektierung), aber stark verzerrt. Sie diente der Verdrängung von Schuld. Ein Beispiel dafür, wie nationale Mythen unbequeme Wahrheiten verdrängen.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis-3" class="analysis-panel">
+                <button class="back-button" onclick="closeClaim()">← Zurück zur Übersicht</button>
+                <div class="glass-panel">
+                    <h2>Behauptung 4: "Social Media zeigt die Wahrheit, Mainstream-Medien lügen"</h2>
+                    <div class="claim-full">
+                        <h3>Quelle:</h3>
+                        <p>Verschiedene Social-Media-Kanäle, Influencer, Alternative-Media-Blogs</p>
+                        <h3>Die Behauptung:</h3>
+                        <div class="claim-text">
+                            "Du kannst den großen Medien nicht trauen. Sie werden von Eliten kontrolliert. Nur auf Social Media erfährst du die WAHRHEIT."
+                        </div>
+                    </div>
+
+                    <h3>Analysiere diese Behauptung:</h3>
+                    <div class="analysis-fields">
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">Q</span>Quelle: Wer behauptet das?</div>
+                            <textarea placeholder="Wer sagt, dass Social Media die Wahrheit zeigt?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Influencer, Blogs, Kanäle – nicht immer mit journalistischer Ausbildung. Wer überprüft ihre Aussagen? Wer bezahlt sie?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">U</span>Urheber-Interesse: Welches Interesse?</div>
+                            <textarea placeholder="Warum haben Influencer Interesse an dieser Aussage?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Je radikaler/emotionaler die Inhalte, desto mehr Interaktionen, desto mehr Geld durch Ads oder Spenden. Ist das Anreiz für Wahrheit oder für Spektakel?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Evidenz: Welche Belege?</div>
+                            <textarea placeholder="Welche Belege gibt es für diese Aussage?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Werden konkrete Beispiele von Medien-Lügen genannt? Oder ist es eine allgemeine Beschuldigung? Und: Gibt es auch Fehler in Social Media? (Spoiler: JA!)
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Logik: Wo sind die Fehlschlüsse?</div>
+                            <textarea placeholder="Welche Logik-Fehler siehst du?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> "Falsche Dichotomie": "Entweder Mainstream-Medien sind falsch ODER Social Media ist wahr" – aber es gibt auch vertrauenswürdige Mainstream-Medien UND Desinformation in Social Media.
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Lücken: Was wird nicht gesagt?</div>
+                            <textarea placeholder="Welche Informationen fehlen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Keine Diskussion von Algorithmen, Filterblasen, Bot-Netzwerken, oder Desinformation in Social Media. Auch: Mainstream-Medien haben KORREKTURSYSTEME (Redaktion, Fact-Checking). Hat Social Media das?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Einordnung: Was sagen Fachleute?</div>
+                            <textarea placeholder="Was sagen Medienwissenschaftler?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Medienwissenschaftler warnen vor Filterblasen, Algorithmen, die Extreme fördern, und Desinformation in Social Media. Mainstream-Medien haben Fehler, aber auch Qualitätskontrolle.
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">N</span>Nachprüfbarkeit: Wie überprüfbar?</div>
+                            <textarea placeholder="Kann man das überprüfen? Wie?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Nimm ein konkretes Claim aus Social Media und check es gegen mehrere unabhängige Quellen. Du wirst sehen: manche sind wahr, manche falsch – unabhängig vom Medium.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="primary" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+                    <div class="solution-box">
+                        <h4>Analyse: Eine verführerische Dichotomie</h4>
+                        <p><strong>Quelle:</strong> Influencer, alternative Medien-Kanäle – keine journalistische Ausbildung oder Redaktion notwendig.</p>
+                        <p><strong>Urheber-Interesse:</strong> Algorithmen belohnen Engagement, nicht Wahrheit. Je radikaler/emotionaler, desto mehr Klicks, desto mehr Geld. Finanzielle Anreize sind nicht auf Wahrheit ausgerichtet.</p>
+                        <p><strong>Evidenz – SELEKTIV:</strong> Ja, Mainstream-Medien haben Fehler gemacht. Aber: 1) Sie korrigieren öffentlich, 2) Falsche Behauptungen in Social Media sind genauso häufig, 3) Keine Kontrolle oder Korrekturen in Social Media.</p>
+                        <p><strong>Logik-Fehler:</strong> FALSCHE DICHOTOMIE: "Mainstream ODER Social Media" – aber es gibt auch vertrauenswürdige Zeitungen mit redaktionellen Standards UND Desinformation in sozialen Medien.</p>
+                        <p><strong>Lücken:</strong> Keine Diskussion von: Algorithmen (fördern Extreme), Filterblasen (du siehst nur deine Meinung), Bots (verbreiten Falschinformationen automatisch), oder manipulierte Kampagnen (z.B. Troll-Farmen).</p>
+                        <p><strong>Einordnung:</strong> Medienwissenschaftler und Fact-Checker warnen: Social Media ist ein Problem für Wahrheitsfindung. Es ist nicht die Lösung, sondern oft Teil des Problems.</p>
+                        <p><strong>Nachprüfbarkeit:</strong> JA. Test es selbst: Nimm ein Claim von Social Media, überprüfe es bei mehreren unabhängigen, seriösen Quellen. Du wirst merken: Die Wahrheit ist nicht "Mainstream ODER Social Media", sondern "überprüfbar oder nicht überprüfbar".</p>
+                        <p><strong>FAZIT:</strong> Diese Behauptung ist nicht neu – JEDE Propaganda-Bewegung hat gesagt, sie sei die "wahre Stimme" gegen die "kontrollierten Medien". Von Nazis bis zu modernen Desinformationskampagnen. Ein altes Muster, neue Technologie.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis-4" class="analysis-panel">
+                <button class="back-button" onclick="closeClaim()">← Zurück zur Übersicht</button>
+                <div class="glass-panel">
+                    <h2>Behauptung 5: "Früher war alles besser"</h2>
+                    <div class="claim-full">
+                        <h3>Quelle:</h3>
+                        <p>Alltagsdiskurs, politische Rhetorik, soziale Medien</p>
+                        <h3>Die Behauptung:</h3>
+                        <div class="claim-text">
+                            "In den 'guten alten Zeiten' gab es weniger Kriminalität, mehr Zusammenhalt, bessere Werte. Die Gesellschaft verfällt heute."
+                        </div>
+                    </div>
+
+                    <h3>Analysiere diese Behauptung:</h3>
+                    <div class="analysis-fields">
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">Q</span>Quelle: Wer sagt das?</div>
+                            <textarea placeholder="Wer macht diese Aussage?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Oft ältere Menschen (die es "miterlebt" haben), aber auch Politiker mit konservativen Zielen. Haben diese Quellen eine objektive Perspektive?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">U</span>Urheber-Interesse: Welches Interesse?</div>
+                            <textarea placeholder="Welches Interesse steckt dahinter?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Konservative Politiker können damit für „alte" Ideen werben. Älteren Menschen vermittelt es das Gefühl, etwas Wichtiges zu haben (ihre Erfahrung). Psychologisch: Nostalgie-Marketing.</p>
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Evidenz: Welche Belege?</div>
+                            <textarea placeholder="Gibt es Daten, die das stützen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Statistiken zeigen: Kriminalität ist LANGFRISTIG GESUNKEN (in Österreich, Deutschland, Europa). Leben ist sicherer, nicht unsicherer. Was widerlegt die Behauptung?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Logik: Wo sind die Fehler?</div>
+                            <textarea placeholder="Welche logischen Fehler findest du?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Nostalgia-Bias: Wir erinnern an gute Dinge, vergessen schlechte. "Selektive Erinnerung" ist kein Beweis für Realität. Schau dir Statistiken an!
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Lücken: Was wird nicht erwähnt?</div>
+                            <textarea placeholder="Welche unbequemen Fakten sind abwesend?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> „Gute alte Zeiten" – für wen? Nicht für Frauen (kein Wahlrecht), nicht für Arbeiter (Kinderarbeit), nicht für Homosexuelle (Verfolgung), nicht für Minderheiten. Welche Perspektiven fehlen?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Einordnung: Was sagen Daten?</div>
+                            <textarea placeholder="Was zeigen Statistiken und Forschung?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Steven Pinker ("Enlightenment Now"): Daten zeigen, dass Gewalt, Armut, Krankheit LANGFRISTIG rückläufig sind. Leben ist objektivv sicherer und besser als "früher".
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">N</span>Nachprüfbarkeit: Wie überprüfen?</div>
+                            <textarea placeholder="Wo kann man das überprüfen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Polizei-Statistiken, WHO-Daten, Lebenserwarung, Sterblichkeitsraten, Schulabschlussquoten. Alle frei verfügbar. Check sie selbst!
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="primary" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+                    <div class="solution-box">
+                        <h4>Analyse: Der Mythos vom Verfalls</h4>
+                        <p><strong>Quelle:</strong> Alltagsdiskurs (oft ältere Menschen), politische Rhetorik (Konservative). Nicht datengestützt, sondern emotional.</p>
+                        <p><strong>Urheber-Interesse:</strong> Konservative nutzen Nostalgie zur politischen Mobilisierung. "Früher besser" = "meine Werte waren richtig" = "wählt meine Partei". Psychologisch wirksam, aber nicht wahr.</p>
+                        <p><strong>Evidenz – FALSCH:</strong> Kriminalität ist langfristig GESUNKEN. Lebenserwartung ist GESTIEGEN. Armut ist ZURÜCKGEGANGEN. Schul- und Berufsabschlüsse sind HÄUFIGER. Die Daten widerlegen diese Behauptung.</p>
+                        <p><strong>Logik-Fehler:</strong> NOSTALGIA-BIAS: Wir erinnern an schöne Dinge ("der Sommer 1985 war toll"), vergessen schlechte ("damals war ich arbeitslos"). Das ist menschlich, aber kein Beweis.</p>
+                        <p><strong>Lücken:</strong> Keine Diskussion davon, für WEN es besser war. Für Frauen? Nein (kein Wahlrecht, berufliche Einschränkungen). Für Arbeiter? Nein (Kinderarbeit, lange Arbeitszeiten). Für LGBTQ+? Nein (Verfolgung). Nur für eine bestimmte Gruppe (privilegierte Männer)?</p>
+                        <p><strong>Einordnung:</strong> Historiker und Datenwissenschaftler zeigen: Das ist ein altes Muster. JEDE Generation sagt, die nächste Generation verfällt. Sokrates sagte das über die Jugend! (2400 Jahre her.) Und Gesellschaften sind statistisch stabiler und wohlhabender geworden.</p>
+                        <p><strong>Nachprüfbarkeit:</strong> JA. Polizei-Statistiken, WHO, World Bank, nationale Statistikämter. Die Daten sind öffentlich. Überprüfe selbst: Hat sich die Welt verschlechtert?</p>
+                        <p><strong>FAZIT:</strong> Eine emotionale, aber falsch Behauptung. Das macht sie nicht weniger wirksam politisch. Ein altes Werkzeug der Manipulation, das immer wieder funktioniert.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis-5" class="analysis-panel">
+                <button class="back-button" onclick="closeClaim()">← Zurück zur Übersicht</button>
+                <div class="glass-panel">
+                    <h2>Behauptung 6: "KI wird alle Arbeitsplätze ersetzen"</h2>
+                    <div class="claim-full">
+                        <h3>Quelle:</h3>
+                        <p>Technologie-Nachrichten, Social Media, Futuristen</p>
+                        <h3>Die Behauptung:</h3>
+                        <div class="claim-text">
+                            "Künstliche Intelligenz wird in 10 Jahren die Hälfte aller Jobs übernehmen. Massenarbeitslosigkeit ist unvermeidlich."
+                        </div>
+                    </div>
+
+                    <h3>Analysiere diese Behauptung:</h3>
+                    <div class="analysis-fields">
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">Q</span>Quelle: Wer sagt das?</div>
+                            <textarea placeholder="Wer behauptet das?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Tech-Journalisten, Futuristen, AI-Unternehmer. Haben diese Gruppen Anreize, Angst zu schüren? (Clickbait, Forschungsmittel, Aktien?)
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">U</span>Urheber-Interesse: Welches Interesse?</div>
+                            <textarea placeholder="Warum verbreiten sie diese Angst?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Angst = Aufmerksamkeit = Clicks = Werbeumsätze. AI-Unternehmen profitieren von Angst (rechtfertigt Regulierung, Förderung). Sind das sachliche oder emotionale Gründe?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Evidenz: Gibt es Belege?</div>
+                            <textarea placeholder="Welche Belege werden genannt?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Oft Szenarien oder Modelle, nicht echte Daten. Zeigt die Geschichte ein Muster? (Webstuhl, Dampfmaschine, Computer – alle sollten Jobs eliminieren, taten es nicht.)
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Logik: Wo sind die Fehler?</div>
+                            <textarea placeholder="Welche logischen Fehlschlüsse?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> "Unvermeidlich" = Determinismus. Aber die Zukunft wird auch von menschlichen Entscheidungen geprägt. Politik, Bildung, Regulierung spielen eine Rolle. Ist wirklich alles "unvermeidlich"?
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">L</span>Lücken: Was wird übersehen?</div>
+                            <textarea placeholder="Welche Informationen fehlen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Keine Diskussion von: Neue Jobs entstehen (wer implementiert KI? Wer trainingst sie?). Produktivität steigt (mehr Wohlstand möglich). Regulierung könnte Jobs schützen. Bildung könnte vorbeugen.
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">E</span>Einordnung: Was sagen Arbeitsmarkt-Experten?</div>
+                            <textarea placeholder="Was ist die seriöse wissenschaftliche Sicht?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> IMF, OECD, Arbeitsmarktforscher: JA, Automatisierung ändert Jobs. Aber: Bisher entstanden MEHR Jobs als verschwanden. Laufende Anpassung ist notwendig, nicht "Massenarbeitslosigkeit".
+                            </div>
+                        </div>
+
+                        <div class="analysis-field">
+                            <div class="field-label"><span class="field-letter">N</span>Nachprüfbarkeit: Wie überprüfen?</div>
+                            <textarea placeholder="Kann man das überprüfen?"></textarea>
+                            <button onclick="toggleHint(this)">Hinweis anzeigen</button>
+                            <div class="hint-box">
+                                <strong>Tipp:</strong> Schau auf HISTORISCHE Daten: Webstuhl (1811), Dampfmaschine, Computer (1970er) – alle sollten Arbeitslosigkeit bringen. Taten sie nicht. Was sagt das über AI?
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="primary" onclick="toggleSolution(this)">Musterlösung anzeigen</button>
+                    <div class="solution-box">
+                        <h4>Analyse: Ein altes Angst-Muster mit neuer Technologie</h4>
+                        <p><strong>Quelle:</strong> Tech-Journalisten, Futuristen, AI-Unternehmer – viele haben finanzielle oder aufmerksamkeits-basierte Anreize.</p>
+                        <p><strong>Urheber-Interesse:</strong> Angst erzeugt Aufmerksamkeit (Clicks, Werbeeinnahmen). AI-Unternehmen profitieren von Angst (Rechtfertigung für Regulierung, Förderung, Investitionen). Das ist nicht sachlich, sondern emotional-kommerziell.</p>
+                        <p><strong>Evidenz – SCHWACH:</strong> Modelle und Szenarien, aber keine echten Daten (die Zukunft ist ja noch nicht da). Aber: Historische Daten zeigen ein Muster.</p>
+                        <p><strong>Logik-Fehler – DETERMINISMUS:</strong> "Unvermeidlich" setzt voraus, dass die Zukunft feststeht. Aber Politik, Bildung, Regulierung können Ergebnisse beeinflussen. Ist die Zukunft wirklich "unvermeidlich" oder wird sie gemacht?</p>
+                        <p><strong>Lücken:</strong> Keine Diskussion von: Neue Jobs entstehen (wer macht KI, trainiert, wartet sie?). Produktivitätssteigerungen könnten Arbeitszeiten verkürzen (4-Tage-Woche?). Regulierung könnte Jobs schützen. Bildung könnte Menschen umschulen.</p>
+                        <p><strong>Einordnung:</strong> OECD, IMF, Arbeitsmarktforscher: Ja, Automatisierung ändert Märkte. Aber die historische Bilanz ist klar: Jede technologische Revolution (Webstuhl, Dampfmaschine, Computer) führte am Ende zu MEHR Jobs, nicht weniger. Übergänge sind schmerzhaft, aber nicht "unvermeidliche Massenarbeitslosigkeit".</p>
+                        <p><strong>Nachprüfbarkeit:</strong> JA. Schau dir Arbeitsmärkte nach der Computerisierung an (1980er-2020er). Die Arbeitslosenquoten sind nicht dramatisch gestiegen – obwohl jeder Job mit Computern revolutioniert wurde. Ein Gegenbeweis gegen die KI-Angst.</p>
+                        <p><strong>FAZIT – HISTORISCHER PARALLEL:</strong> Die Ludditen (1811) zerstörten Webstühle, weil sie fürchteten, ihre Jobs zu verlieren. Verständlich emotional – aber faktisch falsch. Die Wirtschaft schuf neue Jobs. 200 Jahre später macht KI dasselbe: Alte Angst, neue Technologie. Ein klassisches Muster.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: MUSTER ERKENNEN -->
+        <div id="tab-2" class="tab-content">
+            <div class="glass-panel">
+                <h2>Muster erkennen</h2>
+                <p>Nachdem du mindestens 2 Behauptungen analysiert hast, wirst du sehen: Es gibt wiederkehrende Manipulationsmuster. Sie erscheinen in Behauptungen aus verschiedenen Zeiten und Kontexten. Das ist die Stärke des kritischen Denkens: Du erkennst die Muster, nicht die spezifischen Themen.</p>
+            </div>
+
+            <h3>Vergleich der Manipulationsmuster:</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Manipulationsmuster</th>
+                        <th>Behauptung 1</th>
+                        <th>Behauptung 2</th>
+                        <th>Behauptung 3</th>
+                        <th>Behauptung 4</th>
+                        <th>Behauptung 5</th>
+                        <th>Behauptung 6</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Perspektive verborgen</strong></td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sündenbock-Suche</strong></td>
+                        <td></td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Falsche Dichotomie</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkmark">✓</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nostalgia-Bias</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkmark">✓</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Determinismus</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Emotionale Rhetorik</strong></td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fehlende Evidenz</strong></td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Interesse verborgen</strong></td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                        <td class="checkmark">✓</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="insight-box">
+                <div class="insight-icon">💡</div>
+                <h3>Wichtiger Erkenntnis</h3>
+                <p>Alle diese Behauptungen, ob historisch (Kolumbus, Dolchstoßlegende) oder modern (Social Media, KI) nutzen ähnliche Manipulationstechniken:</p>
+                <ul>
+                    <li><strong>Emotionale Rhetorik:</strong> Sie appellieren an Gefühle, nicht an Logik</li>
+                    <li><strong>Verborgene Interessen:</strong> Hinter jeder Behauptung steckt ein Interesse – Macht, Geld, Verdrängung, Aufmerksamkeit</li>
+                    <li><strong>Fehlende Perspektiven:</strong> Sie zeigen nur eine Seite und verschweigen Gegenargumente</li>
+                    <li><strong>Selektive Evidenz:</strong> Sie zeigen Belege, die sie stützen, verstecken aber Belege, die sie widerlegen</li>
+                </ul>
+            </div>
+
+            <div class="glass-panel">
+                <h3>Manipulationstechniken erkennen</h3>
+                <p>Hier sind die häufigsten Muster, auf die du achten solltest:</p>
+
+                <div class="patterns-grid">
+                    <div class="pattern-item">
+                        <div class="pattern-title">Emotionale Ansteckung</div>
+                        <div class="pattern-claims">Behauptungen, die Angst, Wut oder Trauer schüren (aber wenig Logik). Beispiel: "Die Jugend von heute..." (Behauptung 5)</div>
+                    </div>
+
+                    <div class="pattern-item">
+                        <div class="pattern-title">Sündenbock-Suche</div>
+                        <div class="pattern-claims">Eine Gruppe wird für Probleme verantwortlich gemacht (aber oft nicht zu Recht). Beispiel: "Juden/Sozialisten schuld" (Behauptung 2)</div>
+                    </div>
+
+                    <div class="pattern-item">
+                        <div class="pattern-title">Falsche Dichotomie</div>
+                        <div class="pattern-claims">Nur zwei Optionen werden gezeigt ("entweder X oder Y"), aber es gibt mehr. Beispiel: "Mainstream ODER Social Media" (Behauptung 4)</div>
+                    </div>
+
+                    <div class="pattern-item">
+                        <div class="pattern-title">Selektive Wahrnehmung</div>
+                        <div class="pattern-claims">Es werden nur Fakten gewählt, die die These stützen. Gegenfakten werden ignoriert. Beispiel: "Früher besser, heute schlecht" (Behauptung 5)</div>
+                    </div>
+
+                    <div class="pattern-item">
+                        <div class="pattern-title">Appeal to Nostalgia</div>
+                        <div class="pattern-claims">Die Vergangenheit wird idealisiert, ohne objektiv überprüft zu werden. Beispiel: "Gute alte Zeiten" (Behauptung 5)</div>
+                    </div>
+
+                    <div class="pattern-item">
+                        <div class="pattern-title">Determinismus</div>
+                        <div class="pattern-claims">Die Zukunft wird als unausweichlich dargestellt ("unvermeidlich"), obwohl Menschen Entscheidungen treffen. Beispiel: "KI wird alles ersetzen" (Behauptung 6)</div>
+                    </div>
+
+                    <div class="pattern-item">
+                        <div class="pattern-title">Opfermythos</div>
+                        <div class="pattern-claims">Eine Gruppe wird nur als Opfer dargestellt, komplexere Realität (auch Mitverantwortung) wird ignoriert. Beispiel: "Österreich erste Opfer" (Behauptung 3)</div>
+                    </div>
+
+                    <div class="pattern-item">
+                        <div class="pattern-title">Eurozentrismus</div>
+                        <div class="pattern-claims">Eine Perspektive wird als universell behandelt ("Entdeckung", "Zivilisation"), andere Perspektiven sind unsichtbar. Beispiel: "Kolumbus entdeckte" (Behauptung 1)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-box">
+                <div class="insight-icon">🔄</div>
+                <h3>Ein historischer Kreis</h3>
+                <p>Das Faszinierendste: Dieselben Manipulationstechniken erscheinen immer wieder:</p>
+                <ul>
+                    <li><strong>1800er:</strong> "Europa entdeckt und zivilisiert die Welt" (Behauptung 1)</li>
+                    <li><strong>1919:</strong> "Verräter haben uns sabotiert" (Behauptung 2)</li>
+                    <li><strong>1945:</strong> "Wir waren die Opfer" (Behauptung 3)</li>
+                    <li><strong>2020er:</strong> "Mainstream lügt, Social Media sagt die Wahrheit" (Behauptung 4)</li>
+                    <li><strong>Immer:</strong> "Früher war besser" (Behauptung 5)</li>
+                    <li><strong>Immer:</strong> "Die Technologie wird uns zerstören" (Behauptung 6)</li>
+                </ul>
+                <p><strong>Fazit:</strong> Die Werkzeuge der Manipulation sind zeitlos. Wer die Muster kennt, kann sie überall erkennen – egal ob in Schulbüchern des 19. Jh., politischer Propaganda, oder heute in Social Media.</p>
+            </div>
+        </div>
+
+        <!-- TAB 4: REFLEXION -->
+        <div id="tab-3" class="tab-content">
+            <div class="glass-panel">
+                <h2>Reflexion: Kritisches Denken im Alltag</h2>
+                <p>Kritisches Denken ist nicht nur für Geschichte oder Medien wichtig. Es ist eine Fähigkeit, die du überall brauchst. Lass uns überlegen, wie du das in deinem Leben anwenden kannst.</p>
+            </div>
+
+            <div class="reflection-question">
+                <strong>Frage 1: Wo begegnen dir im Alltag Behauptungen, die du hinterfragen solltest?</strong>
+                <div class="reflection-answer" contenteditable="true" placeholder="Schreib deine Gedanken hier..."></div>
+            </div>
+
+            <div class="reflection-question">
+                <strong>Tipps zum Nachdenken:</strong>
+                <ul>
+                    <li>TikTok, Instagram, YouTube: Influencer-Behauptungen über Produkte, Diäten, Gesundheit</li>
+                    <li>Schule: Lehreraussagen, Schulbuchzitate (nicht alle sind automatisch wahr!)</li>
+                    <li>Familie: Großeltern-Aussagen ("Früher war alles besser"), Eltern-Ermahnungen</li>
+                    <li>Politik: Wahlversprechen, Reden von Politikern</li>
+                    <li>Werbung: Versprechungen von Produkten, Apps, Dienstleistungen</li>
+                    <li>Freunde: Gerüchte, Verschwörungstheorien, verbreitete Fakten</li>
+                </ul>
+            </div>
+
+            <div class="reflection-question">
+                <strong>Frage 2: Was ist der Unterschied zwischen gesunder Skepsis und Verschwörungsdenken?</strong>
+                <div class="reflection-answer" contenteditable="true" placeholder="Wie unterscheidest du die beiden?"></div>
+            </div>
+
+            <div class="reflection-question">
+                <strong>Tipps zum Nachdenken:</strong>
+                <ul>
+                    <li><strong>Gesunde Skepsis:</strong> "Das könnte falsch sein. Ich überprüfe mehrere Quellen." → Offen, aber überprüfbar</li>
+                    <li><strong>Verschwörungsdenken:</strong> "Alle großen Medien lügen. Nur meine Quelle sagt die Wahrheit." → Geschlossen, alle anderen sind schuld</li>
+                    <li>Skepsis: "Ich bin verwirrt. Ich recherchiere." → Suche nach Verständnis</li>
+                    <li>Verschwörung: "Ich weiß bereits die Wahrheit. Alle anderen sind dumm/böse." → Suche nach Bestätigung</li>
+                    <li>Skepsis: "Experten könnten Unrecht haben, aber sie haben oft mehr Wissen." → Respekt vor Expertise</li>
+                    <li>Verschwörung: "Experten sind Teil der Verschwörung." → Ablehnung aller Autorität</li>
+                </ul>
+            </div>
+
+            <div class="reflection-question">
+                <strong>Frage 3: Welche Verantwortung hast du als Medienkonsument/in?</strong>
+                <div class="reflection-answer" contenteditable="true" placeholder="Was denkst du über deine Rolle?"></div>
+            </div>
+
+            <div class="reflection-question">
+                <strong>Tipps zum Nachdenken:</strong>
+                <ul>
+                    <li><strong>Überprüfe vor dem Weitergeben:</strong> Wenn du etwas auf Social Media teilst, hast du es überprüft? Das Meme könnte falsch sein.</li>
+                    <li><strong>Sei Multiplikator der Wahrheit:</strong> Du hast Einfluss auf deine Freunde. Wenn du unscharfsinnig teilst, verbreitet sich Desinformation weiter.</li>
+                    <li><strong>Frag nach Quellen:</strong> Wenn Freunde etwas behaupten: "Woher weißt du das?" → Gute Frage, nicht unhöflich</li>
+                    <li><strong>Gestehe Unsicherheit ein:</strong> "Ich bin mir nicht sicher" ist stärker als falsche Gewissheit</li>
+                    <li><strong>Höre anderen zu:</strong> Die beste Verteidigung gegen Desinformation ist offener Dialog, nicht Zensur</li>
+                    <li><strong>Erkenne deine eigenen Biases:</strong> Du glaubst eher an Infos, die deine Meinung bestätigen (Confirmation Bias). Sei vorsichtig!</li>
+                </ul>
+            </div>
+
+            <div class="glass-panel">
+                <h3>Eine letzte Überlegung: Die Verantwortung des kritischen Denkens</h3>
+                <p>Kritisches Denken ist eine Superkraft – aber mit Vorsicht. Es gibt Unterschied zwischen:</p>
+                <ul>
+                    <li><strong>Kritisches Denken:</strong> "Das könnte falsch sein. Ich überprüfe objektiv." → Führt zu Wahrheit</li>
+                    <li><strong>Zynismus:</strong> "Alles ist Lüge. Ich vertrau niemandem." → Führt zu Lähmung und Verschwörungsdenken</li>
+                    <li><strong>Dogmatismus:</strong> "Ich hab Recht. Alle anderen sind dumm." → Führt zu Isolation und Hass</li>
+                </ul>
+                <p style="margin-top: 20px;">Das Ziel ist nicht, alles in Frage zu stellen, sondern <strong>intelligent zu zweifeln</strong>. Das ist eine Kunst.</p>
+                <p style="margin-top: 15px;"><strong>Deine Aufgabe als Schülerin/Schüler:</strong> Du schuldest deinen Mitmenschen und der Gesellschaft das Versprechen, über deine Quellen nachzudenken. In einer Demokratie ist dies nicht optional – es ist ein Fundament.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(index) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById('tab-' + index).classList.add('active');
+
+            // Add active to clicked button
+            event.target.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function selectClaim(index) {
+            // Hide overview
+            document.getElementById('claims-overview').style.display = 'none';
+
+            // Hide all analysis panels
+            document.querySelectorAll('.analysis-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Show selected panel
+            document.getElementById('analysis-' + index).classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function closeClaim() {
+            // Show overview again
+            document.getElementById('claims-overview').style.display = 'grid';
+
+            // Hide all analysis panels
+            document.querySelectorAll('.analysis-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Close any open hints/solutions
+            document.querySelectorAll('.hint-box').forEach(box => {
+                box.classList.remove('active');
+            });
+            document.querySelectorAll('.solution-box').forEach(box => {
+                box.classList.remove('active');
+            });
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function toggleHint(button) {
+            const hintBox = button.nextElementSibling;
+            hintBox.classList.toggle('active');
+        }
+
+        function toggleSolution(button) {
+            const solutionBox = button.nextElementSibling;
+            solutionBox.classList.toggle('active');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeClaim();
+            }
+        });
+    </script>
+</body>
+</html>

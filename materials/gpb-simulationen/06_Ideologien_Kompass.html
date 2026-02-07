@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ideologien-Kompass – Wo stehst du?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1020 50%, #5c1030 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Glass effect */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #ffc107;
+            text-shadow: 0 2px 10px rgba(255, 193, 7, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffc107, #ff9800);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Question section */
+        .question-section {
+            animation: slideIn 0.5s ease;
+        }
+
+        .question-number {
+            color: #ffc107;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* Answer options */
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-option {
+            display: none;
+        }
+
+        .answer-option input[type="radio"] {
+            display: none;
+        }
+
+        .answer-option label {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+        }
+
+        .answer-option label:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffc107;
+        }
+
+        .answer-option input[type="radio"]:checked + label {
+            background: rgba(255, 193, 7, 0.2);
+            border-color: #ffc107;
+            font-weight: 600;
+        }
+
+        .custom-radio {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .answer-option input[type="radio"]:checked + label .custom-radio {
+            background: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .custom-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #1a0a0a;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .answer-option input[type="radio"]:checked + label .custom-radio::after {
+            opacity: 1;
+        }
+
+        /* Navigation buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            color: #1a0a0a;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffc107;
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results section */
+        .results-section {
+            animation: fadeIn 0.8s ease;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-header h2 {
+            font-size: 2em;
+            color: #ffc107;
+            margin-bottom: 15px;
+        }
+
+        .results-header p {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Dimension scores */
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .dimension-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .dimension-label {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 10px;
+        }
+
+        .dimension-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ffc107;
+            margin-bottom: 15px;
+        }
+
+        .dimension-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .dimension-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #ffc107);
+            transition: width 0.6s ease;
+        }
+
+        /* Ideologies ranking */
+        .ideologies-ranking {
+            margin: 50px 0;
+        }
+
+        .ideologies-ranking h3 {
+            font-size: 1.5em;
+            color: #ffc107;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .ideology-result {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .ideology-result.rank-1 {
+            border-left-color: #ffc107;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .ideology-result.rank-2 {
+            border-left-color: #ff9800;
+        }
+
+        .ideology-result.rank-3 {
+            border-left-color: #9c27b0;
+        }
+
+        .ideology-result.rank-4 {
+            border-left-color: #3498db;
+        }
+
+        .ideology-result.rank-5 {
+            border-left-color: #2ecc71;
+        }
+
+        .ideology-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .ideology-name {
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .ideology-match {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #ffc107;
+        }
+
+        .ideology-description {
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .ideology-bar-container {
+            margin: 15px 0;
+        }
+
+        .ideology-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+        }
+
+        .ideology-bar-value {
+            font-weight: 600;
+            color: #ffc107;
+        }
+
+        .ideology-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .ideology-bar-fill {
+            height: 100%;
+            transition: width 0.6s ease;
+        }
+
+        /* Ideology details */
+        .ideology-details {
+            margin-top: 50px;
+        }
+
+        .ideology-detail-section {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid;
+        }
+
+        .ideology-detail-section.lib {
+            border-left-color: #3498db;
+        }
+
+        .ideology-detail-section.kon {
+            border-left-color: #8e44ad;
+        }
+
+        .ideology-detail-section.soz {
+            border-left-color: #e74c3c;
+        }
+
+        .ideology-detail-section.nat {
+            border-left-color: #e67e22;
+        }
+
+        .ideology-detail-section.ana {
+            border-left-color: #2ecc71;
+        }
+
+        .ideology-detail-section h4 {
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .ideology-detail-section p {
+            line-height: 1.7;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .ideology-detail-section strong {
+            color: #ffc107;
+        }
+
+        .thinkers {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .thinkers strong {
+            color: #ffc107;
+        }
+
+        /* Caveat and reflection */
+        .caveat-section {
+            margin-top: 50px;
+            padding: 25px;
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+        }
+
+        .caveat-section h4 {
+            color: #ffc107;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .caveat-section p {
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 12px;
+        }
+
+        .reflection-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid #3498db;
+            border-radius: 8px;
+        }
+
+        .reflection-section h4 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .reflection-section p {
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Hidden sections */
+        .hidden {
+            display: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .glass-panel {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .question-text {
+                font-size: 1.2em;
+            }
+
+            .dimensions-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Ideologien-Kompass</h1>
+            <p>Wo stehst du politisch? Beantworte 12 Fragen und entdecke, wie deine Antworten mit 19. Jahrhundert Ideologien zusammenhängen.</p>
+        </div>
+
+        <!-- Main content -->
+        <div class="glass-panel">
+            <!-- Questions section -->
+            <div id="questionsSection" class="question-section">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text">
+                        Frage <span id="currentQuestion">1</span> von <span id="totalQuestions">12</span>
+                    </div>
+                </div>
+
+                <div id="questionContainer"></div>
+
+                <div class="button-group">
+                    <button class="btn-secondary" id="btnBack" onclick="previousQuestion()" disabled>← Zurück</button>
+                    <button class="btn-primary" id="btnNext" onclick="nextQuestion()">Weiter →</button>
+                </div>
+            </div>
+
+            <!-- Results section -->
+            <div id="resultsSection" class="hidden results-section">
+                <div class="results-header">
+                    <h2>Deine Ergebnisse</h2>
+                    <p>So haben sich deine Antworten verteilt</p>
+                </div>
+
+                <div class="dimensions-grid" id="dimensionsGrid"></div>
+
+                <div class="ideologies-ranking" id="ideologiesRanking"></div>
+
+                <div class="ideology-details" id="ideologyDetails"></div>
+
+                <div class="caveat-section">
+                    <h4>⚠ Wichtig: Die Grenzen dieses Kompass</h4>
+                    <p>Dieser Kompass ist vereinfacht! Politische Positionen sind viel komplexer als vier Dimensionen. Er soll zum Nachdenken anregen, nicht zum Schubladendenken.</p>
+                    <p>Die ideologischen Positionen aus dem 19. Jahrhundert sind heute in ihrer reinen Form kaum noch anzutreffen. Sie haben sich entwickelt, vermischt und angepasst.</p>
+                </div>
+
+                <div class="reflection-section">
+                    <h4>Zum Nachdenken:</h4>
+                    <p><strong>Warum ist es wichtig, die historischen Wurzeln politischer Ideen zu kennen?</strong></p>
+                    <p>Weil viele politische Debatten heute auf Grundlagen basieren, die vor 150+ Jahren gelegt wurden. Wenn du verstehst, wo eine Idee herkommt und warum Menschen sie vertraten, kannst du Politische Debatten besser einordnen und selbst informierte Entscheidungen treffen.</p>
+                </div>
+
+                <div class="button-group" style="margin-top: 40px;">
+                    <button class="btn-primary" onclick="restartQuiz()">↻ Neustart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions data
+        const questions = [
+            {
+                id: 1,
+                text: "Der Staat sollte Fabriken und Bergwerke besitzen, nicht private Unternehmer.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: -2, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: -1, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 1, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 2, staat: 0, gesellschaft: 0, nation: 0 } }
+                ]
+            },
+            {
+                id: 2,
+                text: "Jeder Mensch sollte frei entscheiden können, welchen Beruf er ausübt und wo er lebt.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 0, staat: 2, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 0, staat: 1, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0, staat: -1, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 0, staat: -2, gesellschaft: 0, nation: 0 } }
+                ]
+            },
+            {
+                id: 3,
+                text: "Die Traditionen und Werte unserer Vorfahren müssen bewahrt werden.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: -2, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: -1, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 1, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 2, nation: 0 } }
+                ]
+            },
+            {
+                id: 4,
+                text: "Alle Völker haben das Recht auf einen eigenen Nationalstaat.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: 2 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: 1 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: -1 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: -2 } }
+                ]
+            },
+            {
+                id: 5,
+                text: "Arbeiter sollten das Recht haben, Gewerkschaften zu gründen und zu streiken.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: -1, staat: 1, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: -0.5, staat: 0.5, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0.5, staat: -0.5, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 1, staat: -1, gesellschaft: 0, nation: 0 } }
+                ]
+            },
+            {
+                id: 6,
+                text: "Ein starker Herrscher kann besser regieren als ein Parlament voller Streithähne.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 0, staat: -2, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 0, staat: -1, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0, staat: 1, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 0, staat: 2, gesellschaft: 0, nation: 0 } }
+                ]
+            },
+            {
+                id: 7,
+                text: "Die Kirche sollte großen Einfluss auf die Politik haben.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 0, staat: -1, gesellschaft: -2, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 0, staat: -0.5, gesellschaft: -1, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0, staat: 0.5, gesellschaft: 1, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 0, staat: 1, gesellschaft: 2, nation: 0 } }
+                ]
+            },
+            {
+                id: 8,
+                text: "Reiche sollen hohe Steuern zahlen, um den Armen zu helfen.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: -2, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: -1, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 1, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 2, staat: 0, gesellschaft: 0, nation: 0 } }
+                ]
+            },
+            {
+                id: 9,
+                text: "Die Pressefreiheit darf niemals eingeschränkt werden.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 0, staat: 2, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 0, staat: 1, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0, staat: -1, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 0, staat: -2, gesellschaft: 0, nation: 0 } }
+                ]
+            },
+            {
+                id: 10,
+                text: "Unsere nationale Sprache und Kultur sind wichtiger als internationale Zusammenarbeit.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: 2 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: 1 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: -1 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: -2 } }
+                ]
+            },
+            {
+                id: 11,
+                text: "Alle Menschen sind gleich und sollten die gleichen Rechte haben, egal welcher Herkunft.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 2, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: 1, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: -1, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: 0, staat: 0, gesellschaft: -2, nation: 0 } }
+                ]
+            },
+            {
+                id: 12,
+                text: "Der freie Markt regelt alles am besten – der Staat soll sich heraushalten.",
+                answers: [
+                    { text: "Stimme voll zu", dimensions: { wirtschaft: 2, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher zu", dimensions: { wirtschaft: 1, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme eher nicht zu", dimensions: { wirtschaft: -1, staat: 0, gesellschaft: 0, nation: 0 } },
+                    { text: "Stimme gar nicht zu", dimensions: { wirtschaft: -2, staat: 0, gesellschaft: 0, nation: 0 } }
+                ]
+            }
+        ];
+
+        // Ideologies data
+        const ideologies = [
+            {
+                id: 'liberalismus',
+                name: 'Liberalismus',
+                color: '#3498db',
+                shortClass: 'lib',
+                targetScores: { wirtschaft: 1, staat: 2, gesellschaft: 1, nation: 0 },
+                description: 'Freiheit des Individuums, Marktwirtschaft, Verfassung, Grundrechte',
+                idea: 'Der Liberalismus betont individuelle Freiheit und Rechte. Er vertraut auf Marktwirtschaft und Konkurrenz, fordert aber auch eine Verfassung, die Grundrechte schützt.',
+                context: 'Im 19. Jahrhundert kämpften Liberale gegen absolute Monarchien für Verfassungen, Parlamentarismus und Bürgerrechte. Sie unterstützten die Industrialisierung.',
+                thinkers: 'John Stuart Mill, Adam Smith'
+            },
+            {
+                id: 'konservativismus',
+                name: 'Konservativismus',
+                color: '#8e44ad',
+                shortClass: 'kon',
+                targetScores: { wirtschaft: 0, staat: -1, gesellschaft: -2, nation: 1 },
+                description: 'Tradition, Ordnung, Kirche, organische Gesellschaft, Monarchie',
+                idea: 'Der Konservativismus möchte bewährte Traditionen, die Kirche und die etablierte Ordnung bewahren. Er sieht Gesellschaft als organisch gewachsen, nicht machbar.',
+                context: 'Konservative des 19. Jahrhunderts fürchteten die Französische Revolution und Radikalismus. Sie verteidigten Monarchie, Adel und Kirche gegen liberale und sozialistische Forderungen.',
+                thinkers: 'Edmund Burke, Klemens von Metternich'
+            },
+            {
+                id: 'sozialismus',
+                name: 'Sozialismus',
+                color: '#e74c3c',
+                shortClass: 'soz',
+                targetScores: { wirtschaft: -2, staat: 0, gesellschaft: 1, nation: -1 },
+                description: 'Gleichheit, Arbeitnehmerrechte, Vergesellschaftung, Solidarität',
+                idea: 'Der Sozialismus lehnt Privateigentum an Produktionsmitteln ab und fordert Vergesellschaftung. Er betont Klassenbewusstsein und Solidarität aller Arbeiter über nationale Grenzen.',
+                context: 'Sozialisten des 19. Jahrhunderts reagierten auf die Ausbeutung durch die Industrialisierung. Sie träumten von einer klasenlosen Gesellschaft ohne Staat und Ausbeutung.',
+                thinkers: 'Karl Marx, Friedrich Engels, Ferdinand Lassalle'
+            },
+            {
+                id: 'nationalismus',
+                name: 'Nationalismus',
+                color: '#e67e22',
+                shortClass: 'nat',
+                targetScores: { wirtschaft: 0, staat: -1, gesellschaft: -1, nation: 2 },
+                description: 'Volksgemeinschaft, nationale Einheit, Selbstbestimmung, Kultur',
+                idea: 'Der Nationalismus betont nationale Identität, Volkssouveränität und das Recht auf Selbstbestimmung. Kultur und Sprache sind zentral.',
+                context: 'Im 19. Jahrhundert erhoben sich unterdrückte Völker gegen Vielvölkerreiche (Österreich-Ungarn, Osmanen). Nationalisten forderten einheitliche Nationalstaaten.',
+                thinkers: 'Giuseppe Mazzini, Johann Gottfried Herder'
+            },
+            {
+                id: 'anarchismus',
+                name: 'Anarchismus',
+                color: '#2ecc71',
+                shortClass: 'ana',
+                targetScores: { wirtschaft: -1, staat: 2, gesellschaft: 2, nation: -1 },
+                description: 'Keine Staatsgewalt, Selbstverwaltung, individuelle Freiheit',
+                idea: 'Anarchisten lehnen jeden Staat ab und fordern freiwillige Kooperation und Selbstverwaltung. Sie streben maximale individuelle Freiheit an.',
+                context: 'Anarchisten des 19. Jahrhunderts sahen Staat als Unterdrückungsinstrument. Sie präferierten dezentrale, föderale Strukturen ohne zentrale Gewalt.',
+                thinkers: 'Michail Bakunin, Pierre-Joseph Proudhon'
+            }
+        ];
+
+        // State
+        let currentQuestionIndex = 0;
+        let answers = {};
+
+        // Initialize
+        function init() {
+            document.getElementById('totalQuestions').textContent = questions.length;
+            renderQuestion();
+        }
+
+        // Render question
+        function renderQuestion() {
+            const question = questions[currentQuestionIndex];
+            const container = document.getElementById('questionContainer');
+
+            let html = `
+                <div class="question-number">Frage ${question.id}</div>
+                <div class="question-text">${question.text}</div>
+                <div class="answer-options">
+            `;
+
+            question.answers.forEach((answer, index) => {
+                const answerId = `answer-${currentQuestionIndex}-${index}`;
+                const isChecked = answers[currentQuestionIndex] === index ? 'checked' : '';
+                html += `
+                    <div class="answer-option">
+                        <input type="radio" id="${answerId}" name="answer" value="${index}" ${isChecked} onchange="selectAnswer(${index})">
+                        <label for="${answerId}">
+                            <span class="custom-radio"></span>
+                            ${answer.text}
+                        </label>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+
+            // Update progress
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update buttons
+            document.getElementById('btnBack').disabled = currentQuestionIndex === 0;
+            document.getElementById('btnNext').textContent = currentQuestionIndex === questions.length - 1 ? 'Ergebnisse ansehen →' : 'Weiter →';
+        }
+
+        // Select answer
+        function selectAnswer(answerIndex) {
+            answers[currentQuestionIndex] = answerIndex;
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+                window.scrollTo(0, 0);
+            } else if (answers[currentQuestionIndex] !== undefined) {
+                showResults();
+            }
+        }
+
+        // Previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        // Calculate scores
+        function calculateScores() {
+            const scores = { wirtschaft: 0, staat: 0, gesellschaft: 0, nation: 0 };
+
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== undefined) {
+                    const question = questions[i];
+                    const answer = question.answers[answers[i]];
+                    const dimensions = answer.dimensions;
+
+                    scores.wirtschaft += dimensions.wirtschaft;
+                    scores.staat += dimensions.staat;
+                    scores.gesellschaft += dimensions.gesellschaft;
+                    scores.nation += dimensions.nation;
+                }
+            }
+
+            return scores;
+        }
+
+        // Calculate ideology matches
+        function calculateMatches(scores) {
+            const matches = ideologies.map(ideology => {
+                const diff = {
+                    wirtschaft: Math.abs(scores.wirtschaft - ideology.targetScores.wirtschaft),
+                    staat: Math.abs(scores.staat - ideology.targetScores.staat),
+                    gesellschaft: Math.abs(scores.gesellschaft - ideology.targetScores.gesellschaft),
+                    nation: Math.abs(scores.nation - ideology.targetScores.nation)
+                };
+
+                const totalDiff = diff.wirtschaft + diff.staat + diff.gesellschaft + diff.nation;
+                const maxPossibleDiff = 4 * 4; // 4 dimensions, max diff of 4 each
+                const match = Math.round((1 - (totalDiff / maxPossibleDiff)) * 100);
+
+                return {
+                    ...ideology,
+                    match: Math.max(0, match),
+                    diff: totalDiff
+                };
+            });
+
+            return matches.sort((a, b) => b.match - a.match);
+        }
+
+        // Show results
+        function showResults() {
+            const scores = calculateScores();
+            const matches = calculateMatches(scores);
+
+            // Hide questions, show results
+            document.getElementById('questionsSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+
+            // Render dimensions
+            renderDimensions(scores);
+
+            // Render ideologies ranking
+            renderIdeologiesRanking(matches);
+
+            // Render ideology details
+            renderIdeologyDetails();
+
+            window.scrollTo(0, 0);
+        }
+
+        // Render dimensions
+        function renderDimensions(scores) {
+            const dimensions = [
+                { key: 'wirtschaft', label: 'Wirtschaft', min: 'Staatskontrollen', max: 'Freier Markt' },
+                { key: 'staat', label: 'Staatsgewalt', min: 'Starker Staat', max: 'Individuelle Freiheit' },
+                { key: 'gesellschaft', label: 'Gesellschaft', min: 'Traditionell', max: 'Progressiv' },
+                { key: 'nation', label: 'Nation', min: 'Kosmopolitisch', max: 'National' }
+            ];
+
+            let html = '';
+            dimensions.forEach(dim => {
+                const value = scores[dim.key];
+                const normalized = ((value + 12) / 24) * 100; // Scale from -12 to 12 to 0-100%
+                const displayValue = value >= 0 ? `+${value}` : `${value}`;
+
+                html += `
+                    <div class="dimension-card">
+                        <div class="dimension-label">${dim.label}</div>
+                        <div class="dimension-value">${displayValue}</div>
+                        <div style="font-size: 0.8em; color: rgba(255,255,255,0.6); margin-bottom: 10px;">
+                            <span>${dim.min}</span> <span style="float: right;">${dim.max}</span>
+                        </div>
+                        <div class="dimension-bar">
+                            <div class="dimension-bar-fill" style="width: ${normalized}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('dimensionsGrid').innerHTML = html;
+        }
+
+        // Render ideologies ranking
+        function renderIdeologiesRanking(matches) {
+            let html = '<h3>Deine Übereinstimmung mit den Ideologien</h3>';
+
+            matches.forEach((ideology, index) => {
+                const rank = index + 1;
+                const barWidth = (ideology.match / 100) * 100;
+
+                html += `
+                    <div class="ideology-result rank-${rank}">
+                        <div class="ideology-header">
+                            <div class="ideology-name" style="color: ${ideology.color}">${ideology.name}</div>
+                            <div class="ideology-match">${ideology.match}%</div>
+                        </div>
+                        <div class="ideology-description">${ideology.description}</div>
+                        <div class="ideology-bar-container">
+                            <div class="ideology-bar">
+                                <div class="ideology-bar-fill" style="width: ${barWidth}%; background-color: ${ideology.color};"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('ideologiesRanking').innerHTML = html;
+        }
+
+        // Render ideology details
+        function renderIdeologyDetails() {
+            let html = '';
+
+            ideologies.forEach(ideology => {
+                html += `
+                    <div class="ideology-detail-section ${ideology.shortClass}">
+                        <h4 style="color: ${ideology.color}">${ideology.name}</h4>
+                        <p><strong>Kernidee:</strong> ${ideology.idea}</p>
+                        <p><strong>Historischer Kontext (19. Jahrhundert):</strong> ${ideology.context}</p>
+                        <div class="thinkers"><strong>Wichtige Denker:</strong> ${ideology.thinkers}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('ideologyDetails').innerHTML = html;
+        }
+
+        // Restart quiz
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            answers = {};
+            document.getElementById('questionsSection').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            renderQuestion();
+            window.scrollTo(0, 0);
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propagandawerkstatt – Manipulation erkennen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1020 50%, #5c1030 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffc107, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #d0a8ff;
+            font-weight: 300;
+        }
+
+        /* Glass Panels */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .glass-panel h2 {
+            color: #ffc107;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .glass-panel h3 {
+            color: #ffed4e;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* DEKODE Method Section */
+        .dekode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .dekode-letter {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .dekode-letter:hover {
+            background: rgba(255, 193, 7, 0.15);
+            border-color: rgba(255, 193, 7, 0.6);
+            transform: translateY(-4px);
+        }
+
+        .dekode-letter .letter {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+
+        .dekode-letter .word {
+            font-size: 1.1rem;
+            color: #ffed4e;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .dekode-letter .meaning {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .tab-button {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 193, 7, 0.2);
+            border-color: rgba(255, 193, 7, 0.6);
+        }
+
+        .tab-button.active {
+            background: #ffc107;
+            color: #1a0a0a;
+            border-color: #ffc107;
+        }
+
+        /* Propaganda Text Panels */
+        .propaganda-document {
+            background: linear-gradient(135deg, rgba(255, 239, 213, 0.05), rgba(255, 193, 7, 0.03));
+            border-left: 5px solid #ffc107;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            color: #f5f5f5;
+            box-shadow: inset 0 2px 10px rgba(255, 193, 7, 0.05);
+        }
+
+        .propaganda-document .doc-title {
+            color: #ffc107;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .propaganda-document .doc-meta {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-style: italic;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Analysis Form */
+        .analysis-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffed4e;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+
+        .form-group label .letter-highlight {
+            background: #ffc107;
+            color: #1a0a0a;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ffc107;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 12px rgba(255, 193, 7, 0.2);
+        }
+
+        .form-group textarea::placeholder {
+            color: #707070;
+        }
+
+        .hint-solution-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hint-btn, .solution-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .hint-btn {
+            background: rgba(100, 200, 255, 0.2);
+            color: #64c8ff;
+            border: 1px solid rgba(100, 200, 255, 0.4);
+        }
+
+        .hint-btn:hover {
+            background: rgba(100, 200, 255, 0.3);
+            border-color: rgba(100, 200, 255, 0.7);
+        }
+
+        .solution-btn {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.4);
+        }
+
+        .solution-btn:hover {
+            background: rgba(255, 193, 7, 0.3);
+            border-color: rgba(255, 193, 7, 0.7);
+        }
+
+        .hint-text, .solution-text {
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 3px solid #ffc107;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .hint-text.visible, .solution-text.visible {
+            display: block;
+        }
+
+        /* Pattern Recognition Section */
+        .pattern-section {
+            display: none;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .pattern-section.visible {
+            display: block;
+        }
+
+        .pattern-grid {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .technique-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .technique-table thead {
+            background: rgba(255, 193, 7, 0.15);
+        }
+
+        .technique-table th {
+            color: #ffc107;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .technique-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .technique-table tr:hover {
+            background: rgba(255, 193, 7, 0.08);
+        }
+
+        .technique-name {
+            color: #ffed4e;
+            font-weight: 600;
+            min-width: 200px;
+        }
+
+        .checkbox-cell {
+            text-align: center;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #ffc107;
+        }
+
+        /* Reflection Section */
+        .reflection-questions {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+
+        .reflection-questions h3 {
+            color: #ffed4e;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #64c8ff;
+        }
+
+        .question p {
+            color: #f0f0f0;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .question textarea {
+            width: 100%;
+            min-height: 80px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        .question textarea:focus {
+            outline: none;
+            border-color: #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.15);
+        }
+
+        /* Progress Indicator */
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffc107, #ffed4e);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+                overflow: hidden;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .glass-panel {
+                padding: 20px;
+            }
+
+            .dekode-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .tab-button {
+                width: 100%;
+                text-align: left;
+            }
+
+            .technique-table {
+                font-size: 0.9rem;
+            }
+
+            .technique-table th, .technique-table td {
+                padding: 10px;
+            }
+        }
+
+        /* Tab Content Visibility */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Pattern Recognition Indicator */
+        .pattern-unlock-hint {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            color: #64c8ff;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        .pattern-unlock-hint.visible {
+            display: block;
+        }
+
+        /* Hidden Content */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🎭 Propagandawerkstatt</h1>
+            <p>Manipulation erkennen – Die DEKODE-Methode</p>
+        </header>
+
+        <!-- Step 1: Learn DEKODE Method -->
+        <section class="glass-panel">
+            <h2>📚 Schritt 1: Die DEKODE-Methode lernen</h2>
+            <p style="margin-bottom: 20px; color: #d0d0d0;">
+                Mit der DEKODE-Methode kannst du Propaganda und Manipulation systematisch analysieren.
+                Jeder Buchstabe steht für eine wichtige Frage:
+            </p>
+
+            <div class="dekode-grid">
+                <div class="dekode-letter">
+                    <div class="letter">D</div>
+                    <div class="word">Darstellung</div>
+                    <div class="meaning">Wie wird dargestellt? (Sprache, Bilder, Symbole)</div>
+                </div>
+
+                <div class="dekode-letter">
+                    <div class="letter">E</div>
+                    <div class="word">Emotion</div>
+                    <div class="meaning">Welche Gefühle werden angesprochen? (Angst, Stolz, Wut, Zugehörigkeit)</div>
+                </div>
+
+                <div class="dekode-letter">
+                    <div class="letter">K</div>
+                    <div class="word">Kontext</div>
+                    <div class="meaning">Wann und wo entstand das Material? Was passierte zu dieser Zeit?</div>
+                </div>
+
+                <div class="dekode-letter">
+                    <div class="letter">O</div>
+                    <div class="word">Omission</div>
+                    <div class="meaning">Was wird WEGGELASSEN? Welche Seite fehlt?</div>
+                </div>
+
+                <div class="dekode-letter">
+                    <div class="letter">D</div>
+                    <div class="word">Drahtzieher</div>
+                    <div class="meaning">Wer hat es erstellt? In wessen Interesse?</div>
+                </div>
+
+                <div class="dekode-letter">
+                    <div class="letter">E</div>
+                    <div class="word">Effekt</div>
+                    <div class="meaning">Was soll der Empfänger TUN oder DENKEN?</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Analyze Examples -->
+        <section class="glass-panel">
+            <h2>🔍 Schritt 2: Beispiele analysieren</h2>
+            <p style="margin-bottom: 25px; color: #d0d0d0;">
+                Wähle eine der vier historischen Propagandaquelle und analysiere sie mit der DEKODE-Methode.
+            </p>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <!-- Example Tabs -->
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchExample(0)">
+                    Beispiel 1: König Ludwig XIV (1700)
+                </button>
+                <button class="tab-button" onclick="switchExample(1)">
+                    Beispiel 2: Kreuzzugsrede (1095)
+                </button>
+                <button class="tab-button" onclick="switchExample(2)">
+                    Beispiel 3: Nationalismus (1914)
+                </button>
+                <button class="tab-button" onclick="switchExample(3)">
+                    Beispiel 4: Totalitarismus (1930er)
+                </button>
+            </div>
+
+            <!-- Example 1: Ludwig XIV -->
+            <div class="tab-content active" id="example-0">
+                <div class="propaganda-document">
+                    <div class="doc-title">Ein Gemälde der Macht</div>
+                    <div class="doc-meta">Königliche Hofkunst, ca. 1700</div>
+                    <p>
+                        Ein Gemälde zeigt König Ludwig XIV. in voller Pracht: Er trägt einen Hermelinmantel,
+                        eine goldene Krone und hält ein Zepter. Er steht erhöht auf einem Podest, während
+                        Höflinge zu ihm aufblicken. Hinter ihm strahlt die Sonne – sein Symbol. Am Himmel
+                        schweben Engel, die ihm einen Lorbeerkranz reichen. Zu seinen Füßen liegen besiegte Feinde.
+                    </p>
+                </div>
+
+                <form class="analysis-form" id="form-0">
+                    <div class="form-group">
+                        <label><span class="letter-highlight">D</span>arstellung: Wie wird dargestellt?</label>
+                        <textarea placeholder="Beschreibe, welche Darstellungsmittel verwendet werden..." class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 0, 'D')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 0, 'D')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-0-D">
+                            <strong>Hinweis:</strong> Achte auf Symbole (Sonne, Engel, Hermelinmantel), die räumliche Anordnung
+                            (erhöht auf Podest), und Farben (Gold). Was wirkt kostbar und göttlich?
+                        </div>
+                        <div class="solution-text" id="solution-0-D">
+                            <strong>Musterlösung:</strong> Symbole der Göttlichkeit (Sonne, Engel), prachtvolle Kleidung (Hermelin, Gold, Krone),
+                            räumliche Überlegenheit (Podest, Blickrichtung der Höflinge), Besiegte zu Füßen = Unterwerfung.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">E</span>motion: Welche Gefühle werden angesprochen?</label>
+                        <textarea placeholder="Welche Gefühle sollen beim Betrachter entstehen?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 0, 'E')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 0, 'E')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-0-E">
+                            <strong>Hinweis:</strong> Wie fühlt sich eine Person, die sieht, wie der König glorifiziert wird?
+                            Respekt? Bewunderung? Furcht? Unterwürfigkeit?
+                        </div>
+                        <div class="solution-text" id="solution-0-E">
+                            <strong>Musterlösung:</strong> Respekt, Bewunderung, Ehrfurcht, Unterwürfigkeit. Das Bild soll Ehrfurcht
+                            vor der Göttlichkeit und Macht des Königs erzeugen.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">K</span>ontext: Wann und wo entstand das Material?</label>
+                        <textarea placeholder="Historischer Kontext der Zeit..." class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 0, 'K')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 0, 'K')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-0-K">
+                            <strong>Hinweis:</strong> Was war die Lage in Frankreich um 1700? Wie herrschte Ludwig XIV?
+                            War die Macht gefestigt oder umstritten?
+                        </div>
+                        <div class="solution-text" id="solution-0-K">
+                            <strong>Musterlösung:</strong> Frankreich, ca. 1700. Ludwig XIV. war ein absoluter Herrscher, der die Kirche
+                            kontrollierte. Solche Bilder sollten die göttliche Berechtigung seiner Herrschaft zeigen und Gehorsam begründen.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">O</span>mission: Was wird WEGGELASSEN?</label>
+                        <textarea placeholder="Was sehen wir NICHT im Bild?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 0, 'O')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 0, 'O')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-0-O">
+                            <strong>Hinweis:</strong> Das Bild zeigt Glanz und Macht. Was über die Realität wird verschwiegen?
+                            Leid? Armut? Kritik? Grenzen der Macht?
+                        </div>
+                        <div class="solution-text" id="solution-0-O">
+                            <strong>Musterlösung:</strong> Das Bild zeigt nicht: Hunger des Volkes, Kritiker des Königs,
+                            verlorene Kriege, Schulden des Staates, die echte Macht der Kirche und des Adels.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">D</span>rahtzieher: Wer hat es erstellt?</label>
+                        <textarea placeholder="Wer profitiert von diesem Bild?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 0, 'D2')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 0, 'D2')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-0-D2">
+                            <strong>Hinweis:</strong> Wer bestellt solche Gemälde? Wer profitiert davon, wenn die Menschen
+                            den König verehren?
+                        </div>
+                        <div class="solution-text" id="solution-0-D2">
+                            <strong>Musterlösung:</strong> Der König selbst und sein Hof. Sie beauftragten diese Gemälde, um
+                            ihre Macht zu legitimieren und Gehorsam zu sichern.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">E</span>ffekt: Was soll der Empfänger TUN oder DENKEN?</label>
+                        <textarea placeholder="Was ist das Ziel dieser Propaganda?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 0, 'E2')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 0, 'E2')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-0-E2">
+                            <strong>Hinweis:</strong> Welches Verhalten soll das Bild auslösen? Gehorsam? Unterwerfung?
+                            Akzeptanz der Herrschaft?
+                        </div>
+                        <div class="solution-text" id="solution-0-E2">
+                            <strong>Musterlösung:</strong> Der Betrachter soll den König als göttlich legitimiert akzeptieren
+                            und bedingungslosen Gehorsam leisten. Kritik oder Widerstand werden als gottlos dargestellt.
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Example 2: Kreuzzugrede -->
+            <div class="tab-content" id="example-1">
+                <div class="propaganda-document">
+                    <div class="doc-title">Kreuzzugsrede des Papstes Urban II.</div>
+                    <div class="doc-meta">Ansprache auf der Synode von Clermont, 1095 (rekonstruiert)</div>
+                    <p>
+                        Christen! Die heiligen Stätten in Jerusalem werden von den Ungläubigen geschändet!
+                        Pilger werden beraubt und getötet! Gott selbst ruft euch zu den Waffen! Wer das Kreuz
+                        nimmt und in den heiligen Krieg zieht, dem werden ALLE Sünden vergeben. Das Paradies
+                        erwartet die Gefallenen! Wollt ihr hier in Armut und Streit leben – oder Gottes Ruhm
+                        und ewiges Heil gewinnen?
+                    </p>
+                </div>
+
+                <form class="analysis-form" id="form-1">
+                    <div class="form-group">
+                        <label><span class="letter-highlight">D</span>arstellung: Wie wird dargestellt?</label>
+                        <textarea placeholder="Beschreibe, welche Sprache und Bilder verwendet werden..." class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 1, 'D')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 1, 'D')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-1-D">
+                            <strong>Hinweis:</strong> Welche Wörter sind kraftvoll? "Geschändet", "geraubt", "getötet",
+                            "Ungläubige" – wie beeinflussen sie den Zuhörer?
+                        </div>
+                        <div class="solution-text" id="solution-1-D">
+                            <strong>Musterlösung:</strong> Kraftvolle, emotionale Sprache: "geschändet", "geraubt", "getötet".
+                            Religiöse Symbole (Kreuz, Paradies, Gott). Direkte Anrede ("Christen!") und Gegensatz
+                            (wir Gläubigen vs. "Ungläubige").
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">E</span>motion: Welche Gefühle werden angesprochen?</label>
+                        <textarea placeholder="Welche Gefühle sollen geweckt werden?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 1, 'E')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 1, 'E')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-1-E">
+                            <strong>Hinweis:</strong> Bedenke: Pilger werden getötet, Heilige Orte geschändet.
+                            Das macht Angst, Wut, Scham... Aber welche Hoffnung wird auch angeboten?
+                        </div>
+                        <div class="solution-text" id="solution-1-E">
+                            <strong>Musterlösung:</strong> Empörung und Angst (Pilger in Gefahr), Zorn (Schändung der Heiligen Stätten),
+                            Schande (als Christ untätig bleiben?), aber auch Hoffnung (Vergebung der Sünden) und Ruhm (Gottes Werk).
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">K</span>ontext: Wann und wo entstand das Material?</label>
+                        <textarea placeholder="Historischer und religiöser Kontext..." class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 1, 'K')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 1, 'K')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-1-K">
+                            <strong>Hinweis:</strong> 1095 – wer regiert die Kirche? Wie ist die Macht des Papstes?
+                            Wie war die Situation in Kleinasien damals?
+                        </div>
+                        <div class="solution-text" id="solution-1-K">
+                            <strong>Musterlösung:</strong> 1095, Synode von Clermont. Der Papst versuchte, die Kirche als
+                            zentrale Macht zu etablieren. Byzantium verlor Territorium an Seldschuken. Die Rede war ein Aufruf
+                            zum ersten Kreuzzug, um christliche Territorien zurückzuerobern.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">O</span>mission: Was wird WEGGELASSEN?</label>
+                        <textarea placeholder="Was wird verschwiegen oder nicht erwähnt?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 1, 'O')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 1, 'O')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-1-O">
+                            <strong>Hinweis:</strong> Die Rede spricht von "Ungläubigen", aber was über deren Perspektive?
+                            Welche wirtschaftlichen oder politischen Gründe werden ausgelassen?
+                        </div>
+                        <div class="solution-text" id="solution-1-O">
+                            <strong>Musterlösung:</strong> Nicht erwähnt: die Perspektive der Muslime, die Komplexität der
+                            Situation, wirtschaftliche und territoriale Interessen des Vatikans, dass Christen und Muslime
+                            vorher friedlich koexistierten.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">D</span>rahtzieher: Wer hat es erstellt?</label>
+                        <textarea placeholder="Wer profitiert von dieser Rede?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 1, 'D2')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 1, 'D2')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-1-D2">
+                            <strong>Hinweis:</strong> Wer wird durch einen Kreuzzug mächtiger? Der Papst? Europäische Fürsten?
+                            Geistliche? Kaufleute?
+                        </div>
+                        <div class="solution-text" id="solution-1-D2">
+                            <strong>Musterlösung:</strong> Der Papst (zentralisiert die Kirchenmacht), europäische Fürsten
+                            (Ruhm und Beute), die Kirche (Kontrolle über Gläubige). Auch: Kaufleute profitierten von Handelswegen.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">E</span>ffekt: Was soll der Empfänger TUN oder DENKEN?</label>
+                        <textarea placeholder="Was ist das Ziel dieser Rede?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 1, 'E2')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 1, 'E2')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-1-E2">
+                            <strong>Hinweis:</strong> Was soll ein Ritter, ein Bauer, ein Priester nach dieser Rede TUN?
+                            Welches Verhalten wird belohnt?
+                        </div>
+                        <div class="solution-text" id="solution-1-E2">
+                            <strong>Musterlösung:</strong> Der Zuhörer soll in den Krieg ziehen ("das Kreuz nehmen"),
+                            die Autorität des Papstes akzeptieren und sich als "Kämpfer Gottes" sehen.
+                            Die Belohnung: Sündenvergebung und ewiges Heil.
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Example 3: Nationalismus 1914 -->
+            <div class="tab-content" id="example-2">
+                <div class="propaganda-document">
+                    <div class="doc-title">Zeitungsartikel – Reaktion auf das Attentat von Sarajevo</div>
+                    <div class="doc-meta">Österreichische Zeitung, Juni 1914 (historisch korrekt rekonstruiert)</div>
+                    <p>
+                        VATERLAND IN GEFAHR! Der feige Anschlag von Sarajevo zeigt das wahre Gesicht des
+                        serbischen Terrorismus. Unser geliebter Thronfolger, ein Mann des Friedens, wurde von
+                        einem barbarischen Mörder niedergestreckt. Jedes patriotische Herz brennt vor gerechtem
+                        Zorn! Die Stunde der Vergeltung hat geschlagen. Wer jetzt nicht zu den Fahnen eilt, ist
+                        kein wahrer Österreicher! Für Kaiser und Vaterland – bis zum Sieg!
+                    </p>
+                </div>
+
+                <form class="analysis-form" id="form-2">
+                    <div class="form-group">
+                        <label><span class="letter-highlight">D</span>arstellung: Wie wird dargestellt?</label>
+                        <textarea placeholder="Beschreibe die Sprache und Bilder des Textes..." class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 2, 'D')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 2, 'D')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-2-D">
+                            <strong>Hinweis:</strong> Achte auf: Großbuchstaben ("VATERLAND"), Adjektive ("feige", "barbarisch"),
+                            Gegensätze (wir vs. "Serben"). Welche Sprache ist kampflustig?
+                        </div>
+                        <div class="solution-text" id="solution-2-D">
+                            <strong>Musterlösung:</strong> Großbuchstaben für Dramatik. Emotionale Adjektive: "feige", "barbarisch",
+                            "geliebter", "patriotisch". Kriegsmetaphern: "Fahnen", "Zorn", "Vergeltung". Schwarz-Weiß-Denken:
+                            gute Österreicher vs. böse Serben.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">E</span>motion: Welche Gefühle werden angesprochen?</label>
+                        <textarea placeholder="Welche Emotionen werden provoziert?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 2, 'E')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 2, 'E')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-2-E">
+                            <strong>Hinweis:</strong> Ein geliebter Mensch ist tot. Das macht wütend! Aber die Rede wirkt auch
+                            auf Stolz, Gruppenzugehörigkeit, Angst vor Schande...
+                        </div>
+                        <div class="solution-text" id="solution-2-E">
+                            <strong>Musterlösung:</strong> Trauer und Zorn über den Mord, gerechtigkeitseifer, Angst vor
+                            Schwäche/Schande, nationaler Stolz, Angst vor dem Feind, Druck zur Konformität
+                            ("kein wahrer Österreicher").
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">K</span>ontext: Wann und wo entstand das Material?</label>
+                        <textarea placeholder="Historischer Kontext..." class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 2, 'K')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 2, 'K')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-2-K">
+                            <strong>Hinweis:</strong> Juni 1914 – was bedeutete Sarajevo? Wie war die Situation in Europa vor
+                            dem 1. Weltkrieg? Rivalitäten und Allianzen?
+                        </div>
+                        <div class="solution-text" id="solution-2-K">
+                            <strong>Musterlösung:</strong> Juni 1914, Attentat auf Thronfolger Franz Ferdinand in Sarajevo.
+                            Europa war angespannt: Rivalitäten zwischen Mächten, Militärbündnisse, Nationalismus grassierte.
+                            Der Artikel befeuert Kriegslust statt Diplomatie.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">O</span>mission: Was wird WEGGELASSEN?</label>
+                        <textarea placeholder="Was wird nicht erwähnt oder verschwiegen?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 2, 'O')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 2, 'O')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-2-O">
+                            <strong>Hinweis:</strong> Der Artikel ruft zum Krieg auf. Was über den Krieg wird verschwiegen?
+                            Todesgefahr? Leid? Wirtschaftliche Kosten? Alternative zu Vergeltung?
+                        </div>
+                        <div class="solution-text" id="solution-2-O">
+                            <strong>Musterlösung:</strong> Verschwiegen: die Kosten des Krieges, Tod von Millionen, Leid,
+                            Armut, dass die Serben auch Opfer waren, Möglichkeit diplomatischer Lösungen, dass dieser Mord
+                            zum 1. Weltkrieg führte.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">D</span>rahtzieher: Wer hat es erstellt?</label>
+                        <textarea placeholder="Wer profitiert von dieser Propaganda?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 2, 'D2')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 2, 'D2')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-2-D2">
+                            <strong>Hinweis:</strong> Wer kontrollierte die Zeitung? Kaiser, Regierung, Militär?
+                            Wer profitiert von einem Krieg?
+                        </div>
+                        <div class="solution-text" id="solution-2-D2">
+                            <strong>Musterlösung:</strong> Die Regierung und das Militär (direkte/indirekte Kontrolle über
+                            Presse), Kaiser Franz Joseph I., die Rüstungsindustrie, Generale, Politiker die Expansion wollten.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">E</span>ffekt: Was soll der Empfänger TUN oder DENKEN?</label>
+                        <textarea placeholder="Was ist das Ziel des Artikels?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 2, 'E2')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 2, 'E2')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-2-E2">
+                            <strong>Hinweis:</strong> Der Artikel sagt es fast explizit: "Wer jetzt nicht zu den Fahnen eilt..." –
+                            Welches Verhalten wird verlangt? Und welches verbietet sich durch Sozialdrucl?
+                        </div>
+                        <div class="solution-text" id="solution-2-E2">
+                            <strong>Musterlösung:</strong> Der Leser soll sich für den Krieg einsetzen oder gar freiwillig
+                            melden. Wer das nicht tut, ist unpatriotisch und feige. Der Artikel manipuliert durch Schuldgefühle
+                            und sozialen Druck zur Konformität.
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Example 4: Totalitarismus 1930er -->
+            <div class="tab-content" id="example-3">
+                <div class="propaganda-document">
+                    <div class="doc-title">Auszug aus einem Schulbuch</div>
+                    <div class="doc-meta">Deutsches Schulbuch, 1930er Jahre</div>
+                    <p>
+                        Der Führer hat unser Vaterland aus der Schmach von Versailles befreit. Dank seiner weisen
+                        Führung haben wieder alle Arbeit. Die Autobahnen, die er bauen lässt, verbinden das Reich.
+                        Die Jugend marschiert freudig und gesund in der frischen Luft, statt in dunklen Hinterzimmern
+                        zu verkümmern. Wer den Führer kritisiert, ist ein Volksverräter und Feind der Gemeinschaft.
+                    </p>
+                </div>
+
+                <form class="analysis-form" id="form-3">
+                    <div class="form-group">
+                        <label><span class="letter-highlight">D</span>arstellung: Wie wird dargestellt?</label>
+                        <textarea placeholder="Beschreibe die Darstellungsmittel..." class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 3, 'D')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 3, 'D')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-3-D">
+                            <strong>Hinweis:</strong> Der Führer wird positiv überhöht ("weise"). Gegner werden verteufelt
+                            ("Volksverräter", "Feind"). Idyllische Bilder (Jugend, frische Luft) vs. negative Kontraste
+                            (dunkle Hinterzimmer).
+                        </div>
+                        <div class="solution-text" id="solution-3-D">
+                            <strong>Musterlösung:</strong> Vergöttlichung des Führers ("weise"), Feindbilder (Volksverräter,
+                            Feinde der Gemeinschaft), positive Bilder (Jugend, Autobahnen, Arbeit), Kontraste zwischen
+                            "früher" (Schmach) und "jetzt" (Befreiung).
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">E</span>motion: Welche Gefühle werden angesprochen?</label>
+                        <textarea placeholder="Welche Emotionen werden geweckt?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 3, 'E')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 3, 'E')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-3-E">
+                            <strong>Hinweis:</strong> Der Text spricht von Befreiung, Arbeit, Gesundheit, Stolz. Aber auch:
+                            Angst vor Feinden und Verrätern, Druck zur Konformität.
+                        </div>
+                        <div class="solution-text" id="solution-3-E">
+                            <strong>Musterlösung:</strong> Stolz auf den Führer und das Vaterland, Hoffnung (Arbeit,
+                            Wiederaufstieg), Dankbarkeit, aber auch Angst vor Feinden und Verrätern, Druck zur
+                            Unkritikalität, Zugehörigkeitsgefühl.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">K</span>ontext: Wann und wo entstand das Material?</label>
+                        <textarea placeholder="Historischer Kontext..." class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 3, 'K')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 3, 'K')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-3-K">
+                            <strong>Hinweis:</strong> 1930er Jahre in Deutschland. Wer war der Führer? Wie war die Wirtschaft?
+                            Welche Ziele verfolgte die Regierung?
+                        </div>
+                        <div class="solution-text" id="solution-3-K">
+                            <strong>Musterlösung:</strong> 1930er, Deutschland unter Hitler. Nach Wirtschaftskrise und
+                            Demütigung durch Versailles Friedensvertrag. Die Nazi-Regierung nutzte Schulbücher zur
+                            Indoktrinierung von Kindern. Autobahnen waren tatsächlich gebaut, aber auch zur militärischen
+                            Vorbereitung.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">O</span>mission: Was wird WEGGELASSEN?</label>
+                        <textarea placeholder="Was wird verschwiegen oder ignoriert?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 3, 'O')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 3, 'O')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-3-O">
+                            <strong>Hinweis:</strong> Das Buch zeigt nur Positives. Was wird ausgeblendet? Unterdrückung?
+                            Verletzung von Rechten? Zerstörung? Pläne?
+                        </div>
+                        <div class="solution-text" id="solution-3-O">
+                            <strong>Musterlösung:</strong> Vollständig verschwiegen: Verfolgung von Juden, politischen Gegnern
+                            und Minderheiten, Abschaffung von Rechten, Militarisierung, Pläne für Kriege und Eroberung,
+                            Konzentrationslager.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">D</span>rahtzieher: Wer hat es erstellt?</label>
+                        <textarea placeholder="Wer profitiert von dieser Propaganda?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 3, 'D2')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 3, 'D2')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-3-D2">
+                            <strong>Hinweis:</strong> Wer schreibt Schulbücher? Wer profitiert davon, dass Kinder
+                            den Führer anbeten?
+                        </div>
+                        <div class="solution-text" id="solution-3-D2">
+                            <strong>Musterlösung:</strong> Die Nazi-Regierung (direkte Kontrolle über Schulbücher), Hitler
+                            und die NSDAP, Gestapo und Sicherheitsapparat. Durch Indoktrination in der Schule wurde die
+                            Herrschaft gesichert.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="letter-highlight">E</span>ffekt: Was soll der Empfänger TUN oder DENKEN?</label>
+                        <textarea placeholder="Was ist das Ziel dieses Schulbuchtexts?" class="dekode-input"></textarea>
+                        <div class="hint-solution-group">
+                            <button type="button" class="hint-btn" onclick="toggleHint(event, 3, 'E2')">💡 Hinweis</button>
+                            <button type="button" class="solution-btn" onclick="toggleSolution(event, 3, 'E2')">✓ Lösung zeigen</button>
+                        </div>
+                        <div class="hint-text" id="hint-3-E2">
+                            <strong>Hinweis:</strong> Das Ziel ist Indoktrinierung von Kindern. Was sollen sie lernen?
+                            Unkritikalität? Gehorsam? Zugehörigkeit?
+                        </div>
+                        <div class="solution-text" id="solution-3-E2">
+                            <strong>Musterlösung:</strong> Der Schüler soll den Führer vergöttern und nicht kritisieren,
+                            sich mit der Gemeinschaft identifizieren und Feinde der Gemeinschaft fürchten/hassen.
+                            Unkritikalität soll geprägt werden. Das ist Massenindoktrinierung durch Schulen.
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Step 3: Pattern Recognition -->
+        <section class="glass-panel">
+            <h2>🔗 Schritt 3: Muster erkennen</h2>
+
+            <div class="pattern-unlock-hint" id="patternHint">
+                <strong>💡 Hinweis:</strong> Analysiere mindestens 2 Beispiele, um die Muster zu erkennen!
+            </div>
+
+            <div class="pattern-section" id="patternSection">
+                <p style="margin-bottom: 25px; color: #d0d0d0;">
+                    Propaganda nutzt immer wieder die gleichen Techniken – egal ob im Mittelalter, im 19. Jahrhundert oder
+                    heute! Kreuze an, welche Techniken du in jedem Beispiel findest.
+                </p>
+
+                <div class="pattern-grid">
+                    <table class="technique-table">
+                        <thead>
+                            <tr>
+                                <th>Propagandatechnik</th>
+                                <th class="checkbox-cell">Ludwig XIV</th>
+                                <th class="checkbox-cell">Kreuzzug</th>
+                                <th class="checkbox-cell">Krieg 1914</th>
+                                <th class="checkbox-cell">Totalitarismus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="technique-name">1. Symbolisierung (Macht durch Symbole)</td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                            </tr>
+                            <tr>
+                                <td class="technique-name">2. Emotionalisierung (Gefühle statt Logik)</td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                            </tr>
+                            <tr>
+                                <td class="technique-name">3. Feindbildung (Uns vs. Sie)</td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                            </tr>
+                            <tr>
+                                <td class="technique-name">4. Vergöttlichung von Führern</td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                            </tr>
+                            <tr>
+                                <td class="technique-name">5. Auslassung von unbequemen Wahrheiten</td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                            </tr>
+                            <tr>
+                                <td class="technique-name">6. Druck zur Konformität (wer widerspricht, ist böse)</td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                                <td class="checkbox-cell"><input type="checkbox" class="pattern-check"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="background: rgba(100, 200, 255, 0.1); border: 1px solid rgba(100, 200, 255, 0.3);
+                            border-radius: 8px; padding: 20px; margin-top: 25px;">
+                    <h3 style="color: #64c8ff; margin-bottom: 15px;">🎯 Erkenntnisse:</h3>
+                    <ul style="color: #d0d0d0; list-style-position: inside; line-height: 1.8;">
+                        <li><strong>Diese Techniken wiederholen sich über Jahrhunderte hinweg!</strong></li>
+                        <li>Propaganda arbeitet mit Emotionen, nicht mit Logik und Fakten.</li>
+                        <li>Symbole, Führerkult und Feindbilder sind mächtige Werkzeuge.</li>
+                        <li>Das Wichtigste: Fragen stellen, die DEKODE-Methode anwenden, kritisch denken!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 4: Reflection -->
+        <section class="glass-panel">
+            <h2>🤔 Schritt 4: Reflexion – Propaganda heute?</h2>
+            <p style="margin-bottom: 25px; color: #d0d0d0;">
+                Propaganda gibt es nicht nur in der Geschichte – sie ist überall! Wo begegnest du Manipulation im Alltag?
+            </p>
+
+            <div class="reflection-questions">
+                <h3>Deine Gedanken:</h3>
+
+                <div class="question">
+                    <p>1. Gibt es Propaganda heute? Wo begegnest du Manipulation im Alltag?</p>
+                    <p style="font-size: 0.9rem; color: #a0a0a0; margin-bottom: 10px;">
+                        (Denk an: Werbung, Influencer, politische Reden, Nachrichten, Social Media...)
+                    </p>
+                    <textarea placeholder="Deine Antwort..."></textarea>
+                </div>
+
+                <div class="question">
+                    <p>2. Welche DEKODE-Techniken hast du auch in modernen Beispielen erkannt?</p>
+                    <p style="font-size: 0.9rem; color: #a0a0a0; margin-bottom: 10px;">
+                        (z.B. Feindbilder in Talkshows, Symbolisierung bei Marken, Emotionalisierung in Anzeigen)
+                    </p>
+                    <textarea placeholder="Deine Antwort..."></textarea>
+                </div>
+
+                <div class="question">
+                    <p>3. Was kannst du konkret tun, um Propaganda zu erkennen und nicht darauf hereinzufallen?</p>
+                    <p style="font-size: 0.9rem; color: #a0a0a0; margin-bottom: 10px;">
+                        (Welche Strategien könnten dir helfen?)
+                    </p>
+                    <textarea placeholder="Deine Antwort..."></textarea>
+                </div>
+
+                <div class="question">
+                    <p>4. Warum ist es wichtig, kritisch zu denken und Propaganda zu durchschauen?</p>
+                    <p style="font-size: 0.9rem; color: #a0a0a0; margin-bottom: 10px;">
+                        (Was könnte passieren, wenn man zu leicht beeinflusst wird?)
+                    </p>
+                    <textarea placeholder="Deine Antwort..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="text-align: center; margin-top: 50px; padding: 30px; color: #a0a0a0; border-top: 1px solid rgba(255, 193, 7, 0.2);">
+            <p style="margin-bottom: 10px;">
+                <strong>Propagandawerkstatt</strong> – Für 4. Klasse AHS<br>
+                Lerne, Manipulation zu erkennen und kritisch zu denken.
+            </p>
+            <p style="font-size: 0.9rem;">
+                Die DEKODE-Methode hilft dir, jeden propagandistischen Text zu analysieren –
+                gestern, heute und morgen.
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Track analyzed examples
+        const analyzedExamples = new Set();
+        const exampleCount = 4;
+
+        // Switch between examples
+        function switchExample(index) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Show selected tab content
+            document.getElementById(`example-${index}`).classList.add('active');
+
+            // Update active tab button
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Mark as analyzed
+            analyzedExamples.add(index);
+            updateProgress();
+            checkPatternUnlock();
+        }
+
+        // Toggle hints
+        function toggleHint(event, exampleIndex, fieldKey) {
+            event.preventDefault();
+            const hintEl = document.getElementById(`hint-${exampleIndex}-${fieldKey}`);
+            if (hintEl) {
+                hintEl.classList.toggle('visible');
+            }
+        }
+
+        // Toggle solutions
+        function toggleSolution(event, exampleIndex, fieldKey) {
+            event.preventDefault();
+            const solutionEl = document.getElementById(`solution-${exampleIndex}-${fieldKey}`);
+            if (solutionEl) {
+                solutionEl.classList.toggle('visible');
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (analyzedExamples.size / exampleCount) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Check if pattern section should unlock
+        function checkPatternUnlock() {
+            if (analyzedExamples.size >= 2) {
+                document.getElementById('patternHint').classList.remove('visible');
+                document.getElementById('patternSection').classList.add('visible');
+            } else {
+                document.getElementById('patternHint').classList.add('visible');
+                document.getElementById('patternSection').classList.remove('visible');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            analyzedExamples.add(0); // First example is shown by default
+            updateProgress();
+            checkPatternUnlock();
+        });
+    </script>
+</body>
+</html>

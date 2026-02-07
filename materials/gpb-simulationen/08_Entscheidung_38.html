@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entscheidung '38 – Drei Wege durch Wien</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a0a0a 0%, #3d1020 50%, #5c1030 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            color: #ffc107;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #b0b0b0;
+            font-style: italic;
+        }
+
+        /* Path Selector */
+        .path-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .character-card {
+            border-radius: 12px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+        }
+
+        .character-card.path-a {
+            border-color: #f1c40f;
+            background: rgba(241, 196, 15, 0.08);
+        }
+
+        .character-card.path-b {
+            border-color: #95a5a6;
+            background: rgba(149, 165, 166, 0.08);
+        }
+
+        .character-card.path-c {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.08);
+        }
+
+        .character-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .character-card.active {
+            transform: scale(1.05);
+        }
+
+        .character-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+
+        .character-card .role {
+            font-size: 0.95em;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .character-card .description {
+            font-size: 0.9em;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+        /* Main Narrative Area */
+        .narrative-area {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .narrative-area.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scene-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 4px solid;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .path-a .scene-box {
+            border-left-color: #f1c40f;
+        }
+
+        .path-b .scene-box {
+            border-left-color: #95a5a6;
+        }
+
+        .path-c .scene-box {
+            border-left-color: #e74c3c;
+        }
+
+        .scene-title {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #ffc107;
+        }
+
+        .scene-text {
+            font-size: 1.05em;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            color: #e0e0e0;
+        }
+
+        /* Choices */
+        .choices {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .choice-btn {
+            padding: 18px;
+            border: 2px solid;
+            background: rgba(255, 255, 255, 0.05);
+            color: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .path-a .choice-btn {
+            border-color: #f1c40f;
+        }
+
+        .path-a .choice-btn:hover {
+            background: rgba(241, 196, 15, 0.2);
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+        }
+
+        .path-b .choice-btn {
+            border-color: #95a5a6;
+        }
+
+        .path-b .choice-btn:hover {
+            background: rgba(149, 165, 166, 0.2);
+            box-shadow: 0 0 20px rgba(149, 165, 166, 0.3);
+        }
+
+        .path-c .choice-btn {
+            border-color: #e74c3c;
+        }
+
+        .path-c .choice-btn:hover {
+            background: rgba(231, 76, 60, 0.2);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .choice-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Historical Context */
+        .historical-context {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        .path-a .historical-context {
+            border-color: #f1c40f;
+        }
+
+        .path-b .historical-context {
+            border-color: #95a5a6;
+        }
+
+        .path-c .historical-context {
+            border-color: #e74c3c;
+        }
+
+        .historical-context h3 {
+            color: #ffc107;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .context-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .context-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .context-section h4 {
+            color: #ffc107;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .context-section p {
+            color: #d0d0d0;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .context-section ul {
+            margin-left: 20px;
+            color: #d0d0d0;
+        }
+
+        .context-section li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        /* Progress Indicator */
+        .progress {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .progress-step {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: #ffc107;
+            border-color: #ffc107;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+        }
+
+        .progress-step.completed {
+            background: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .progress-text {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 28px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: #ffc107;
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Start Screen */
+        .start-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .start-screen.active {
+            display: block;
+        }
+
+        .start-screen h2 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            color: #ffc107;
+        }
+
+        .start-screen p {
+            font-size: 1.1em;
+            color: #b0b0b0;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .educational-note {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 40px;
+            color: #e0e0e0;
+            font-size: 0.95em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .path-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .choices {
+                grid-template-columns: 1fr;
+            }
+
+            .scene-text {
+                font-size: 1em;
+            }
+
+            .character-card h3 {
+                font-size: 1.3em;
+            }
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Entscheidung '38</h1>
+            <p class="subtitle">Drei Wege durch Wien – März bis Dezember 1938</p>
+        </header>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="start-screen active">
+            <h2>Wien, 12. März 1938</h2>
+            <p>
+                Die Wehrmacht marschiert ein. Österreich wird Teil des Deutschen Reiches.
+                In wenigen Stunden verändert sich alles. Du wirst drei Menschen kennenlernen,
+                die an diesem Tag in Wien leben – und drei völlig verschiedene Wege gehen werden.
+            </p>
+
+            <div class="educational-note">
+                <strong>Historische Hinweis:</strong> Diese Simulation basiert auf dokumentierten
+                Erlebnissen und Entscheidungen echter Menschen. Es geht nicht darum, zu urteilen,
+                sondern zu verstehen, wie kompliziert es war, unter einer totalitären Diktatur zu leben.
+                Die Entscheidungen, die hier präsentiert werden, waren unter Todesangst, Unwissenheit
+                und enormem sozialen Druck getroffen worden.
+            </div>
+
+            <p style="margin-bottom: 40px; color: #ffc107; font-weight: 600;">
+                Wähle einen Weg und erlebe die Geschichte aus dieser Perspektive.
+            </p>
+
+            <div class="path-selector">
+                <div class="character-card path-a" data-path="a">
+                    <h3>Familie Goldstein</h3>
+                    <div class="role">Jüdische Familie</div>
+                    <div class="description">
+                        Miriam, 16 Jahre alt. Ihr Vater ist Arzt. Die neuen Gesetze bedrohen ihre Existenz unmittelbar.
+                    </div>
+                </div>
+
+                <div class="character-card path-b" data-path="b">
+                    <h3>Franz Huber</h3>
+                    <div class="role">Postbeamter</div>
+                    <div class="description">
+                        35 Jahre alt. Kein ideologischer Nazi, aber auch kein Held. Die alltägliche Frage: Mitläufer oder Widerständler?
+                    </div>
+                </div>
+
+                <div class="character-card path-c" data-path="c">
+                    <h3>Anna Berger</h3>
+                    <div class="role">Lehrerin</div>
+                    <div class="description">
+                        28 Jahre alt. Sie muss entscheiden, ob sie Widerstand leisten kann – und zu welchem Preis.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Narrative Areas -->
+        <div id="narrativeArea" class="narrative-area">
+            <div class="progress">
+                <div class="progress-step active" id="step1"></div>
+                <span class="progress-text">Szene <span id="sceneCounter">1</span>/3</span>
+                <div class="progress-step" id="step2"></div>
+                <div class="progress-step" id="step3"></div>
+            </div>
+
+            <!-- PATH A CONTENT -->
+            <div id="pathA" class="path-a hidden">
+                <!-- A1 -->
+                <div id="sceneA1" class="scene-box hidden">
+                    <div class="scene-title">März 1938 – Der Anschluss</div>
+                    <div class="scene-text">
+                        Du bist Miriam Goldstein, 16 Jahre alt. Dein Vater ist Arzt mit einer Praxis im 2. Bezirk.
+                        Am 12. März 1938 marschiert die Wehrmacht ein. Von deinem Fenster siehst du jubelnde Menschen
+                        mit Hakenkreuzfahnen. Dein Vater sagt beim Abendessen: „Wir müssen weg." Deine Mutter widerspricht:
+                        „Das wird sich beruhigen. Wir sind Österreicher, seit Generationen."
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('a', 1, 'a')">
+                            Deinem Vater zustimmen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Sofort versuchen zu fliehen</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('a', 1, 'b')">
+                            Deiner Mutter zustimmen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Abwarten und hoffen</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- A2a -->
+                <div id="sceneA2a" class="scene-box hidden">
+                    <div class="scene-title">April 1938 – Fluchtversuch</div>
+                    <div class="scene-text">
+                        Dein Vater geht zum Konsulat, um Visa zu beantragen. Die Schlange reicht um den Block.
+                        Hunderte Menschen warten – alle Juden, die fliehen wollen. Am nächsten Tag werden neue Regeln
+                        eingeführt: Juden brauchen eine „Unbedenklichkeitsbescheinigung" vom Finanzamt.
+                        Diese wird nur gegen hohe Zahlungen ausgestellt. Die Familie hat Ersparnisse, aber nicht genug.
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('a', 2, 'a')">
+                            Alles verkaufen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Um die Gebühren zu bezahlen</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('a', 2, 'b')">
+                            Illegal fliehen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Über die Grenze ohne Papiere</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- A2b -->
+                <div id="sceneA2b" class="scene-box hidden">
+                    <div class="scene-title">April 1938 – Reibpartien</div>
+                    <div class="scene-text">
+                        Im April beginnen die „Reibpartien" – jüdische Bürger werden gezwungen,
+                        auf Knien die Straßen zu schrubben, während Passanten lachen und zuschauen.
+                        Dein Vater verliert seine Ärztezulassung. Man sagt ihm: „Juden dürfen keine Deutschen behandeln."
+                        Dein Schulweg wird zum Spießrutenlauf. Klassenkameraden, die dich gestern noch gegrüßt haben,
+                        meiden dich jetzt.
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('a', 2, 'c')">
+                            Jetzt doch versuchen zu fliehen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Es ist später, aber noch nicht zu spät</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('a', 2, 'd')">
+                            Sich verstecken<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Und hoffen, dass es vorbeigeht</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- A3 - Final -->
+                <div id="sceneA3" class="scene-box hidden">
+                    <div class="scene-title">Dezember 1938 und danach</div>
+                    <div class="scene-text">
+                        <strong>Die historische Realität:</strong><br><br>
+                        Miriam und ihre Familie erlebten das, was abertausende österreichische Juden erlebten.
+                        Manche konnten fliehen – entweder legal, über Konsulate und unter entwürdigenden Bedingungen,
+                        oder illegal, mit Schleusern, über die Grenzen. Viele schafften es nicht.<br><br>
+                        Die sogenannte „Kindertransport" brachte zwischen 1938 und 1940 etwa 10.000 jüdische Kinder
+                        nach Großbritannien in Sicherheit – oft getrennt von ihren Eltern. Die Eltern sollten folgen.
+                        Für die meisten war es die letzte Hoffnung.<br><br>
+                        Nach den Novemberpogromen von 1938 verschärften sich die Gesetze weiter.
+                        Die Deportationen begannen 1942. Von etwa 184.000 Juden, die 1938 in Österreich lebten,
+                        wurden etwa 65.000 in Konzentrationslager und Vernichtungslager deportiert und ermordet.
+                    </div>
+                </div>
+
+                <div id="contextA" class="historical-context hidden">
+                    <h3>Historischer Hintergrund: Die jüdische Gemeinschaft Österreichs</h3>
+                    <div class="context-section">
+                        <h4>Die Zahlen</h4>
+                        <ul>
+                            <li><strong>184.000</strong> Juden lebten 1938 in Österreich (hauptsächlich in Wien)</li>
+                            <li><strong>65.000</strong> wurden in Konzentrations- und Vernichtungslager deportiert und ermordet</li>
+                            <li><strong>~30.000</strong> konnten in andere Länder emigrieren</li>
+                            <li><strong>Novemberpogrome 1938:</strong> 40 Synagogen wurden zerstört, Hunderte Geschäfte geplündert</li>
+                        </ul>
+                    </div>
+                    <div class="context-section">
+                        <h4>Fluchtmöglichkeiten und ihre Grenzen</h4>
+                        <ul>
+                            <li>Die USA, Großbritannien und andere Länder hatten strenge Einwanderungsquoten</li>
+                            <li>Die Kindertransporte retteten etwa 10.000 Kinder, trennten sie aber von ihren Eltern</li>
+                            <li>Illegale Flucht war teuer und lebensgefährlich</li>
+                            <li>Viele Länder schlossen ihre Grenzen, besonders nach Kriegsbeginn 1939</li>
+                        </ul>
+                    </div>
+                    <div class="context-section">
+                        <h4>Österreichs Rolle</h4>
+                        <p>
+                            Lange Zeit stellte sich Österreich als das erste Opfer des Nationalsozialismus dar
+                            („Opfermythos"). Die Forschung zeigt jedoch: Österreich hatte eine aktive Rolle in der
+                            Verfolgung und Vernichtung. Viele der Architekten des Holocaust waren Österreicher.
+                            Die Wiener Bevölkerung war bei den Pogromen und Vertreibungen oft enthusiastisch beteiligt.
+                        </p>
+                    </div>
+                    <div class="context-section">
+                        <h4>Die schwierigste Frage: Was hätte ich getan?</h4>
+                        <p>
+                            Aus unserer sicheren Gegenwart ist es leicht zu sagen: „Ich wäre geflohen!" oder
+                            „Ich hätte Widerstand geleistet!" Aber vergiss nicht: Die Menschen damals handelten
+                            unter Todesangst, Unwissenheit über das volle Ausmaß der Verfolgung (die Vernichtungslager
+                            waren nicht allgemein bekannt), und unter enormem sozialen Druck. Viele hielten es für
+                            unmöglich zu fliehen. Andere wollten das unvorstellbar machen – dass ihr Heimatland
+                            so etwas von seinen Bürgern verlangen könnte.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PATH B CONTENT -->
+            <div id="pathB" class="path-b hidden">
+                <!-- B1 -->
+                <div id="sceneB1" class="scene-box hidden">
+                    <div class="scene-title">März 1938 – Das Dilemma des Mitläufers</div>
+                    <div class="scene-text">
+                        Du bist Franz Huber, 35 Jahre alt, Postbeamter. Du bist kein ideologischer Nazi,
+                        aber auch kein Held. Du machst dir Sorgen um deine Stelle und deine Familie.
+                        Am Tag des Anschlusses hängt dein Nachbar eine Hakenkreuzfahne aus dem Fenster.
+                        Abends klopft er an deine Tür: „Hast du keine Fahne? Das fällt auf, Huber.
+                        Du willst doch keinen Ärger."
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('b', 1, 'a')">
+                            Eine Fahne aufhängen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Besser nicht auffallen</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('b', 1, 'b')">
+                            Keine Fahne<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Du machst nicht mit</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- B2a -->
+                <div id="sceneB2a" class="scene-box hidden">
+                    <div class="scene-title">April–Mai 1938 – Der Druck intensiviert sich</div>
+                    <div class="scene-text">
+                        Die Wochen vergehen. Du wirst zu einer NSDAP-Versammlung „eingeladen".
+                        Dein Chef sagt während eines Gespräches: „Huber, wer nicht Mitglied wird,
+                        hat keine Zukunft bei der Post." Es ist keine offene Drohung – aber die Botschaft
+                        ist unmissverständlich. In derselben Woche siehst du, wie der jüdische Kollege
+                        Steinberg seinen Schreibtisch räumen muss. Er sagt kein Wort.
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('b', 2, 'a')">
+                            Der NSDAP beitreten<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Um deine Karriere zu sichern</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('b', 2, 'b')">
+                            Steinberg heimlich helfen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Und nicht beitreten</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- B2b -->
+                <div id="sceneB2b" class="scene-box hidden">
+                    <div class="scene-title">April 1938 – Konsequenzen der Weigerung</div>
+                    <div class="scene-text">
+                        In der Nacht wird ein Zettel unter deine Tür geschoben: „Volksverräter werden nicht vergessen."
+                        Am nächsten Tag wirst du am Arbeitsplatz gemieden. Dein Chef spricht nicht mit dir.
+                        Deine Kollegen, mit denen du jahrelang gelacht hast, setzen sich in der Kantine nicht neben dich.
+                        Du wirst nicht direkt bedroht, aber die Botschaft ist klar.
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('b', 2, 'c')">
+                            Nachgeben und dich anpassen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Ist es nicht wert, alles zu verlieren</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('b', 2, 'd')">
+                            Standhaft bleiben<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Egal, was es kostet</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- B3 - Final -->
+                <div id="sceneB3" class="scene-box hidden">
+                    <div class="scene-title">Dezember 1938 und danach</div>
+                    <div class="scene-text">
+                        <strong>Die historische Realität:</strong><br><br>
+                        Franz Huber ist ein typisches Beispiel. Er steht für die Millionen, die weder
+                        überzeuge Nazis noch mutige Widerständler waren. Sie waren die „Graue Zone" –
+                        Menschen, die sich anpassten, um ihre Jobs zu behalten, ihre Familien zu schützen.
+                        Das ist menschlich verständlich. Aber es ist auch wichtig zu verstehen:
+                        Diese Anpassung, diese kleine Nachgeben hier und dort, war es, die das System funktionieren ließ.<br><br>
+                        Manche, wie Franz, traten der NSDAP bei, ohne echte Nazis zu sein. Das war die Mehrheit
+                        der NSDAP-Mitglieder. Sie waren Opportunisten, nicht Ideologen. Aber der Unterschied
+                        war gering: Ob aus Überzeugung oder aus Karrieregründen – die Unterstützung funktionierte gleich.
+                    </div>
+                </div>
+
+                <div id="contextB" class="historical-context hidden">
+                    <h3>Historischer Hintergrund: Die „Graue Zone" und die Mehrheit</h3>
+                    <div class="context-section">
+                        <h4>Die Statistiken der Anpassung</h4>
+                        <ul>
+                            <li><strong>NSDAP-Mitgliedschaft in Österreich:</strong> Von etwa 500.000 bis 1945 (etwa 10% der Bevölkerung)</li>
+                            <li><strong>Die Mehrheit war nicht aktiv ideologisch engagiert</strong> – sie waren Mitläufer aus Karrieregründen</li>
+                            <li><strong>Nur wenige (Schätzungen gehen von 1-3%) leisteten aktiven Widerstand</strong></li>
+                            <li><strong>Die große Mehrheit war Zuschauer</strong> – still, passiv, aber stillschweigend duldend</li>
+                        </ul>
+                    </div>
+                    <div class="context-section">
+                        <h4>Warum Anpassung?</h4>
+                        <ul>
+                            <li>Angst vor beruflichem Aus und wirtschaftlichem Ruin</li>
+                            <li>Angst vor sozialer Ausgrenzung und Isolation</li>
+                            <li>Der psychologische Effekt der Normalisierung – das Unnormale wird normal</li>
+                            <li>Minimale, schrittweise Veränderungen, die das Widerstandspotenzial zermürbten</li>
+                            <li>Die Abwesenheit von klaren Alternativen – wohin hätte man gehen können?</li>
+                        </ul>
+                    </div>
+                    <div class="context-section">
+                        <h4>Die Rolle des Mitläufers</h4>
+                        <p>
+                            Der deutsche Historian Raul Hilberg schrieb, dass der Holocaust nicht nur von den Nazi-Eliten
+                            begangen wurde, sondern von vielen „gewöhnlichen Menschen", die kleine Rollen spielten.
+                            Beamte, die Formulare ausfüllten. Polizisten, die Befehle befolgten. Nachbarn, die
+                            Nachbarn denunzierten. Arbeiter, die an Deportationen beteiligt waren. Einzeln betrachtet,
+                            schien jeder diese Verantwortung zu leugnen. Zusammen ermöglichten sie das System.
+                        </p>
+                    </div>
+                    <div class="context-section">
+                        <h4>Die Frage: War es möglich zu widerstehen?</h4>
+                        <p>
+                            Das ist kompliziert. Es gab Konsequenzen für Weigerung – Jobverlust, soziale Ächtung,
+                            möglicherweise sogar Verhaftung, wenn man aktiv Widerstand leistete. Aber es war nicht
+                            automatisch der Tod. Viele Menschen, die sich weigerten, überlebten. Es war weniger bequem,
+                            weniger sicher, aber nicht unmöglich. Der Punkt ist: Es brauchte Mut, Überzeugung und
+                            die Bereitschaft, Risiken zu nehmen. Die meisten hatten den nicht.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PATH C CONTENT -->
+            <div id="pathC" class="path-c hidden">
+                <!-- C1 -->
+                <div id="sceneC1" class="scene-box hidden">
+                    <div class="scene-title">März 1938 – Der Eid</div>
+                    <div class="scene-text">
+                        Du bist Anna Berger, 28 Jahre alt, Lehrerin. Am Tag des Anschlusses werden alle Lehrer
+                        aufgefordert, einen Treueeid auf Hitler zu schwören. Es ist keine Frage – es ist ein Befehl.
+                        Deine Kollegin Margarethe, von der du weißt, dass sie ein KPÖ-Mitglied war, ist bereits verhaftet worden.
+                        Die Schule ist voller uniformierter SA-Männer, die die Lehrer beobachten.
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('c', 1, 'a')">
+                            Den Eid verweigern<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Offen Widerstand leisten</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('c', 1, 'b')">
+                            Den Eid schwören<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Aber im Verborgenen handeln</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- C2a -->
+                <div id="sceneC2a" class="scene-box hidden">
+                    <div class="scene-title">März–April 1938 – Leben im Untergrund</div>
+                    <div class="scene-text">
+                        Du verlierst sofort deine Stelle. Die Schuldirektorin sagt dir: „Sie sind nicht geeignet,
+                        österreichische Jugend zu unterrichten." Du bist arbeitslos, ohne Einkommen.
+                        Schlimmer noch: Du stehst auf der Liste der Gestapo. Deine Wohnung wird beobachtet.
+                        Du darfst nicht mehr öffentlich unterrichten. Aber andere in der Untergrundorganisation
+                        kontaktieren dich: Sie brauchen Hilfe.
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('c', 2, 'a')">
+                            Ins Ausland fliehen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Deine Sicherheit ist wichtig</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('c', 2, 'b')">
+                            Im Untergrund aktiv werden<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Und die Konsequenzen tragen</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- C2b -->
+                <div id="sceneC2b" class="scene-box hidden">
+                    <div class="scene-title">April–Oktober 1938 – Versteckte Widerstände</div>
+                    <div class="scene-text">
+                        Du schwörst den Eid. Außen hin folgst du den Regeln. Aber du hilfst heimlich.
+                        Du versteckst Flugblätter in deinen Taschen und verteilst sie nachts in Briefkästen.
+                        Du gibst jüdischen Schülern Privatunterricht, nachdem sie von der Schule ausgeschlossen wurden.
+                        Du führst Gespräche – vorsichtig – mit Schülern, die es wagen, zu denken.
+                        Die Gestapo hat eine Datei über dich, aber sie haben noch nichts Definitives.
+                    </div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="makeChoice('c', 2, 'c')">
+                            Ein Flugblatt verteilen<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Öffentlich Stellung beziehen</span>
+                        </button>
+                        <button class="choice-btn" onclick="makeChoice('c', 2, 'd')">
+                            Vorsichtiger sein<br>
+                            <span style="font-size: 0.9em; opacity: 0.8;">Nur im Kleinen helfen</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- C3 - Final -->
+                <div id="sceneC3" class="scene-box hidden">
+                    <div class="scene-title">Dezember 1938 und danach</div>
+                    <div class="scene-text">
+                        <strong>Die historische Realität:</strong><br><br>
+                        Anna Berger steht für die kleine Minderheit, die Widerstand leistete. Aber „Widerstand"
+                        bedeutete viele verschiedene Dinge. Es gab kein einheitliches Widerstandsnetz – nur einzelne,
+                        isolierte Menschen und kleine Gruppen, die versuchten, das Richtige zu tun.<br><br>
+                        Es gab die Gruppe O5 (kommunistische Widerständler), christliche Widerständler,
+                        bürgerliche Konservative, Deserteure, die sich der Wehrmacht widersetzten.
+                        Manche verteilten Flugblätter. Manche halfen Verfolgten. Manche weigerten sich einfach,
+                        an Nazi-Verbrechen beteiligt zu sein. Die meisten wurden verhaftet. Viele wurden getötet.<br><br>
+                        Das Wichtigste zu verstehen: Widerstand war nicht mutig, sondern suizidal.
+                        Es war praktisch unmöglich zu gewinnen. Aber einige taten es trotzdem.
+                    </div>
+                </div>
+
+                <div id="contextC" class="historical-context hidden">
+                    <h3>Historischer Hintergrund: Widerstand in Österreich</h3>
+                    <div class="context-section">
+                        <h4>Die Formen des Widerstands</h4>
+                        <ul>
+                            <li><strong>Die Gruppe O5:</strong> Kommunistische Untergrundorganisation mit etwa 200-300 aktiven Mitgliedern</li>
+                            <li><strong>Christliche Widerständler:</strong> Katholische und evangelische Kreise, die moralische Einwände erhoben</li>
+                            <li><strong>Deserteure:</strong> Soldaten, die sich der Wehrmacht widersetzten</li>
+                            <li><strong>Individuelle Akte:</strong> Einzelne Menschen, die Verfolgten halfen, Flugblätter verteilten, oder einfach sich weigerten</li>
+                        </ul>
+                    </div>
+                    <div class="context-section">
+                        <h4>Die Zahlen und das Risiko</h4>
+                        <ul>
+                            <li><strong>Schätzungen:</strong> Etwa 1-3% der Bevölkerung leistete aktiven Widerstand</li>
+                            <li><strong>Die Mehrheit der Widerständler wurde verhaftet und getötet</strong></li>
+                            <li><strong>Die Gruppe O5 verlor über 100 Mitglieder durch Hinrichtungen</strong></li>
+                            <li><strong>Viele starben in Konzentrationslagern, bevor der Krieg zu Ende war</strong></li>
+                        </ul>
+                    </div>
+                    <div class="context-section">
+                        <h4>Die Realität von Widerstand</h4>
+                        <p>
+                            Es ist wichtig zu verstehen: Widerstand war nicht heroisch. Es war hoffnungslos.
+                            Niemand dachte ernsthaft, dass kleine Flugblätter oder individuelle Verweigerungen
+                            Hitler würden stürzen. Die Widerständler handelten aus Prinzip, nicht aus der
+                            Hoffnung auf Sieg. Sie waren bereit, dafür zu sterben. Und viele taten es.
+                        </p>
+                    </div>
+                    <div class="context-section">
+                        <h4>Die schwierigste Frage: Warum die meisten nicht widerstand leisteten</h4>
+                        <p>
+                            Die Zahlen sind klar: Die meisten Österreicher leisteten keinen Widerstand.
+                            Das liegt nicht daran, dass sie alle böse waren. Es liegt daran, dass Widerstand
+                            unreasonably teuer ist – es kostet dein Leben, deine Familie, alles. Die Mehrheit
+                            versuchte zu überleben. Das ist menschlich. Aber es ist auch wichtig, sich zu erinnern:
+                            Diese Überlebenslogik ermöglichte es Hitler, zu tun, was er getan hat.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="resetSimulation()">Neustart</button>
+                <button class="nav-btn" onclick="chooseAnotherPath()">Anderen Weg erkunden</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPath = null;
+        let currentScene = null;
+        let sceneHistory = [];
+
+        const pathData = {
+            a: {
+                scenes: ['A1', 'A2', 'A3'],
+                choices: {
+                    '1': { a: '2a', b: '2b' },
+                    '2a': { a: '3', b: '3' },
+                    '2b': { c: '3', d: '3' },
+                    '2': { c: '3', d: '3' }
+                }
+            },
+            b: {
+                scenes: ['B1', 'B2', 'B3'],
+                choices: {
+                    '1': { a: '2a', b: '2b' },
+                    '2a': { a: '3', b: '3' },
+                    '2b': { c: '3', d: '3' },
+                    '2': { c: '3', d: '3' }
+                }
+            },
+            c: {
+                scenes: ['C1', 'C2', 'C3'],
+                choices: {
+                    '1': { a: '2a', b: '2b' },
+                    '2a': { a: '3', b: '3' },
+                    '2b': { c: '3', d: '3' },
+                    '2': { c: '3', d: '3' }
+                }
+            }
+        };
+
+        function startPath(path) {
+            currentPath = path;
+            currentScene = 1;
+            sceneHistory = [1];
+
+            document.getElementById('startScreen').classList.remove('active');
+            document.getElementById('narrativeArea').classList.add('active');
+
+            showScene();
+        }
+
+        function showScene() {
+            // Hide all narratives
+            document.getElementById('pathA').classList.add('hidden');
+            document.getElementById('pathB').classList.add('hidden');
+            document.getElementById('pathC').classList.add('hidden');
+
+            // Hide all scenes
+            document.querySelectorAll('.scene-box, .historical-context').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Show current path and scene
+            const pathDiv = document.getElementById('path' + currentPath.toUpperCase());
+            pathDiv.classList.remove('hidden');
+
+            const sceneId = 'scene' + currentPath.toUpperCase() + currentScene;
+            const sceneEl = document.getElementById(sceneId);
+            if (sceneEl) {
+                sceneEl.classList.remove('hidden');
+            }
+
+            // Show context at end
+            if (currentScene === 3) {
+                const contextEl = document.getElementById('context' + currentPath.toUpperCase());
+                if (contextEl) {
+                    contextEl.classList.remove('hidden');
+                }
+            }
+
+            updateProgress();
+            updateSceneCounter();
+        }
+
+        function makeChoice(path, scene, choice) {
+            const nextScene = pathData[path].choices[scene][choice];
+            if (nextScene) {
+                currentScene = nextScene;
+                sceneHistory.push(currentScene);
+                showScene();
+            }
+        }
+
+        function updateProgress() {
+            const steps = [1, 2, 3];
+            steps.forEach((step, index) => {
+                const el = document.getElementById(`step${step}`);
+                if (step < currentScene) {
+                    el.classList.add('completed');
+                    el.classList.remove('active');
+                } else if (step == currentScene) {
+                    el.classList.add('active');
+                    el.classList.remove('completed');
+                } else {
+                    el.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        function updateSceneCounter() {
+            document.getElementById('sceneCounter').textContent = currentScene;
+        }
+
+        function resetSimulation() {
+            currentPath = null;
+            currentScene = null;
+            sceneHistory = [];
+
+            document.getElementById('narrativeArea').classList.remove('active');
+            document.getElementById('startScreen').classList.add('active');
+        }
+
+        function chooseAnotherPath() {
+            resetSimulation();
+        }
+
+        // Event listeners for character cards
+        document.querySelectorAll('.character-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const path = this.getAttribute('data-path');
+                startPath(path);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stimmen der Industrialisierung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2b1a2f 0%, #3a2a3f 100%);
+            color: #e8dcc8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #ffc107;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #b8a89c;
+            font-style: italic;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: rgba(255, 193, 7, 0.15);
+            border: 2px solid #ffc107;
+            color: #ffc107;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 193, 7, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: #ffc107;
+            color: #2b1a2f;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Character Cards */
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .character-card {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 5px solid;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .character-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .character-card.active {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+        }
+
+        .character-card h3 {
+            color: #ffc107;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .character-card .role {
+            font-size: 0.9em;
+            color: #b8a89c;
+        }
+
+        /* Testimony Panel */
+        .testimony-panel {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            padding: 25px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .testimony-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .testimony-color {
+            width: 15px;
+            height: 60px;
+            border-radius: 3px;
+        }
+
+        .testimony-header h2 {
+            color: #ffc107;
+            flex-grow: 1;
+        }
+
+        .testimony-header .role {
+            font-size: 0.95em;
+            color: #b8a89c;
+        }
+
+        .testimony-text {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #e8dcc8;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* Analysis Questions */
+        .analysis-questions {
+            margin-top: 25px;
+        }
+
+        .analysis-questions h4 {
+            color: #ffc107;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .question-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 3px solid #ffc107;
+            border-radius: 3px;
+        }
+
+        .question-item strong {
+            color: #ffc107;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .question-item p {
+            color: #c9b9a8;
+            font-size: 0.95em;
+        }
+
+        /* Matching Quiz */
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 800px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .quotes-column, .character-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .column-title {
+            color: #ffc107;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .quote-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 4px;
+            cursor: move;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .quote-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+
+        .quote-item.matched {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+        }
+
+        .character-option {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .character-option:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+
+        .character-option.selected {
+            background: rgba(255, 193, 7, 0.2);
+            border-color: #ffc107;
+        }
+
+        /* Score Display */
+        .score-display {
+            background: rgba(255, 193, 7, 0.15);
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .score-display.visible {
+            display: block;
+        }
+
+        .score-display h3 {
+            color: #ffc107;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .score-display p {
+            color: #e8dcc8;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        thead {
+            background: rgba(255, 193, 7, 0.2);
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            color: #ffc107;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e8dcc8;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        /* Reflection Questions */
+        .reflection-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .reflection-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .reflection-item h4 {
+            color: #ffc107;
+            margin-bottom: 12px;
+            font-size: 1.05em;
+        }
+
+        .reflection-item p {
+            color: #c9b9a8;
+            line-height: 1.7;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #ffc107;
+            color: #ffc107;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 193, 7, 0.3);
+        }
+
+        button.submit {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        button.submit:hover {
+            background: rgba(46, 204, 113, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .characters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimony-panel {
+                padding: 15px;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab-button {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Stimmen der Industrialisierung</h1>
+            <p class="subtitle">Verschiedene Perspektiven auf eine Epoche der Transformation</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('zeugen')">Zeugenaussagen</button>
+            <button class="tab-button" onclick="switchTab('zuordnung')">Zuordnung</button>
+            <button class="tab-button" onclick="switchTab('vergleich')">Vergleich & Reflexion</button>
+        </div>
+
+        <!-- TAB 1: ZEUGENAUSSAGEN -->
+        <div id="zeugen" class="tab-content active">
+            <div class="characters-grid">
+                <div class="character-card active" onclick="selectCharacter(0)">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: #4a90d9; border-radius: 2px;"></div>
+                        <h3>Friedrich Hartmann</h3>
+                    </div>
+                    <div class="role">Fabrikbesitzer, 52</div>
+                </div>
+
+                <div class="character-card" onclick="selectCharacter(1)">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: #e74c3c; border-radius: 2px;"></div>
+                        <h3>Maria Koller</h3>
+                    </div>
+                    <div class="role">Fabrikarbeiterin, 28</div>
+                </div>
+
+                <div class="character-card" onclick="selectCharacter(2)">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: #f39c12; border-radius: 2px;"></div>
+                        <h3>Gustav</h3>
+                    </div>
+                    <div class="role">Kinderarbeiter, 11</div>
+                </div>
+
+                <div class="character-card" onclick="selectCharacter(3)">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: #9b59b6; border-radius: 2px;"></div>
+                        <h3>Baronin Elisabeth</h3>
+                    </div>
+                    <div class="role">Adelige, 45</div>
+                </div>
+
+                <div class="character-card" onclick="selectCharacter(4)">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <div style="width: 12px; height: 12px; background: #2ecc71; border-radius: 2px;"></div>
+                        <h3>Dr. Anton Berger</h3>
+                    </div>
+                    <div class="role">Sozialreformer & Arzt, 38</div>
+                </div>
+            </div>
+
+            <div id="testimony-container"></div>
+        </div>
+
+        <!-- TAB 2: ZUORDNUNG -->
+        <div id="zuordnung" class="tab-content">
+            <div class="score-display" id="scoreDisplay"></div>
+
+            <div class="matching-container">
+                <div class="quotes-column">
+                    <div class="column-title">Zitate (zum Zuordnen)</div>
+                    <div id="quotes-list"></div>
+                </div>
+                <div class="character-column">
+                    <div class="column-title">Personen</div>
+                    <div id="characters-list"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="submit" onclick="checkAnswers()">Ergebnisse überprüfen</button>
+                <button onclick="resetQuiz()">Quiz zurücksetzen</button>
+            </div>
+
+            <div id="explanation" style="display: none; margin-top: 30px;"></div>
+        </div>
+
+        <!-- TAB 3: VERGLEICH & REFLEXION -->
+        <div id="vergleich" class="tab-content">
+            <h2 style="color: #ffc107; margin-bottom: 25px;">Vergleichende Analyse</h2>
+
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Person</th>
+                            <th>Bewertung der Industrialisierung</th>
+                            <th>Persönliches Interesse</th>
+                            <th>Blinder Fleck</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Friedrich Hartmann</strong></td>
+                            <td>Sehr positiv – Fortschritt, Gewinn, Effizienz</td>
+                            <td>Profitabilität, Wettbewerbsfähigkeit, Macht</td>
+                            <td>Menschliche Kosten, Arbeitsbedingungen, Auswirkungen auf Familien</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maria Koller</strong></td>
+                            <td>Äußerst negativ – Ausbeutung, Leid, Ungerechtigkeit</td>
+                            <td>Sicherheit, Gesundheit, Zeit für Familie, Gerechtigkeit</td>
+                            <td>Strukturelle Probleme, warum Fabrikanten diese Bedingungen dulden</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gustav</strong></td>
+                            <td>Negativ – Leiden, Hoffnungslosigkeit, Verlust der Kindheit</td>
+                            <td>Schutz, Bildung, Sicherheit, normale Kindheit</td>
+                            <td>Systemische Ausbeutung, warum Eltern gezwungen sind, Kinder arbeiten zu lassen</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Baronin Elisabeth</strong></td>
+                            <td>Negativ – Destabilisierung der Ordnung, Chaos, Modernisierung</td>
+                            <td>Erhaltung ihrer Macht, traditionelle Hierarchien, Kontrolle</td>
+                            <td>Dass Arbeiter WOLLEN in die Stadt gehen, warum die "alte Ordnung" nicht haltbar ist</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dr. Anton Berger</strong></td>
+                            <td>Gemischt – Potenzial für Fortschritt, aber mit sozialen Reformen</td>
+                            <td>Menschliches Wohlbefinden, Gerechtigkeit, Gesundheit, Reformen</td>
+                            <td>Wirtschaftliche Zwänge, warum Reform so schwierig umzusetzen ist</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="reflection-questions">
+                <div class="reflection-item">
+                    <h4>❶ Wessen Perspektive wird in Geschichtsbüchern am seltensten erzählt? Warum?</h4>
+                    <p>Die Perspektiven von Kinderarbeitern wie Gustav und Fabrikarbeiterinnen wie Maria werden oft übersehen. Warum? Sie hatten keine Macht, keine Stimme in der öffentlichen Debatte, konnten nicht lesen und schreiben, um ihre Geschichten aufzuzeichnen. Die Geschichtsschreibung wird oft von denen dominiert, die Macht hatten – Fabrikanten und später Historiker aus der Mittelklasse. Die Arbeiter hinterließen weniger schriftliche Spuren, aber ihre Erfahrungen waren zentral für die Epoche.</p>
+                </div>
+
+                <div class="reflection-item">
+                    <h4>❷ Welche Forderungen von Dr. Berger sind heute Gesetz?</h4>
+                    <p>Fast alle seine Forderungen sind in Österreich heute Realität: Verbot der Kinderarbeit unter 15 Jahren (mit Ausnahmen für leichte Tätigkeiten), maximale Arbeitszeiten (8 Stunden täglich), Krankenversicherung für alle Arbeitnehmer, Schulpflicht für alle Kinder. Aber dies sind Errungenschaften, für die Arbeiter, Reformer und Aktivisten viele Jahrzehnte kämpfen mussten – und es gibt immer noch Länder, wo diese Standards nicht gelten.</p>
+                </div>
+
+                <div class="reflection-item">
+                    <h4>❸ Gibt es heute ähnliche Konflikte? Wo?</h4>
+                    <p>Ja, absolut. In weniger regulierten Ländern und in Bereichen wie: Textilproduktion (Bangladesch, Vietnam) mit Fabrikbedingungen ähnlich wie zur Industrialisierung; Smartphone- und Elektronikproduktion (China, Philippinen) mit Arbeitern, die unter Druck unter schlechten Bedingungen arbeiten; die "Gig Economy" (Uber, Deliveroo) mit Debatten über Arbeitsschutz und Versicherung; globale Lieferketten, die Ausbeutung in reichen Ländern verstecken. Der Konflikt zwischen Effizienz/Gewinn und menschlichem Wohlbefinden ist nicht vorbei – er hat nur eine neue Form.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Character Data
+        const characters = [
+            {
+                name: "Friedrich Hartmann",
+                role: "Fabrikbesitzer, 52",
+                color: "#4a90d9",
+                testimony: "Meine Baumwollspinnerei beschäftigt 200 Arbeiter – vor zehn Jahren waren es noch 30 mit Handspinnrädern. Die Dampfmaschine hat alles verändert! Die Produktion ist zehnmal so hoch, die Preise fallen, und selbst einfache Leute können sich nun Stoffe leisten. Ja, die Arbeitstage sind lang – aber war das Leben auf dem Bauernhof etwa leichter? Ich biete meinen Arbeitern ein festes Einkommen, eine Unterkunft, und ihre Kinder lernen ein Handwerk. Was die Sozialisten wollen – kürzere Arbeitszeiten, höhere Löhne – das würde uns ruinieren. Dann wandert die Produktion nach England ab, und ALLE verlieren ihre Arbeit.",
+                questions: [
+                    {
+                        q: "Wie bewertet Friedrich die Industrialisierung – positiv oder negativ? Warum?",
+                        a: "Positiv. Für ihn bedeutet die Industrialisierung Fortschritt, höhere Produktion, fallende Preise und wirtschaftliche Macht. Er sieht sich selbst als Wohltäter, der Arbeitsplätze schafft."
+                    },
+                    {
+                        q: "Welches persönliche Interesse hat Friedrich?",
+                        a: "Seine Profitabilität, Wettbewerbsfähigkeit, wirtschaftliche Macht und sein Status als Fabrikant (als neue Klasse von Einflussreichen)."
+                    },
+                    {
+                        q: "Worüber spricht Friedrich NICHT?",
+                        a: "Über die Unfallverletzungen, die Kinderarbeit, die Krankheiten durch Lärm und Staub, die Armut trotz Löhnen, oder dass seine Arbeiter ihm völlig unterlegen sind."
+                    }
+                ]
+            },
+            {
+                name: "Maria Koller",
+                role: "Fabrikarbeiterin, 28",
+                color: "#e74c3c",
+                testimony: "Ich stehe jeden Tag 14 Stunden an der Maschine. Meine Hände sind voller Narben, und der Lärm hat mein Gehör geschädigt. Für meine Arbeit bekomme ich halb so viel wie die Männer – obwohl ich dieselbe Arbeit mache. Meine drei Kinder sehe ich kaum. Die Älteste, neun Jahre alt, arbeitet schon im Werk – sie ist klein genug, um unter die Maschinen zu kriechen und verstopfte Fäden zu lösen. Letzte Woche hat ein Mädchen dabei zwei Finger verloren. Der Fabrikherr sagte: 'Selbst schuld, sie war nicht aufmerksam genug.' Wenn es regnet, tropft es durchs Dach auf die Maschinen. Wir schlafen zu sechst in einer Kammer.",
+                questions: [
+                    {
+                        q: "Wie bewertet Maria die Industrialisierung – positiv oder negativ? Warum?",
+                        a: "Äußerst negativ. Die Industrialisierung hat ihr Leben zerstört: lange Stunden, gefährliche Arbeit, Lohnungerechtigkeit, die Zerstörung ihrer Familie, körperliche Verletzungen."
+                    },
+                    {
+                        q: "Welches persönliche Interesse hat Maria?",
+                        a: "Ihre und ihrer Kinder Sicherheit, Gesundheit, gerechte Löhne, Zeit mit ihrer Familie, anständige Lebensräume."
+                    },
+                    {
+                        q: "Worüber spricht Maria NICHT?",
+                        a: "Sie spricht nicht über die wirtschaftlichen Zwickmühlen des Fabrikanten oder warum die Arbeit so schlecht bezahlt ist – sie ist zu sehr von unmittelbar Notwendigem beschäftigt."
+                    }
+                ]
+            },
+            {
+                name: "Gustav",
+                role: "Kinderarbeiter, 11",
+                color: "#f39c12",
+                testimony: "Ich arbeite in der Kohlenmine. Jeden Morgen um vier Uhr geht es hinunter in den Schacht. Ich ziehe die Kohlewagen durch enge Gänge – manchmal muss ich auf allen Vieren kriechen. Oben ist es hell und warm, das weiß ich noch, aber ich sehe die Sonne nur am Sonntag. Mein Rücken tut immer weh. Der Aufseher schlägt mich, wenn ich zu langsam bin. Mein Vater sagt, ohne meinen Lohn könnten wir keine Miete zahlen. Ich wünschte, ich könnte in die Schule gehen wie die Kinder der Reichen.",
+                questions: [
+                    {
+                        q: "Wie bewertet Gustav die Industrialisierung – positiv oder negativ? Warum?",
+                        a: "Negativ. Für ihn bedeutet sie Verlust der Kindheit, körperliches Leiden, Gefahr, Dunkelheit, Schläge und Hoffnungslosigkeit."
+                    },
+                    {
+                        q: "Welches persönliche Interesse hat Gustav?",
+                        a: "Schutz, Sicherheit, Bildung, eine normale Kindheit, das Sehen von Sonnenlicht, Freiheit von Schlägen und Schmerz."
+                    },
+                    {
+                        q: "Worüber spricht Gustav NICHT?",
+                        a: "Er versteht nicht die strukturellen Gründe für Armut oder Kinderarbeit. Er sieht sich nicht als Opfer eines Systems, sondern als jemanden, der einfach Pech hat."
+                    }
+                ]
+            },
+            {
+                name: "Baronin Elisabeth von Waldstein",
+                role: "Adelige, 45",
+                color: "#9b59b6",
+                testimony: "Diese 'Industrialisierung' zerstört die natürliche Ordnung. Die Bauern verlassen das Land, die Städte werden zu stinkenden Molochen, und eine neue Klasse von Emporkömmlinge – diese Fabrikanten – maßt sich Macht an, die ihr nicht zusteht. Mein Gut verliert Arbeitskräfte, weil die jungen Leute in die Stadt wollen. Und was erwartet sie dort? Elend, Krankheit, Gottlosigkeit. Die alten Zeiten waren besser – jeder kannte seinen Platz, und der Gutsherr sorgte für seine Leute.",
+                questions: [
+                    {
+                        q: "Wie bewertet die Baronin die Industrialisierung – positiv oder negativ? Warum?",
+                        a: "Negativ. Sie sieht sie als Bedrohung für die traditionelle Ordnung, die Autorität des Adels und die ländliche Gesellschaft, die sie kennt und kontrolliert."
+                    },
+                    {
+                        q: "Welches persönliche Interesse hat die Baronin?",
+                        a: "Die Erhaltung ihrer Macht, ihres Status und der feudalen Hierarchie. Sie fürchtet den Aufstieg einer neuen wirtschaftlichen Klasse, die ihre Autorität bedroht."
+                    },
+                    {
+                        q: "Worüber spricht die Baronin NICHT?",
+                        a: "Sie bemerkt nicht, dass die Bauern WOLLEN in die Stadt gehen, weil das Leben auf ihrem Gut wahrscheinlich auch hart war. Sie verklärte 'die guten alten Zeiten'."
+                    }
+                ]
+            },
+            {
+                name: "Dr. Anton Berger",
+                role: "Sozialreformer & Arzt, 38",
+                color: "#2ecc71",
+                testimony: "Ich behandle die Arbeiterfamilien im Viertel um die Fabrik. Die Zustände sind katastrophal: Tuberkulose, Rachitis bei den Kindern, Unfälle ohne ärztliche Versorgung. Die durchschnittliche Lebenserwartung hier ist 35 Jahre – in den Villenvierteln der Fabrikanten liegt sie bei 55. Das ist kein Schicksal, das ist ein Skandal! Ich fordere: Verbot der Kinderarbeit unter 12, maximale Arbeitszeit von 10 Stunden, Krankenversicherung für Arbeiter, Schulpflicht für alle Kinder. Der Fabrikherr Hartmann nennt mich einen Utopisten. Ich nenne ihn einen Menschenverächter.",
+                questions: [
+                    {
+                        q: "Wie bewertet Dr. Berger die Industrialisierung – positiv oder negativ? Warum?",
+                        a: "Gemischt. Er sieht das Potenzial für Fortschritt, aber fordert radikale soziale Reformen. Ohne diese ist die Industrialisierung für ihn ein Skandal."
+                    },
+                    {
+                        q: "Welches persönliche Interesse hat Dr. Berger?",
+                        a: "Menschliches Wohlbefinden, Gerechtigkeit, die Gesundheit der arbeitenden Klasse und die Umsetzung sozialer Reformen."
+                    },
+                    {
+                        q: "Worüber spricht Dr. Berger NICHT?",
+                        a: "Er spricht wenig über die wirtschaftlichen Zwänge, denen Fabrikanten gegenüberstehen, oder wie schwierig es ist, Reformen umzusetzen und dabei wettbewerbsfähig zu bleiben."
+                    }
+                ]
+            }
+        ];
+
+        // Matching Quiz Data
+        const quotes = [
+            { text: "Die Dampfmaschine hat alles verändert!", character: 0 },
+            { text: "Meine Hände sind voller Narben", character: 1 },
+            { text: "Ich sehe die Sonne nur am Sonntag", character: 2 },
+            { text: "Eine neue Klasse von Emporkömmlingen", character: 3 },
+            { text: "Die durchschnittliche Lebenserwartung hier ist 35 Jahre", character: 4 },
+            { text: "Kürzere Arbeitszeiten würden uns ruinieren", character: 0 },
+            { text: "Ich ziehe die Kohlewagen durch enge Gänge", character: 2 },
+            { text: "Verbot der Kinderarbeit unter 12", character: 4 }
+        ];
+
+        let currentCharacter = 0;
+        let userAnswers = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            displayTestimony(0);
+            initializeQuiz();
+        });
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function selectCharacter(index) {
+            // Update active card
+            document.querySelectorAll('.character-card').forEach((card, i) => {
+                card.classList.toggle('active', i === index);
+            });
+
+            currentCharacter = index;
+            displayTestimony(index);
+        }
+
+        function displayTestimony(index) {
+            const char = characters[index];
+            const container = document.getElementById('testimony-container');
+
+            let html = `
+                <div class="testimony-panel">
+                    <div class="testimony-header">
+                        <div class="testimony-color" style="background: ${char.color};"></div>
+                        <div>
+                            <h2>${char.name}</h2>
+                            <div class="role">${char.role}</div>
+                        </div>
+                    </div>
+                    <div class="testimony-text">"${char.testimony}"</div>
+                    <div class="analysis-questions">
+                        <h4>Analysefragen:</h4>
+            `;
+
+            char.questions.forEach((item, i) => {
+                html += `
+                    <div class="question-item">
+                        <strong>${i + 1}. ${item.q}</strong>
+                        <p>${item.a}</p>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        function initializeQuiz() {
+            const quotesList = document.getElementById('quotes-list');
+            const charactersList = document.getElementById('characters-list');
+
+            // Shuffle quotes for variety
+            const shuffledQuotes = [...quotes].sort(() => Math.random() - 0.5);
+
+            // Display quotes
+            quotesList.innerHTML = '';
+            shuffledQuotes.forEach((quote, index) => {
+                const div = document.createElement('div');
+                div.className = 'quote-item';
+                div.innerHTML = `"${quote.text}"`;
+                div.dataset.quoteIndex = quotes.indexOf(quote);
+                quotesList.appendChild(div);
+            });
+
+            // Display character options
+            charactersList.innerHTML = '';
+            characters.forEach((char, index) => {
+                const div = document.createElement('div');
+                div.className = 'character-option';
+                div.innerHTML = `<strong style="color: ${char.color};">${char.name}</strong>`;
+                div.dataset.characterIndex = index;
+                div.onclick = function() {
+                    selectCharacterOption(this);
+                };
+                charactersList.appendChild(div);
+            });
+        }
+
+        let selectedQuote = null;
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.quote-item') && document.getElementById('zuordnung').classList.contains('active')) {
+                if (selectedQuote) {
+                    selectedQuote.classList.remove('selected');
+                }
+                selectedQuote = e.target.closest('.quote-item');
+                selectedQuote.classList.add('selected');
+            }
+        });
+
+        function selectCharacterOption(element) {
+            if (!selectedQuote || document.getElementById('zuordnung').classList.contains('active') === false) return;
+
+            const quoteIndex = parseInt(selectedQuote.dataset.quoteIndex);
+            const characterIndex = parseInt(element.dataset.characterIndex);
+
+            userAnswers[quoteIndex] = characterIndex;
+            selectedQuote.classList.remove('selected');
+            selectedQuote = null;
+
+            // Update matching visual
+            const charDiv = element;
+            const prevAnswer = charDiv.dataset.assignedQuote;
+            if (prevAnswer !== undefined) {
+                delete userAnswers[parseInt(prevAnswer)];
+            }
+
+            charDiv.dataset.assignedQuote = quoteIndex;
+            charDiv.innerHTML = `<strong style="color: ${characters[characterIndex].color};">${characters[characterIndex].name}</strong><div style="font-size: 0.85em; color: #b8a89c; margin-top: 8px;">"${quotes[quoteIndex].text}"</div>`;
+            charDiv.classList.add('selected');
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const totalQuestions = quotes.length;
+
+            quotes.forEach((quote, index) => {
+                if (userAnswers[index] === quote.character) {
+                    correct++;
+                }
+            });
+
+            const scorePercent = Math.round((correct / totalQuestions) * 100);
+            const scoreDisplay = document.getElementById('scoreDisplay');
+
+            scoreDisplay.classList.add('visible');
+            scoreDisplay.innerHTML = `
+                <h3>${correct}/${totalQuestions} richtig!</h3>
+                <p>Das ist ${scorePercent}% korrekt.</p>
+            `;
+
+            // Show explanation
+            const explanation = document.getElementById('explanation');
+            explanation.style.display = 'block';
+
+            let explanationHTML = `
+                <h3 style="color: #ffc107; margin-bottom: 15px;">Erklärung:</h3>
+            `;
+
+            quotes.forEach((quote, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === quote.character;
+                const userCharName = userAnswer !== undefined ? characters[userAnswer].name : "Nicht beantwortet";
+                const correctCharName = characters[quote.character].name;
+
+                explanationHTML += `
+                    <div style="background: ${isCorrect ? 'rgba(46, 204, 113, 0.15)' : 'rgba(231, 76, 60, 0.15)'}; border-left: 4px solid ${isCorrect ? '#2ecc71' : '#e74c3c'}; padding: 15px; margin-bottom: 12px; border-radius: 3px;">
+                        <div style="color: ${isCorrect ? '#2ecc71' : '#e74c3c'}; font-weight: 600; margin-bottom: 8px;">
+                            "${quote.text}"
+                        </div>
+                        <div style="color: #e8dcc8;">
+                            <strong>Deine Antwort:</strong> ${userCharName}<br>
+                            <strong>Richtige Antwort:</strong> ${correctCharName}
+                        </div>
+                    </div>
+                `;
+            });
+
+            explanation.innerHTML = explanationHTML;
+        }
+
+        function resetQuiz() {
+            userAnswers = {};
+            selectedQuote = null;
+            document.getElementById('scoreDisplay').classList.remove('visible');
+            document.getElementById('explanation').style.display = 'none';
+            initializeQuiz();
+        }
+    </script>
+</body>
+</html>
